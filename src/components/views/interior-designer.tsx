@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
   Card,
   CardContent,
@@ -15,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { RotateCcw, Download, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 type Option<T> = {
   value: T;
@@ -23,7 +23,6 @@ type Option<T> = {
   description: string;
 };
 
-// --- Configuration ---
 const categories = {
   style: {
     title: "Estilo",
@@ -89,41 +88,14 @@ const defaultDesign: DesignState = {
   nature: "sin-plantas",
 };
 
-// --- Main Component ---
 export function InteriorDesigner() {
+  const mountRef = useRef<HTMLDivElement>(null);
   const [design, setDesign] = useState<DesignState>(defaultDesign);
   const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
-  const [currentImageSrc, setCurrentImageSrc] = useState(PlaceHolderImages.find(img => img.id === 'habitat-interior')?.imageUrl || '');
-  const [nextImageSrc, setNextImageSrc] = useState('');
-  const [isFading, setIsFading] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
 
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
-  const getCurrentImageDetails = () => {
-    const styleOpt = categories.style.options.find(o => o.value === design.style);
-    return {
-      title: styleOpt?.label || 'Diseño Personalizado',
-      description: styleOpt?.description || 'Un espacio único en Marte.',
-    };
-  };
-
-  const handleImageTransition = useCallback((newSrc: string) => {
-    if (newSrc !== currentImageSrc) {
-        setNextImageSrc(newSrc);
-        setIsFading(true);
-
-        const timer = setTimeout(() => {
-            setCurrentImageSrc(newSrc);
-            setIsFading(false);
-            setNextImageSrc('');
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }
-  }, [currentImageSrc]);
-
-  // Load from localStorage on mount
   useEffect(() => {
     try {
       const savedDesign = localStorage.getItem("habitatDesign");
@@ -136,22 +108,112 @@ export function InteriorDesigner() {
     setIsMounted(true);
   }, []);
 
-  // Save to localStorage and update image on design change
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("habitatDesign", JSON.stringify(design));
-      // For this example, we'll just cycle through placeholder images
-      // A real implementation would use the layered approach or named images.
-      const imageMap: { [key: string]: string } = {
-        minimalista: "habitat-interior",
-        calido: "habitat-interior",
-        cientifico: "habitat-interior",
-      };
-      const placeholderId = imageMap[design.style] || 'habitat-interior';
-      const newImageUrl = PlaceHolderImages.find(img => img.id === placeholderId)?.imageUrl || '';
-      handleImageTransition(newImageUrl);
     }
-  }, [design, isMounted, handleImageTransition]);
+  }, [design, isMounted]);
+  
+  useEffect(() => {
+    if (!isMounted || !mountRef.current) return;
+    
+    const currentMount = mountRef.current;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('hsl(var(--background))');
+    const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+    camera.position.set(2, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    currentMount.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+    
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 1, 0);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 10, 7.5);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+
+    // Room Geometry
+    const roomSize = { width: 6, height: 3, depth: 4 };
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd, side: THREE.BackSide });
+    const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+    
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(roomSize.width, 0.1, roomSize.depth), floorMaterial);
+    floor.position.y = -0.05;
+    floor.receiveShadow = true;
+    scene.add(floor);
+    
+    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(roomSize.width, 0.1, roomSize.depth), wallMaterial);
+    ceiling.position.y = roomSize.height + 0.05;
+    scene.add(ceiling);
+
+    const wall1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, roomSize.height, roomSize.depth), wallMaterial);
+    wall1.position.x = roomSize.width / 2;
+    wall1.position.y = roomSize.height / 2;
+    scene.add(wall1);
+
+    const wall2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, roomSize.height, roomSize.depth), wallMaterial);
+    wall2.position.x = -roomSize.width / 2;
+    wall2.position.y = roomSize.height / 2;
+    scene.add(wall2);
+    
+    const wall3 = new THREE.Mesh(new THREE.BoxGeometry(roomSize.width, roomSize.height, 0.1), wallMaterial);
+    wall3.position.z = roomSize.depth / 2;
+    wall3.position.y = roomSize.height / 2;
+    scene.add(wall3);
+
+    const wall4 = new THREE.Mesh(new THREE.BoxGeometry(roomSize.width, roomSize.height, 0.1), wallMaterial);
+    wall4.position.z = -roomSize.depth / 2;
+    wall4.position.y = roomSize.height / 2;
+    scene.add(wall4);
+
+
+    // Basic furniture
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.6, 3), new THREE.MeshStandardMaterial({color: 0x335599}));
+    bed.position.set(-roomSize.width / 2 + 0.8, 0.3, 0);
+    bed.castShadow = true;
+    scene.add(bed);
+
+    const desk = new THREE.Mesh(new THREE.BoxGeometry(2, 0.8, 0.8), new THREE.MeshStandardMaterial({color: 0x886644}));
+    desk.position.set(roomSize.width / 2 - 1.2, 0.4, 0.5);
+    desk.castShadow = true;
+    scene.add(desk);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    const handleResize = () => {
+        if (!currentMount) return;
+        camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (currentMount && renderer.domElement) {
+        currentMount.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+      controls.dispose();
+    };
+
+  }, [isMounted, design]);
 
   const handleOptionChange = (category: keyof DesignState, value: string) => {
     setDesign((prev) => ({ ...prev, [category]: value }));
@@ -163,15 +225,11 @@ export function InteriorDesigner() {
   };
 
   const handleDownload = () => {
-    if (imageRef.current) {
-        const link = document.createElement('a');
-        link.href = imageRef.current.src;
-        link.download = 'habitat-design.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast({ title: "Descarga iniciada", description: "Tu diseño se está descargando." });
-    }
+    toast({
+        variant: "destructive",
+        title: "Función no disponible",
+        description: "La descarga de imágenes desde la vista 3D aún no está implementada."
+    });
   };
 
   const handleShare = () => {
@@ -187,7 +245,9 @@ export function InteriorDesigner() {
     return null; // or a loading skeleton
   }
   
-  const { title, description } = getCurrentImageDetails();
+  const styleOpt = categories.style.options.find(o => o.value === design.style);
+  const title = styleOpt?.label || 'Diseño Personalizado';
+  const description = styleOpt?.description || 'Un espacio único en Marte.';
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 md:space-y-6 h-full flex flex-col">
@@ -200,7 +260,7 @@ export function InteriorDesigner() {
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecer
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDownload} aria-label="Descargar imagen">
+            <Button variant="outline" size="sm" onClick={handleDownload} aria-label="Descargar imagen" disabled>
                 <Download className="mr-2 h-4 w-4" />
                 Descargar
             </Button>
@@ -210,8 +270,7 @@ export function InteriorDesigner() {
             </Button>
         </div>
       </div>
-      <div className="grid md:grid-cols-3 gap-6 flex-1">
-        {/* Left Column: Controls */}
+      <div className="grid md:grid-cols-3 gap-6 flex-1 min-h-0">
         <div className="md:col-span-1 space-y-4 overflow-y-auto">
             {Object.entries(categories).map(([key, category]) => (
                 <Card key={key}>
@@ -235,37 +294,15 @@ export function InteriorDesigner() {
                 </Card>
             ))}
         </div>
-        {/* Right Column: Preview */}
+        
         <Card className="md:col-span-2 flex flex-col">
           <CardHeader>
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 flex items-center justify-center p-2">
-            <div className="relative aspect-video w-full rounded-lg overflow-hidden border">
-                {currentImageSrc && (
-                    <Image
-                        ref={imageRef}
-                        key={currentImageSrc}
-                        src={currentImageSrc}
-                        alt={description}
-                        fill
-                        className={cn(
-                          "object-cover transition-opacity duration-300",
-                          isFading ? 'opacity-0' : 'opacity-100'
-                        )}
-                        priority
-                    />
-                )}
-                 {nextImageSrc && (
-                    <Image
-                        src={nextImageSrc}
-                        alt={description}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                )}
+          <CardContent className="flex-1 flex items-center justify-center p-2 relative">
+            <div ref={mountRef} className="absolute inset-0 w-full h-full rounded-lg overflow-hidden border">
+                {/* 3D Scene will be rendered here */}
             </div>
           </CardContent>
         </Card>
