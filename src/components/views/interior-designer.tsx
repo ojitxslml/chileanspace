@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ResetIcon, Download, Share2 } from "lucide-react";
+import { RotateCcw, Download, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -197,7 +197,7 @@ export function InteriorDesigner() {
         </h2>
         <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm" onClick={handleReset} aria-label="Restablecer diseño">
-                <ResetIcon className="mr-2 h-4 w-4" />
+                <RotateCcw className="mr-2 h-4 w-4" />
                 Restablecer
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownload} aria-label="Descargar imagen">
