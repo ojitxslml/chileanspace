@@ -2,18 +2,8 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import { WeatherResponseSchema, type WeatherDataPoint } from '@/ai/schemas/weather-schemas';
 
-export const WeatherDataPointSchema = z.object({
-  hour: z.string(),
-  speed2m: z.number(),
-  speed10m: z.number(),
-  speed100m: z.number(),
-});
-
-export type WeatherDataPoint = z.infer<typeof WeatherDataPointSchema>;
-
-const WeatherResponseSchema = z.array(WeatherDataPointSchema);
 
 export async function getWeather(): Promise<WeatherDataPoint[]> {
     return getWeatherFlow();

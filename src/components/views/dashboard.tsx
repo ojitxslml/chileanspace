@@ -23,8 +23,9 @@ import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { crewData, sectorData } from "@/lib/sector-data"
-import { getWeather, WeatherDataPoint } from "@/ai/flows/weather-flow"
+import { getWeather } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
+import { WeatherDataPoint } from "@/ai/schemas/weather-schemas"
 
 const energyChartData = [
   { month: "January", solar: 186, piezoelectric: 80 },
