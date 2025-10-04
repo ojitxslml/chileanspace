@@ -28,6 +28,14 @@ type Option<T> = {
 };
 
 const categories = {
+  area: {
+    title: "Área",
+    options: [
+      { value: "residential", label: "Residencial", description: "Diseña tu espacio personal para el descanso y la relajación." },
+      { value: "command-center", label: "Centro de Mando", description: "Optimiza el espacio para la máxima eficiencia y colaboración." },
+      { value: "science-lab", label: "Laboratorio", description: "Configura un entorno de investigación funcional y seguro." },
+    ],
+  },
   style: {
     title: "Estilo",
     options: [
@@ -70,6 +78,7 @@ const categories = {
   },
 };
 
+type Area = typeof categories.area.options[number]["value"];
 type Style = typeof categories.style.options[number]["value"];
 type Layout = typeof categories.layout.options[number]["value"];
 type Lighting = typeof categories.lighting.options[number]["value"];
@@ -77,6 +86,7 @@ type Privacy = typeof categories.privacy.options[number]["value"];
 type Nature = typeof categories.nature.options[number]["value"];
 
 interface DesignState {
+  area: Area;
   style: Style;
   layout: Layout;
   lighting: Lighting;
@@ -85,6 +95,7 @@ interface DesignState {
 }
 
 const defaultDesign: DesignState = {
+  area: "residential",
   style: "minimalista",
   layout: "compacta",
   lighting: "circadiana",
@@ -249,9 +260,9 @@ export function InteriorDesigner() {
     return null; // or a loading skeleton
   }
   
-  const styleOpt = categories.style.options.find(o => o.value === design.style);
-  const title = styleOpt?.label || 'Diseño Personalizado';
-  const description = styleOpt?.description || 'Un espacio único en Marte.';
+  const selectedArea = categories.area.options.find(o => o.value === design.area);
+  const title = selectedArea?.label ? `Diseñando: ${selectedArea.label}` : 'Diseño Personalizado';
+  const description = selectedArea?.description || 'Un espacio único en Marte.';
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 md:space-y-6 h-full flex flex-col">
