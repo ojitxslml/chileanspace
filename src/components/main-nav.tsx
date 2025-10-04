@@ -100,24 +100,6 @@ export function MainNav({
                     <span className="truncate text-sm font-medium">Cmdr. Alex Reyes</span>
                 </div>
                  <div className="flex items-center gap-1">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                         <SidebarMenuButton variant="ghost" size="icon" className="h-8 w-8" tooltip={{children: "Settings"}}>
-                            <Settings className="h-4 w-4"/>
-                         </SidebarMenuButton>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="mb-2 w-48" side="top" align="end">
-                         <DropdownMenuItem>
-                            <Globe className="mr-2 h-4 w-4" />
-                            <span>English</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Globe className="mr-2 h-4 w-4" />
-                            <span>Español</span>
-                          </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-
                     <SidebarMenuButton variant="ghost" size="icon" className="h-8 w-8" tooltip={{children: "Log Out"}}>
                       <LogOut className="h-4 w-4" />
                     </SidebarMenuButton>
