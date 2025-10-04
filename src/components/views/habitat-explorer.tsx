@@ -166,7 +166,7 @@ export function HabitatExplorer() {
     piezoRef.current = piezo;
 
     // Storm particles
-    const particleCount = 50000;
+    const particleCount = 100000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
@@ -175,7 +175,7 @@ export function HabitatExplorer() {
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particleMaterial = new THREE.PointsMaterial({
         color: 0xffae8b,
-        size: 0.2,
+        size: 0.25,
         transparent: true,
         opacity: 0.7,
         blending: THREE.AdditiveBlending
@@ -195,7 +195,7 @@ export function HabitatExplorer() {
         const positions = stormParticlesRef.current.geometry.attributes.position.array as Float32Array;
         const intensity = stormIntensityValue.current / 100;
         for (let i = 0; i < positions.length; i += 3) {
-            positions[i] -= (5 + intensity * 50) * delta; // X direction
+            positions[i] -= (10 + intensity * 100) * delta; // X direction
             if (positions[i] < -50) {
                 positions[i] = 50;
             }
@@ -234,7 +234,7 @@ export function HabitatExplorer() {
     const intensity = value[0];
     stormIntensityValue.current = intensity;
      if (stormIntensityRef.current) {
-        stormIntensityRef.current.textContent = (intensity * 1.5).toFixed(1);
+        stormIntensityRef.current.textContent = ((intensity / 100) * 40).toFixed(1);
     }
     if (piezoRef.current) {
         const material = piezoRef.current.material as THREE.MeshStandardMaterial;
@@ -262,7 +262,7 @@ export function HabitatExplorer() {
       <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
         <CardContent className="p-4 space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="storm-intensity">Storm Intensity: <span ref={stormIntensityRef}>0</span> kWe</Label>
+                <Label htmlFor="storm-intensity">Storm Intensity: <span ref={stormIntensityRef}>0.0</span> m/s</Label>
                 <Slider defaultValue={[0]} max={100} step={1} onValueChange={handleStormChange}/>
             </div>
             <div className="flex items-center space-x-2">
@@ -279,4 +279,5 @@ export function HabitatExplorer() {
   );
 }
 
+    
     
