@@ -30,16 +30,19 @@ export default function LandingPage() {
           CHILEANSPACE
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-white/80 md:text-xl">
-          Diseñando un futuro sostenible en Marte. Explore nuestro innovador
-          concepto de hábitat, diseñado para la resiliencia y la habitabilidad
-          en el Planeta Rojo.
+          Designing a sustainable future on Mars. Explore our innovative
+          habitat concept, engineered for resilience and habitability on the
+          Red Planet.
         </p>
         <Link href="/habitat" className="mt-8">
           <Button size="lg" className="text-lg">
-            Explorar el Hábitat
+            Explore The Habitat
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </Link>
+        <p className="mt-8 max-w-4xl text-base text-white/70">
+          This project, developed in collaboration with the Pontificia Universidad Católica de Chile, integrates advanced architectural design, life support systems, and resource utilization to create a self-sufficient Martian colony. Dive into our interactive dashboard to see how we're solving the challenges of living on another world.
+        </p>
       </div>
     </div>
   );
