@@ -50,7 +50,6 @@ export function MainNav({
     { id: "oshi", label: "OSHI Dashboard", icon: HeartPulse },
     { id: "provisions", label: "Provisions", icon: Package },
     { id: "explorer", label: "3D Explorer", icon: Box },
-    { id: "designer", label: "Interior Designer", icon: LayoutGrid },
     { id: "analysis", label: "Sectional Analysis", icon: SquareGanttChart },
     { id: "materials", label: "Material Viewer", icon: Layers },
   ];

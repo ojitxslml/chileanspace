@@ -9,7 +9,6 @@ import {
 import { MainNav } from "@/components/main-nav";
 import { Dashboard } from "@/components/views/dashboard";
 import { HabitatExplorer } from "@/components/views/habitat-explorer";
-import { InteriorDesigner } from "@/components/views/interior-designer";
 import { SectionalAnalysis } from "@/components/views/sectional-analysis";
 import { MaterialViewer } from "@/components/views/material-viewer";
 import { ProvisionsManagement } from "@/components/views/provisions-management";
@@ -38,8 +37,6 @@ export default function Home() {
         return <ProvisionsManagement />;
       case "explorer":
         return <HabitatExplorer />;
-      case "designer":
-        return <InteriorDesigner />;
       case "analysis":
         return <SectionalAnalysis />;
       case "materials":
