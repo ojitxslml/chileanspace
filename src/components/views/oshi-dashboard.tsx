@@ -124,13 +124,13 @@ export function OshiDashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 h-[calc(4*88px)]">
               <div className="space-y-2 p-2">
                 {filteredCrew.map((crew) => (
                   <div
                     key={crew.id}
                     className={cn(
-                      "flex items-center gap-4 p-3 border rounded-lg cursor-pointer transition-colors",
+                      "flex items-center gap-4 p-3 border rounded-lg cursor-pointer transition-colors h-[80px]",
                       selectedCrewId === crew.id
                         ? "bg-accent border-primary"
                         : "hover:bg-accent/50"
