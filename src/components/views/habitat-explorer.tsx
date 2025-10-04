@@ -86,7 +86,7 @@ export function HabitatExplorer() {
     // Towers
     const towerRadius = 1.5;
     const towerHeight = 5;
-    const towerDistance = 7;
+    const towerDistance = 10;
     const towerCount = 6;
     const towerGeometry = new THREE.CylinderGeometry(towerRadius, towerRadius, towerHeight, 48);
 
@@ -100,33 +100,23 @@ export function HabitatExplorer() {
         tower.castShadow = true;
         tower.receiveShadow = true;
         habitatGroup.add(tower);
-
-        // Corridor
-        const corridorLength = towerDistance - 4;
-        const corridorGeometry = new THREE.CylinderGeometry(0.5, 0.5, corridorLength, 24);
-        const corridor = new THREE.Mesh(corridorGeometry, mainMaterial);
-        corridor.position.set(x / 2, 1, z / 2);
-        corridor.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(x, 0, z).normalize());
-        corridor.castShadow = true;
-        corridor.receiveShadow = true;
-        habitatGroup.add(corridor);
     }
     
     // Greenhouses
     const greenhouseGeo = new THREE.BoxGeometry(4, 3, 6);
     const greenhouseMat = new THREE.MeshStandardMaterial({ color: 0x90a955 });
     const greenhouse1 = new THREE.Mesh(greenhouseGeo, greenhouseMat);
-    greenhouse1.position.set(0, 1.5, 10);
+    greenhouse1.position.set(0, 1.5, -10);
     greenhouse1.castShadow = true;
     habitatGroup.add(greenhouse1);
 
     const greenhouse2 = new THREE.Mesh(greenhouseGeo, greenhouseMat);
-    greenhouse2.position.set(0, 1.5, -10);
+    greenhouse2.position.set(0, 1.5, 10);
     greenhouse2.castShadow = true;
     habitatGroup.add(greenhouse2);
 
     // Invisible Dome for effects
-    const domeGeometry = new THREE.SphereGeometry(15, 32, 16, 0, Math.PI * 2, 0, Math.PI);
+    const domeGeometry = new THREE.SphereGeometry(6, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const domeMaterial = new THREE.MeshStandardMaterial({ 
         color: "hsl(var(--primary))", 
         transparent: true, 
@@ -140,7 +130,7 @@ export function HabitatExplorer() {
     domeRef.current = dome;
 
     // Piezoelectric layer
-    const piezoGeometry = new THREE.SphereGeometry(15.1, 32, 16, 0, Math.PI * 2, 0, Math.PI);
+    const piezoGeometry = new THREE.SphereGeometry(6.1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const piezoMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x00ffff, 
         transparent: true, 
