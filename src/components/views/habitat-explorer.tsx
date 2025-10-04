@@ -12,8 +12,7 @@ import { Switch } from "@/components/ui/switch";
 export function HabitatExplorer() {
   const mountRef = useRef<HTMLDivElement>(null);
   const stormIntensityRef = useRef<HTMLDivElement>(null);
-  const domeRef = useRef<THREE.Mesh>();
-  const piezoRef = useRef<THREE.Mesh>();
+  const piezoGroupRef = useRef<THREE.Group>();
   const stormParticlesRef = useRef<THREE.Points>();
   const stormIntensityValue = useRef(0);
 
@@ -103,12 +102,27 @@ export function HabitatExplorer() {
     hubRoof.castShadow = true;
     habitatGroup.add(hubRoof);
 
-    // Towers
+    // Towers and Piezoelectric layers
     const towerRadius = 1.5;
     const towerHeight = 5;
     const towerDistance = 10;
     const towerCount = 6;
     const towerGeometry = new THREE.CylinderGeometry(towerRadius, towerRadius, towerHeight, 48);
+
+    const piezoGroup = new THREE.Group();
+    piezoGroup.visible = false;
+    scene.add(piezoGroup);
+    piezoGroupRef.current = piezoGroup;
+
+    const piezoMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x00ffff, 
+        transparent: true, 
+        opacity: 0.2,
+        emissive: 0x00ffff,
+        emissiveIntensity: 0
+    });
+    const piezoGeometry = new THREE.CylinderGeometry(towerRadius + 0.05, towerRadius + 0.05, towerHeight, 48);
+
 
     for (let i = 0; i < towerCount; i++) {
         const angle = (i / towerCount) * Math.PI * 2;
@@ -120,6 +134,10 @@ export function HabitatExplorer() {
         tower.castShadow = true;
         tower.receiveShadow = true;
         habitatGroup.add(tower);
+
+        const piezoLayer = new THREE.Mesh(piezoGeometry, piezoMaterial);
+        piezoLayer.position.copy(tower.position);
+        piezoGroup.add(piezoLayer);
     }
     
     // Greenhouses
@@ -135,38 +153,8 @@ export function HabitatExplorer() {
     greenhouse2.castShadow = true;
     habitatGroup.add(greenhouse2);
 
-    // Invisible Dome for effects
-    const domeGeometry = new THREE.SphereGeometry(16, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    const domeMaterial = new THREE.MeshStandardMaterial({ 
-        color: "hsl(var(--primary))", 
-        transparent: true, 
-        opacity: 0.1,
-        visible: false,
-        side: THREE.BackSide
-    });
-    const dome = new THREE.Mesh(domeGeometry, domeMaterial);
-    dome.position.y = 0;
-    scene.add(dome);
-    domeRef.current = dome;
-
-    // Piezoelectric layer
-    const piezoGeometry = new THREE.SphereGeometry(16.1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    const piezoMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0x00ffff, 
-        transparent: true, 
-        opacity: 0.2,
-        visible: false,
-        side: THREE.BackSide,
-        emissive: 0x00ffff,
-        emissiveIntensity: 0
-    });
-    const piezo = new THREE.Mesh(piezoGeometry, piezoMaterial);
-    piezo.position.y = 0;
-    scene.add(piezo);
-    piezoRef.current = piezo;
-
     // Storm particles
-    const particleCount = 100000;
+    const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
@@ -194,8 +182,9 @@ export function HabitatExplorer() {
       if(stormParticlesRef.current && stormIntensityValue.current > 0) {
         const positions = stormParticlesRef.current.geometry.attributes.position.array as Float32Array;
         const intensity = stormIntensityValue.current / 100;
+        const speed = (10 + intensity * 100) * delta;
         for (let i = 0; i < positions.length; i += 3) {
-            positions[i] -= (10 + intensity * 100) * delta; // X direction
+            positions[i] -= speed; // X direction
             if (positions[i] < -50) {
                 positions[i] = 50;
             }
@@ -236,23 +225,18 @@ export function HabitatExplorer() {
      if (stormIntensityRef.current) {
         stormIntensityRef.current.textContent = ((intensity / 100) * 40).toFixed(1);
     }
-    if (piezoRef.current) {
-        const material = piezoRef.current.material as THREE.MeshStandardMaterial;
-        material.emissiveIntensity = intensity / 100;
-    }
-  }
-
-  const toggleDome = (checked: boolean) => {
-    if (domeRef.current) {
-      const material = domeRef.current.material as THREE.MeshStandardMaterial;
-      material.visible = checked;
+    if (piezoGroupRef.current) {
+        piezoGroupRef.current.children.forEach(child => {
+            const mesh = child as THREE.Mesh;
+            const material = mesh.material as THREE.MeshStandardMaterial;
+            material.emissiveIntensity = intensity / 100;
+        });
     }
   }
 
   const togglePiezo = (checked: boolean) => {
-    if (piezoRef.current) {
-      const material = piezoRef.current.material as THREE.MeshStandardMaterial;
-      material.visible = checked;
+    if (piezoGroupRef.current) {
+      piezoGroupRef.current.visible = checked;
     }
   }
 
@@ -265,10 +249,6 @@ export function HabitatExplorer() {
                 <Label htmlFor="storm-intensity">Storm Intensity: <span ref={stormIntensityRef}>0.0</span> m/s</Label>
                 <Slider defaultValue={[0]} max={100} step={1} onValueChange={handleStormChange}/>
             </div>
-            <div className="flex items-center space-x-2">
-                <Switch id="dome-toggle" onCheckedChange={toggleDome}/>
-                <Label htmlFor="dome-toggle">Show Force Field</Label>
-            </div>
              <div className="flex items-center space-x-2">
                 <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
                 <Label htmlFor="piezo-toggle">Show Piezoelectric Layer</Label>
@@ -279,5 +259,4 @@ export function HabitatExplorer() {
   );
 }
 
-    
     
