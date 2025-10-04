@@ -1,0 +1,191 @@
+{
+  "entities": {
+    "HabitatDesign": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "HabitatDesign",
+      "type": "object",
+      "description": "Represents a saved habitat interior design layout.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the habitat design."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the habitat design."
+        },
+        "level": {
+          "type": "string",
+          "description": "The level or floor of the habitat this design applies to."
+        },
+        "layoutData": {
+          "type": "string",
+          "description": "JSON string representing the drag-and-drop layout of the interior."
+        },
+        "volume": {
+          "type": "number",
+          "description": "Calculated volume of the designed interior space."
+        },
+        "area": {
+          "type": "number",
+          "description": "Calculated area of the designed interior space."
+        },
+        "createdDate": {
+          "type": "string",
+          "description": "Date and time when the design was created.",
+          "format": "date-time"
+        },
+        "lastModifiedDate": {
+          "type": "string",
+          "description": "Date and time when the design was last modified.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "level",
+        "layoutData",
+        "volume",
+        "area",
+        "createdDate",
+        "lastModifiedDate"
+      ]
+    },
+    "Material": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Material",
+      "type": "object",
+      "description": "Represents a construction material used in the habitat.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the material."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the material."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the material properties and usage."
+        },
+        "properties": {
+          "type": "string",
+          "description": "JSON string storing a map of properties applicable to each material"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of an image representing the material.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "properties",
+        "imageUrl"
+      ]
+    },
+    "StormSimulation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StormSimulation",
+      "type": "object",
+      "description": "Represents the state of a dust storm simulation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the storm simulation state."
+        },
+        "intensity": {
+          "type": "number",
+          "description": "Intensity of the dust storm (e.g., on a scale of 0 to 1)."
+        },
+        "particleDensity": {
+          "type": "number",
+          "description": "Density of dust particles in the simulation."
+        },
+        "piezoelectricEmission": {
+          "type": "number",
+          "description": "Energy output (kWe) from the piezoelectric layers."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp when the simulation state was recorded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "intensity",
+        "particleDensity",
+        "piezoelectricEmission",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/habitatDesigns/{habitatDesignId}",
+        "definition": {
+          "entityName": "HabitatDesign",
+          "schema": {
+            "$ref": "#/backend/entities/HabitatDesign"
+          },
+          "description": "Stores habitat designs owned by a specific user. Authorization is based on path ownership (request.auth.uid == userId).",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who owns the habitat design."
+            },
+            {
+              "name": "habitatDesignId",
+              "description": "The unique identifier of the habitat design."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/materials/{materialId}",
+        "definition": {
+          "entityName": "Material",
+          "schema": {
+            "$ref": "#/backend/entities/Material"
+          },
+          "description": "Stores data of construction materials available in the application. Accessible to all authenticated users.",
+          "params": [
+            {
+              "name": "materialId",
+              "description": "The unique identifier of the material."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/stormSimulations/{stormSimulationId}",
+        "definition": {
+          "entityName": "StormSimulation",
+          "schema": {
+            "$ref": "#/backend/entities/StormSimulation"
+          },
+          "description": "Stores data about dust storm simulations. Accessible to all authenticated users.",
+          "params": [
+            {
+              "name": "stormSimulationId",
+              "description": "The unique identifier of the storm simulation."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure is designed to support the CHILEANSPACE application, focusing on a healthful habitat on Mars. The structure emphasizes security, scalability, and debuggability by adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules Are Not Filters).  Authorization Independence is achieved via path-based ownership and data segregation. QAPs are supported through clear separation of user-owned data and globally accessible data, preventing the need for complex filtering in security rules.  User-specific data, like habitat designs, are stored under `/users/{userId}`. Global data, like materials, is stored at the root level.  The StormSimulation data is also stored at the root level, assuming that historical data for simulations are important for all users."
+  }
+}
