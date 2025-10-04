@@ -12,6 +12,7 @@ import { HabitatExplorer } from "@/components/views/habitat-explorer";
 import { InteriorDesigner } from "@/components/views/interior-designer";
 import { SectionalAnalysis } from "@/components/views/sectional-analysis";
 import { MaterialViewer } from "@/components/views/material-viewer";
+import { AppHeader } from "@/components/app-header";
 
 export default function Home() {
   const [activeView, setActiveView] = useState("dashboard");
@@ -38,10 +39,7 @@ export default function Home() {
       <MainNav activeView={activeView} setActiveView={setActiveView} />
       <SidebarInset>
         <div className="flex h-screen flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:hidden">
-            <SidebarTrigger />
-            <h1 className="text-lg font-semibold font-headline">CHILEANSPACE</h1>
-          </header>
+          <AppHeader />
           <main className="flex-1 overflow-auto">{renderActiveView()}</main>
         </div>
       </SidebarInset>
