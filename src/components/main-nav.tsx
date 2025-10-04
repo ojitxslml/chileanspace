@@ -2,9 +2,9 @@
 
 import {
   Home,
-  Cube,
+  Box,
   LayoutGrid,
-  SquareGantt,
+  SquareGanttChart,
   Layers,
   Settings,
 } from "lucide-react";
@@ -34,9 +34,9 @@ export function MainNav({
 }: MainNavProps) {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "explorer", label: "3D Explorer", icon: Cube },
+    { id: "explorer", label: "3D Explorer", icon: Box },
     { id: "designer", label: "Interior Designer", icon: LayoutGrid },
-    { id: "analysis", label: "Sectional Analysis", icon: SquareGantt },
+    { id: "analysis", label: "Sectional Analysis", icon: SquareGanttChart },
     { id: "materials", label: "Material Viewer", icon: Layers },
   ];
 
