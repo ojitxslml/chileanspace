@@ -41,7 +41,7 @@ export default function LandingPage() {
           </Button>
         </Link>
         <p className="mt-8 max-w-4xl text-base text-white/70">
-          This project, developed in collaboration with the Pontificia Universidad Católica de Chile, integrates advanced architectural design, life support systems, and resource utilization to create a self-sufficient Martian colony. Dive into our interactive dashboard to see how we're solving the challenges of living on another world.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         </p>
       </div>
     </div>
