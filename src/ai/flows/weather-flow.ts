@@ -17,7 +17,15 @@ const getWeatherFlow = ai.defineFlow(
   async () => {
     const user = process.env.METEOMATICS_USER || 'jerez_richard';
     const pass = process.env.METEOMATICS_PASS || 'E5X9Aq3bT19k5koSxePo';
-    const apiUrl = `https://api.meteomatics.com/2023-01-01T00:00:00Z--2023-12-30T00:00:00Z:PT20M/wind_speed_2m:ms,wind_speed_10m:ms,wind_speed_100m:ms/-63.3215,-58.9020/json`;
+    
+    const today = new Date();
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+    
+    const startDate = today.toISOString();
+    const endDate = sevenDaysFromNow.toISOString();
+
+    const apiUrl = `https://api.meteomatics.com/${startDate}--${endDate}:PT1H/wind_speed_2m:ms,wind_speed_10m:ms,wind_speed_100m:ms/-63.3215,-58.9020/json`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -49,23 +57,23 @@ const getWeatherFlow = ai.defineFlow(
                  });
              }
         }
-        return transformedData.filter((_, i) => i % 3 === 0).slice(0, 24);
+        return transformedData.filter((_, i) => i % 4 === 0);
 
     } catch (error) {
         console.error("Error fetching from Meteomatics API:", error);
     }
     
 
-    const simulatedData: WeatherDataPoint[] = Array.from({ length: 24 * 3 }, (_, i) => {
-        const hour = Math.floor(i / 3);
-        const minute = (i % 3) * 20;
+    const simulatedData: WeatherDataPoint[] = Array.from({ length: 24 * 7 }, (_, i) => {
+        const day = Math.floor(i / 24) + 1;
+        const hour = i % 24;
         return {
-            hour: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+            hour: `Day ${day} ${String(hour).padStart(2, '0')}:00`,
             speed2m: parseFloat((Math.random() * 10 + 5).toFixed(1)),
             speed10m: parseFloat((Math.random() * 15 + 8).toFixed(1)),
             speed100m: parseFloat((Math.random() * 25 + 15).toFixed(1)),
         };
-    }).filter((_, i) => i % 3 === 0).slice(0, 24); 
+    }).filter((_, i) => i % 4 === 0);
 
     return simulatedData;
   }
