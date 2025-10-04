@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -13,6 +14,8 @@ export function HabitatExplorer() {
   const stormIntensityRef = useRef<HTMLDivElement>(null);
   const domeRef = useRef<THREE.Mesh>();
   const piezoRef = useRef<THREE.Mesh>();
+  const stormParticlesRef = useRef<THREE.Points>();
+  const stormIntensityValue = useRef(0);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -62,6 +65,23 @@ export function HabitatExplorer() {
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
+    
+    // Add rocks
+    const rockGeometry = new THREE.DodecahedronGeometry(1, 0);
+    const rockMaterial = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.8 });
+    for (let i = 0; i < 50; i++) {
+        const rock = new THREE.Mesh(rockGeometry, rockMaterial);
+        rock.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() * 0.5),
+            (Math.random() - 0.5) * 100
+        );
+        rock.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        const scale = Math.random() * 0.5 + 0.2;
+        rock.scale.set(scale, scale, scale);
+        rock.castShadow = true;
+        scene.add(rock);
+    }
     
     const habitatGroup = new THREE.Group();
     scene.add(habitatGroup);
@@ -116,7 +136,7 @@ export function HabitatExplorer() {
     habitatGroup.add(greenhouse2);
 
     // Invisible Dome for effects
-    const domeGeometry = new THREE.SphereGeometry(6, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    const domeGeometry = new THREE.SphereGeometry(16, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const domeMaterial = new THREE.MeshStandardMaterial({ 
         color: "hsl(var(--primary))", 
         transparent: true, 
@@ -130,7 +150,7 @@ export function HabitatExplorer() {
     domeRef.current = dome;
 
     // Piezoelectric layer
-    const piezoGeometry = new THREE.SphereGeometry(6.1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    const piezoGeometry = new THREE.SphereGeometry(16.1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const piezoMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x00ffff, 
         transparent: true, 
@@ -145,10 +165,47 @@ export function HabitatExplorer() {
     scene.add(piezo);
     piezoRef.current = piezo;
 
+    // Storm particles
+    const particleCount = 5000;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 100;
+    }
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+        color: 0xffae8b,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending
+    });
+    const stormParticles = new THREE.Points(particles, particleMaterial);
+    scene.add(stormParticles);
+    stormParticlesRef.current = stormParticles;
+
 
     // Animation loop
+    const clock = new THREE.Clock();
     const animate = function () {
       requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+      if(stormParticlesRef.current && stormIntensityValue.current > 0) {
+        const positions = stormParticlesRef.current.geometry.attributes.position.array as Float32Array;
+        const intensity = stormIntensityValue.current / 100;
+        for (let i = 0; i < positions.length; i += 3) {
+            positions[i] -= (2 + intensity * 20) * delta; // X direction
+            if (positions[i] < -50) {
+                positions[i] = 50;
+            }
+        }
+        stormParticlesRef.current.geometry.attributes.position.needsUpdate = true;
+        (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = Math.max(0, Math.min(0.7, intensity * 2));
+      } else if (stormParticlesRef.current) {
+        (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = 0;
+      }
+
       controls.update();
       renderer.render(scene, camera);
     };
@@ -175,12 +232,27 @@ export function HabitatExplorer() {
   
   const handleStormChange = (value: number[]) => {
     const intensity = value[0];
+    stormIntensityValue.current = intensity;
      if (stormIntensityRef.current) {
         stormIntensityRef.current.textContent = (intensity * 1.5).toFixed(1);
     }
     if (piezoRef.current) {
         const material = piezoRef.current.material as THREE.MeshStandardMaterial;
         material.emissiveIntensity = intensity / 100;
+    }
+  }
+
+  const toggleDome = (checked: boolean) => {
+    if (domeRef.current) {
+      const material = domeRef.current.material as THREE.MeshStandardMaterial;
+      material.visible = checked;
+    }
+  }
+
+  const togglePiezo = (checked: boolean) => {
+    if (piezoRef.current) {
+      const material = piezoRef.current.material as THREE.MeshStandardMaterial;
+      material.visible = checked;
     }
   }
 
@@ -194,11 +266,11 @@ export function HabitatExplorer() {
                 <Slider defaultValue={[0]} max={100} step={1} onValueChange={handleStormChange}/>
             </div>
             <div className="flex items-center space-x-2">
-                <Switch id="dome-toggle" onCheckedChange={(checked) => domeRef.current && (domeRef.current.material as THREE.MeshStandardMaterial).visible  === checked}/>
+                <Switch id="dome-toggle" onCheckedChange={toggleDome}/>
                 <Label htmlFor="dome-toggle">Show Force Field</Label>
             </div>
              <div className="flex items-center space-x-2">
-                <Switch id="piezo-toggle" onCheckedChange={(checked) => piezoRef.current && (piezoRef.current.material as THREE.MeshStandardMaterial).visible === checked}/>
+                <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
                 <Label htmlFor="piezo-toggle">Show Piezoelectric Layer</Label>
             </div>
         </CardContent>
@@ -206,3 +278,4 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
