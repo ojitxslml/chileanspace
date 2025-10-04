@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -13,7 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from "recharts"
 import { Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building, Sunrise, Sunset, RadioTower, AlertTriangle } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -23,26 +24,32 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { crewData, sectorData } from "@/lib/sector-data"
 
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
+const energyChartData = [
+  { month: "January", solar: 186, piezoelectric: 80 },
+  { month: "February", solar: 305, piezoelectric: 200 },
+  { month: "March", solar: 237, piezoelectric: 120 },
+  { month: "April", solar: 73, piezoelectric: 190 },
+  { month: "May", solar: 209, piezoelectric: 130 },
+  { month: "June", solar: 214, piezoelectric: 140 },
+];
 
-const chartConfig = {
-  desktop: {
+const energyChartConfig = {
+  solar: {
     label: "Solar",
     color: "hsl(var(--chart-1))",
   },
-  mobile: {
+  piezoelectric: {
     label: "Piezoelectric",
     color: "hsl(var(--chart-2))",
   },
-}
+};
 
+const windChartData = Array.from({ length: 24 }, (_, i) => ({
+  hour: `${String(i).padStart(2, '0')}:00`,
+  "2m": (Math.random() * 10 + 5).toFixed(1),
+  "10m": (Math.random() * 15 + 8).toFixed(1),
+  "100m": (Math.random() * 25 + 15).toFixed(1),
+}));
 
 export function Dashboard() {
   const [selectedSectorId, setSelectedSectorId] = useState("all");
@@ -230,14 +237,14 @@ export function Dashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
         <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
-            <CardTitle>Energy Production (Last 24h)</CardTitle>
+            <CardTitle>Energy Production (Last 6 Months)</CardTitle>
             <CardDescription>Solar vs. Piezoelectric Output</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
-            <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <LineChart
+            <ChartContainer config={energyChartConfig} className="h-[300px] w-full">
+              <BarChart
                 accessibilityLayer
-                data={chartData}
+                data={energyChartData}
                 margin={{
                   left: 12,
                   right: 12,
@@ -259,23 +266,19 @@ export function Dashboard() {
                 />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
+                  content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Line
-                  dataKey="desktop"
-                  type="monotone"
-                  stroke="var(--color-desktop)"
-                  strokeWidth={2}
-                  dot={false}
+                <Bar
+                  dataKey="solar"
+                  fill="var(--color-solar)"
+                  radius={4}
                 />
-                 <Line
-                  dataKey="mobile"
-                  type="monotone"
-                  stroke="var(--color-mobile)"
-                  strokeWidth={2}
-                  dot={false}
+                 <Bar
+                  dataKey="piezoelectric"
+                  fill="var(--color-piezoelectric)"
+                  radius={4}
                 />
-              </LineChart>
+              </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -327,6 +330,26 @@ export function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Wind Speed (Last 24h)</CardTitle>
+          <CardDescription>Wind speed at different altitudes from the surface.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={windChartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
+              <YAxis label={{ value: 'm/s', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="10m" name="10m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
     </div>
   )
 }

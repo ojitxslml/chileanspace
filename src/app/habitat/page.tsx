@@ -18,10 +18,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Settings, Globe } from "lucide-react";
+import { Settings, Globe, Save } from "lucide-react";
 import { OshiDashboard } from "@/components/views/oshi-dashboard";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 
 export default function Home() {
@@ -62,7 +66,9 @@ export default function Home() {
                   <span className="sr-only">Settings</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="mb-2 w-48" side="top" align="end">
+              <DropdownMenuContent className="mb-2 w-64 p-4" side="top" align="end">
+                <DropdownMenuLabel>Language</DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Globe className="mr-2 h-4 w-4" />
                   <span>English</span>
@@ -71,6 +77,22 @@ export default function Home() {
                   <Globe className="mr-2 h-4 w-4" />
                   <span>Español</span>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Meteomatics API</DropdownMenuLabel>
+                <div className="space-y-2">
+                  <div>
+                    <Label htmlFor="meteo-user" className="text-xs">Username</Label>
+                    <Input id="meteo-user" placeholder="Your username" />
+                  </div>
+                   <div>
+                    <Label htmlFor="meteo-pass" className="text-xs">Password</Label>
+                    <Input id="meteo-pass" type="password" placeholder="Your password" />
+                  </div>
+                  <Button variant="secondary" size="sm" className="w-full">
+                    <Save className="mr-2 h-4 w-4"/>
+                    Save Credentials
+                  </Button>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
