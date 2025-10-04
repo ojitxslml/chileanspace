@@ -41,9 +41,6 @@ export default function LandingPage() {
           </Button>
         </Link>
       </div>
-      <footer className="absolute bottom-4 z-10 text-center text-xs text-white/50">
-        Un proyecto de exploración conceptual.
-      </footer>
     </div>
   );
 }
