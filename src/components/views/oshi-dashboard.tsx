@@ -28,7 +28,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { AlertCircle, BrainCircuit, Calendar, MessageSquare, Puzzle, SlidersHorizontal, SunMoon, TrendingUp, Zap } from "lucide-react";
+import { AlertCircle, BrainCircuit, Calendar, MessageSquare, Puzzle, Search, SlidersHorizontal, SunMoon, TrendingUp, Zap } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const dimensionDetails: Record<
   OshiDimension,
@@ -86,6 +87,12 @@ export function OshiDashboard() {
   const [selectedCrewId, setSelectedCrewId] = React.useState<string>(
     oshiCrewData[0].id
   );
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const filteredCrew = oshiCrewData.filter((crew) =>
+    crew.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const selectedCrew = oshiCrewData.find((c) => c.id === selectedCrewId);
 
   return (
@@ -107,10 +114,19 @@ export function OshiDashboard() {
               Select a crew member to view their OSHI details.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 p-2 overflow-hidden">
-            <ScrollArea className="h-full">
+          <CardContent className="flex-1 p-2 flex flex-col min-h-0">
+             <div className="relative p-2">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search crew..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <ScrollArea className="flex-1">
               <div className="space-y-2 p-2">
-                {oshiCrewData.map((crew) => (
+                {filteredCrew.map((crew) => (
                   <div
                     key={crew.id}
                     className={cn(
