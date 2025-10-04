@@ -270,43 +270,43 @@ export function InteriorDesigner() {
             </Button>
         </div>
       </div>
-      <div className="grid md:grid-cols-3 gap-6 flex-1 min-h-0">
-        <div className="md:col-span-1 space-y-4 overflow-y-auto">
+      <Card>
+        <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {Object.entries(categories).map(([key, category]) => (
-                <Card key={key}>
-                    <CardHeader className="pb-4">
-                        <CardTitle className="text-base">{category.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <RadioGroup
-                            value={design[key as keyof DesignState]}
-                            onValueChange={(value) => handleOptionChange(key as keyof DesignState, value)}
-                            aria-label={category.title}
-                        >
-                            {category.options.map((option) => (
-                                <div key={option.value} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option.value} id={`${key}-${option.value}`} />
-                                    <Label htmlFor={`${key}-${option.value}`} className="cursor-pointer">{option.label}</Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
-                    </CardContent>
-                </Card>
+                <div key={key} className="space-y-3">
+                    <h3 className="font-semibold text-sm">{category.title}</h3>
+                    <RadioGroup
+                        value={design[key as keyof DesignState]}
+                        onValueChange={(value) => handleOptionChange(key as keyof DesignState, value)}
+                        aria-label={category.title}
+                        className="flex flex-row flex-wrap gap-2"
+                    >
+                        {category.options.map((option) => (
+                            <div key={option.value}>
+                                <RadioGroupItem value={option.value} id={`${key}-${option.value}`} className="sr-only peer" />
+                                <Label htmlFor={`${key}-${option.value}`} className="cursor-pointer rounded-md border-2 border-muted bg-popover px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                                    {option.label}
+                                </Label>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                </div>
             ))}
-        </div>
-        
-        <Card className="md:col-span-2 flex flex-col">
-          <CardHeader>
+        </CardContent>
+      </Card>
+      <Card className="flex-1 flex flex-col">
+        <CardHeader>
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1 flex items-center justify-center p-2 relative">
+        </CardHeader>
+        <CardContent className="flex-1 flex items-center justify-center p-2 relative">
             <div ref={mountRef} className="absolute inset-0 w-full h-full rounded-lg overflow-hidden border">
                 {/* 3D Scene will be rendered here */}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
+    
