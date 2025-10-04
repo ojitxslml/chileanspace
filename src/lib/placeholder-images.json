@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "mars-landscape",
+      "description": "A vast, reddish landscape of Mars with mountains in the distance.",
+      "imageUrl": "https://images.unsplash.com/photo-1614935981447-893ce3858657?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYXJzJTIwbGFuZHNjYXBlfGVufDB8fHx8MTc1OTYwMjcwNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mars landscape"
+    },
+    {
+      "id": "habitat-exterior",
+      "description": "Exterior view of a futuristic habitat dome on Mars.",
+      "imageUrl": "https://images.unsplash.com/photo-1546781192-bb0f53b62738?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzcGFjZSUyMGhhYml0YXR8ZW58MHx8fHwxNzU5NjAyNzA1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "space habitat"
+    },
+    {
+      "id": "habitat-interior",
+      "description": "Interior view of a Martian habitat with plants growing inside.",
+      "imageUrl": "https://images.unsplash.com/photo-1553290236-9cfbfb7f06ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoYWJpdGF0JTIwaW50ZXJpb3J8ZW58MHx8fHwxNzU5NjAyNzA1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "habitat interior"
+    },
+    {
+      "id": "solar-panels",
+      "description": "Solar panels array on the Martian surface.",
+      "imageUrl": "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzb2xhciUyMHBhbmVsc3xlbnwwfHx8fDE3NTk1NjI1Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "solar panels"
+    }
+  ]
 }
