@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -11,6 +12,7 @@ import { HabitatExplorer } from "@/components/views/habitat-explorer";
 import { InteriorDesigner } from "@/components/views/interior-designer";
 import { SectionalAnalysis } from "@/components/views/sectional-analysis";
 import { MaterialViewer } from "@/components/views/material-viewer";
+import { ProvisionsManagement } from "@/components/views/provisions-management";
 import { AppHeader } from "@/components/app-header";
 import {
   DropdownMenu,
@@ -29,6 +31,8 @@ export default function Home() {
     switch (activeView) {
       case "dashboard":
         return <Dashboard />;
+      case "provisions":
+        return <ProvisionsManagement />;
       case "explorer":
         return <HabitatExplorer />;
       case "designer":

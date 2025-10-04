@@ -11,6 +11,7 @@ import {
   User,
   LogOut,
   Globe,
+  Package,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ export function MainNav({
 }: MainNavProps) {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "provisions", label: "Provisions", icon: Package },
     { id: "explorer", label: "3D Explorer", icon: Box },
     { id: "designer", label: "Interior Designer", icon: LayoutGrid },
     { id: "analysis", label: "Sectional Analysis", icon: SquareGanttChart },
