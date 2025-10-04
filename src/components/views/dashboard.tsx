@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Card,
   CardContent,
@@ -23,6 +23,8 @@ import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { crewData, sectorData } from "@/lib/sector-data"
+import { getWeather, WeatherDataPoint } from "@/ai/flows/weather-flow"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const energyChartData = [
   { month: "January", solar: 186, piezoelectric: 80 },
@@ -44,17 +46,13 @@ const energyChartConfig = {
   },
 };
 
-const windChartData = Array.from({ length: 24 }, (_, i) => ({
-  hour: `${String(i).padStart(2, '0')}:00`,
-  "2m": (Math.random() * 10 + 5).toFixed(1),
-  "10m": (Math.random() * 15 + 8).toFixed(1),
-  "100m": (Math.random() * 25 + 15).toFixed(1),
-}));
-
 export function Dashboard() {
   const [selectedSectorId, setSelectedSectorId] = useState("all");
   const filteredCrew = selectedSectorId === "all" ? crewData : crewData.filter(c => c.sector === selectedSectorId);
   const [selectedCrewMemberId, setSelectedCrewMemberId] = useState(filteredCrew.length > 0 ? filteredCrew[0].id : "");
+  const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
+  const [loadingWindData, setLoadingWindData] = useState(true);
+
 
   const selectedCrewMember = crewData.find(m => m.id === selectedCrewMemberId) || (filteredCrew.length > 0 ? filteredCrew[0] : null);
 
@@ -67,6 +65,21 @@ export function Dashboard() {
       setSelectedCrewMemberId("");
     }
   }
+
+  useEffect(() => {
+    async function fetchWeather() {
+      try {
+        setLoadingWindData(true);
+        const data = await getWeather();
+        setWindData(data);
+      } catch (error) {
+        console.error("Failed to fetch weather data:", error);
+      } finally {
+        setLoadingWindData(false);
+      }
+    }
+    fetchWeather();
+  }, []);
   
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
@@ -336,18 +349,32 @@ export function Dashboard() {
           <CardDescription>Wind speed at different altitudes from the surface.</CardDescription>
         </CardHeader>
         <CardContent>
+           {loadingWindData ? (
+            <div className="h-[300px] flex items-center justify-center">
+              <div className="space-y-4 w-full p-4">
+                <Skeleton className="h-8 w-1/4" />
+                <Skeleton className="h-48 w-full" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                </div>
+              </div>
+            </div>
+          ) : (
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={windChartData}>
+            <LineChart data={windData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
               <YAxis label={{ value: 'm/s', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="10m" name="10m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="speed2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="speed10m" name="10m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="speed100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
+          )}
         </CardContent>
       </Card>
     </div>
