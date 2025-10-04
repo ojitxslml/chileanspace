@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Settings, Globe } from "lucide-react";
+import { OshiDashboard } from "@/components/views/oshi-dashboard";
 
 
 export default function Home() {
@@ -31,6 +32,8 @@ export default function Home() {
     switch (activeView) {
       case "dashboard":
         return <Dashboard />;
+      case "oshi":
+        return <OshiDashboard />;
       case "provisions":
         return <ProvisionsManagement />;
       case "explorer":

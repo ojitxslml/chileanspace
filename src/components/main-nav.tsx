@@ -12,6 +12,7 @@ import {
   LogOut,
   Globe,
   Package,
+  HeartPulse,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -46,6 +47,7 @@ export function MainNav({
 }: MainNavProps) {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "oshi", label: "OSHI Dashboard", icon: HeartPulse },
     { id: "provisions", label: "Provisions", icon: Package },
     { id: "explorer", label: "3D Explorer", icon: Box },
     { id: "designer", label: "Interior Designer", icon: LayoutGrid },
