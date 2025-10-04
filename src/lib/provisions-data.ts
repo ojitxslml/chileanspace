@@ -8,6 +8,7 @@ export const provisionsData = {
   nextDelivery: {
     date: "Sol 351",
     status: "In Transit",
+    eta: "6 Sols",
   },
   lastDelivery: {
     date: "Sol 320",

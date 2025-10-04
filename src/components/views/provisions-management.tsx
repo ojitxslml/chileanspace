@@ -119,7 +119,7 @@ export function ProvisionsManagement() {
           <CardContent>
             <div className="text-2xl font-bold">{provisionsData.nextDelivery.date}</div>
             <p className="text-xs text-muted-foreground">
-              Status: {provisionsData.nextDelivery.status}
+              ETA: {provisionsData.nextDelivery.eta} - Status: {provisionsData.nextDelivery.status}
             </p>
           </CardContent>
         </Card>
