@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
   Card,
   CardContent,
@@ -13,7 +14,10 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
-import { Activity, Droplets, ShieldCheck, Users, Zap } from "lucide-react"
+import { Activity, Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building } from "lucide-react"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -35,7 +39,47 @@ const chartConfig = {
   },
 }
 
+const crewData = [
+    {
+      id: "cmdr-alex",
+      name: "Cmdr. Alex Reyes",
+      role: "Comandante de Misión",
+      vitals: { hr: 68, spo2: 99, temp: 36.8 },
+    },
+    {
+      id: "dr-lena",
+      name: "Dra. Lena Petrova",
+      role: "Oficial Científico",
+      vitals: { hr: 72, spo2: 98, temp: 37.0 },
+    },
+    {
+      id: "ken-sato",
+      name: "Ken Sato",
+      role: "Ingeniero de Sistemas",
+      vitals: { hr: 75, spo2: 99, temp: 36.9 },
+    },
+    {
+      id: "maya-singh",
+      name: "Maya Singh",
+      role: "Especialista de Hábitat",
+      vitals: { hr: 65, spo2: 100, temp: 36.7 },
+    },
+]
+
+const sectorData = [
+    { name: "Centro de Mando", status: "Nominal", color: "bg-green-500" },
+    { name: "Módulos Residenciales", status: "Nominal", color: "bg-green-500" },
+    { name: "Laboratorio Científico", status: "Activo", color: "bg-blue-500" },
+    { name: "Invernaderos", status: "Nominal", color: "bg-green-500" },
+    { name: "Soporte Vital (ECLSS)", status: "Nominal", color: "bg-green-500" },
+    { name: "Almacenamiento", status: "En Espera", color: "bg-yellow-500" },
+]
+
+
 export function Dashboard() {
+  const [selectedCrewMemberId, setSelectedCrewMemberId] = useState(crewData[0].id)
+  const selectedCrewMember = crewData.find(m => m.id === selectedCrewMemberId) || crewData[0];
+
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between space-y-2">
@@ -93,6 +137,81 @@ export function Dashboard() {
               No critical faults detected
             </p>
           </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader>
+            <CardTitle>Tripulación</CardTitle>
+            <CardDescription>Monitoreo de signos vitales de la tripulación.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6 sm:grid-cols-2">
+            <RadioGroup defaultValue={selectedCrewMemberId} className="grid gap-4" onValueChange={setSelectedCrewMemberId}>
+              {crewData.map((member) => (
+                <div key={member.id}>
+                  <RadioGroupItem value={member.id} id={member.id} className="peer sr-only" />
+                  <Label
+                    htmlFor={member.id}
+                    className="flex flex-col items-start rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <span className="text-lg font-semibold">{member.name}</span>
+                    <span className="text-sm text-muted-foreground">{member.role}</span>
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+            <Card className="border-dashed">
+                <CardHeader>
+                    <CardTitle>{selectedCrewMember.name}</CardTitle>
+                    <CardDescription>Signos Vitales</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <HeartPulse className="h-8 w-8 text-red-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Ritmo Cardíaco</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.hr} <span className="text-sm font-normal">BPM</span></p>
+                        </div>
+                    </div>
+                     <div className="flex items-center gap-4">
+                        <Wind className="h-8 w-8 text-blue-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Saturación de O₂</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.spo2}<span className="text-sm font-normal">%</span></p>
+                        </div>
+                    </div>
+                     <div className="flex items-center gap-4">
+                        <Thermometer className="h-8 w-8 text-orange-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Temperatura Corporal</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.temp}<span className="text-sm font-normal">°C</span></p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+          </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle>Estado de Sectores</CardTitle>
+                <CardDescription>Estado operativo de las áreas de la colonia.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                {sectorData.map(sector => (
+                    <div key={sector.name} className="flex justify-between items-center p-2 rounded-md hover:bg-muted/50">
+                        <div className="flex items-center gap-3">
+                            <Building className="h-5 w-5 text-muted-foreground" />
+                            <span className="font-medium">{sector.name}</span>
+                        </div>
+                        <Badge variant={sector.status === "Nominal" ? "default": "secondary"} className={
+                            sector.status === "Nominal" ? "bg-green-500/20 text-green-700 dark:text-green-400 border-green-500/30" : 
+                            sector.status === "Activo" ? "bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-500/30" : 
+                            "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-500/30"
+                        }>{sector.status}</Badge>
+                    </div>
+                ))}
+            </CardContent>
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
