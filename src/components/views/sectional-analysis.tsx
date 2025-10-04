@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -145,7 +146,7 @@ export function SectionalAnalysis() {
   const data = sectorData[selectedSector]
 
   const StatusIndicator = ({
-    icon,
+    icon: Icon,
     label,
     value,
     unit,
@@ -162,7 +163,7 @@ export function SectionalAnalysis() {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-muted rounded-md">
-          <icon className="w-5 h-5 text-muted-foreground" />
+          <Icon className="w-5 h-5 text-muted-foreground" />
         </div>
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
@@ -309,3 +310,5 @@ export function SectionalAnalysis() {
     </div>
   )
 }
+
+    
