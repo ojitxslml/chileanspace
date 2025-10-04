@@ -14,12 +14,13 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
-import { Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building } from "lucide-react"
+import { Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building, Sunrise, Sunset, RadioTower, AlertTriangle } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -151,7 +152,7 @@ export function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
             <CardHeader>
                 <CardTitle>Estado de Sectores</CardTitle>
@@ -192,7 +193,7 @@ export function Dashboard() {
                 ))}
             </CardContent>
         </Card>
-        <Card className="xl:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Tripulación</CardTitle>
             <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
@@ -207,7 +208,7 @@ export function Dashboard() {
                           <RadioGroupItem value={member.id} id={member.id} className="peer sr-only" />
                           <Label
                               htmlFor={member.id}
-                              className="flex flex-col items-start rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                              className="flex flex-col items-start rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
                           >
                               <span className="text-lg font-semibold">{member.name}</span>
                               <span className="text-sm text-muted-foreground">{member.role}</span>
@@ -311,42 +312,52 @@ export function Dashboard() {
         </Card>
         <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Atmosphere Composition</CardTitle>
-            <CardDescription>Key life support metrics.</CardDescription>
+            <CardTitle>External Situation & Alerts</CardTitle>
+            <CardDescription>Live data from outside the habitat.</CardDescription>
           </CardHeader>
-          <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px] w-full">
-              <BarChart accessibilityLayer data={chartData}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <YAxis />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="dashed" />}
-                />
-                <Bar
-                  dataKey="desktop"
-                  fill="var(--color-desktop)"
-                  radius={4}
-                />
-                <Bar
-                  dataKey="mobile"
-                  fill="var(--color-mobile)"
-                  radius={4}
-                />
-              </BarChart>
-            </ChartContainer>
+          <CardContent className="space-y-4">
+              <div>
+                  <h4 className="text-sm font-medium mb-2">Current Conditions</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                          <Thermometer className="h-4 w-4 text-muted-foreground" />
+                          <span>Temp: <span className="font-semibold">-63°C</span></span>
+                      </div>
+                       <div className="flex items-center gap-2">
+                          <Wind className="h-4 w-4 text-muted-foreground" />
+                          <span>Pressure: <span className="font-semibold">0.6 kPa</span></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                          <Sunrise className="h-4 w-4 text-muted-foreground" />
+                          <span>Radiation: <Badge variant="outline" className="text-yellow-500 border-yellow-500/50">High</Badge></span>
+                      </div>
+                       <div className="flex items-center gap-2">
+                          <Sunset className="h-4 w-4 text-muted-foreground" />
+                          <span>Storms: <Badge variant="outline">Clear</Badge></span>
+                      </div>
+                  </div>
+              </div>
+              <Separator />
+              <div>
+                  <h4 className="text-sm font-medium mb-2">Upcoming Events</h4>
+                  <ul className="space-y-1 text-sm list-disc pl-4 text-muted-foreground">
+                      <li><span className="font-semibold text-foreground">Sol 345:</span> Supply Ship Arrival (ESA)</li>
+                      <li><span className="font-semibold text-foreground">Sol 350:</span> Solar Flare Peak Predicted</li>
+                  </ul>
+              </div>
+              <Separator />
+               <div>
+                  <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                    Active Alerts
+                  </h4>
+                  <ul className="space-y-1 text-sm list-disc pl-4 text-muted-foreground">
+                       <li><span className="font-semibold text-destructive">High radiation levels detected near Sector Gamma-7. EVA missions suspended.</span></li>
+                  </ul>
+              </div>
           </CardContent>
         </Card>
       </div>
     </div>
   )
 }
-
-    
