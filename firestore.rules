@@ -1,100 +1,120 @@
 /**
- * @fileoverview Firestore Security Rules for CHILEANSPACE Habitat Application.
+ * @fileoverview Firestore Security Rules for the Habitat application.
  *
  * Core Philosophy:
- * This ruleset prioritizes a user-ownership model for habitat designs,
- * ensuring that only the owning user can create, modify, or delete their designs.
- * Public read access is granted to material and storm simulation data.
+ * This ruleset prioritizes secure data access based on clearly defined roles and ownership.
+ * It aims to strike a balance between security and rapid prototyping by focusing on authorization
+ * while relaxing data validation constraints.
  *
  * Data Structure:
- * - /users/{userId}/habitatDesigns/{habitatDesignId}: Stores habitat designs owned by a specific user.
- * - /materials/{materialId}: Stores construction material data accessible to all authenticated users.
- * - /stormSimulations/{stormSimulationId}: Stores dust storm simulation data accessible to all authenticated users.
+ * - /users/{userId}: Stores individual user profiles. Access is restricted to the owning user.
+ * - /crew/{crewId}: Stores crew member data. Currently, read access is public, but write access is restricted.
+ * - /sectors/{sectorId}: Stores habitat sector data. Currently, read access is public, but write access is restricted.
+ * - /oshi/{oshiId}: Stores OSHI data for crew members. Currently, read access is public, but write access is restricted.
+ * - /provisions/{provisionId}: Stores inventory data. Currently, read access is public, but write access is restricted.
+ * - /materials/{materialId}: Stores construction material data. Currently, read access is public, but write access is restricted.
  *
  * Key Security Decisions:
- * - User listing is implicitly disallowed by not providing a rule for it.
- * - Public read access is granted for materials and storm simulations.
- *
- * Denormalization for Authorization:
- *  - The 'id' field in the `HabitatDesign` entity is used to enforce path consistency.
+ * - User listing is explicitly disallowed.
+ * - Public read access is granted to the crew, sector, oshi, provisions, and materials collections to allow for the reported issue to be fixed.
+ * - Data validation is minimized to accelerate prototyping.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces ownership for habitat designs, allowing only the owner to read, create, update, or delete their own designs.
-     * @path /users/{userId}/habitatDesigns/{habitatDesignId}
-     * @allow (create) - User 'user123' creates a new habitat design with design.id == 'user123'.
-     * @allow (get, list, update, delete) - User 'user123' reads/modifies/deletes habitat design 'design456' under /users/user123/.
-     * @deny (create) - User 'user456' attempts to create a habitat design under /users/user123/.
-     * @deny (get, list, update, delete) - User 'user456' attempts to read/modify/delete habitat design 'design456' under /users/user123/.
-     * @principle Enforces document ownership for writes. Validates relational integrity between user ID in the path and data.
+     * @description Allows a user to read and write their own profile data.
+     * @path /users/{userId}
+     * @allow (read, write) if the user is signed in and the requested userId matches their own ID. (e.g., request.auth.uid == 'user123')
+     * @deny (read, write) if the user is not signed in or the userId does not match their own ID. (e.g., request.auth.uid == 'otherUser')
+     * @principle Enforces strict user ownership for profile data.
      */
-    match /users/{userId}/habitatDesigns/{habitatDesignId} {
-      // Helper function to check if the user is signed in and owns the document
+    match /users/{userId} {
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
 
-      // Helper function to check if the user is signed in and owns the existing document
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      // Allow the owner to read their habitat designs
       allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-
-      // Allow the owner to create a new habitat design if the userId in the path matches the request auth UID
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-
-      // Allow the owner to update an existing habitat design if they own it and the userId hasn't changed
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-
-      // Allow the owner to delete their habitat design if they own it
-      allow delete: if isExistingOwner(userId);
+      allow list: if false; // User listing is not permitted.
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) && resource != null;
+      allow delete: if isOwner(userId) && resource != null;
     }
 
     /**
-     * @description Allows any authenticated user to read material data, but restricts creation, updates, and deletion.
+     * @description Allows anyone to read crew member data, but restricts writes.
+     * @path /crew/{crewId}
+     * @allow (read) any signed in user can read crew data.
+     * @deny (write) any writes are forbidden until proper authorization is set up.
+     * @principle Permits public read access while restricting write operations to authorized users.
+     */
+    match /crew/{crewId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false; // TODO: Add authorization for crew creation.
+      allow update: if false; // TODO: Add authorization for crew updates.
+      allow delete: if false; // TODO: Add authorization for crew deletion.
+    }
+
+    /**
+     * @description Allows anyone to read sector data, but restricts writes.
+     * @path /sectors/{sectorId}
+     * @allow (read) any signed in user can read sector data.
+     * @deny (write) any writes are forbidden until proper authorization is set up.
+     * @principle Permits public read access while restricting write operations to authorized users.
+     */
+    match /sectors/{sectorId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false; // TODO: Add authorization for sector creation.
+      allow update: if false; // TODO: Add authorization for sector updates.
+      allow delete: if false; // TODO: Add authorization for sector deletion.
+    }
+
+    /**
+     * @description Allows anyone to read OSHI data, but restricts writes.
+     * @path /oshi/{oshiId}
+     * @allow (read) any signed in user can read OSHI data.
+     * @deny (write) any writes are forbidden until proper authorization is set up.
+     * @principle Permits public read access while restricting write operations to authorized users.
+     */
+    match /oshi/{oshiId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false; // TODO: Add authorization for OSHI data creation.
+      allow update: if false; // TODO: Add authorization for OSHI data updates.
+      allow delete: if false; // TODO: Add authorization for OSHI data deletion.
+    }
+
+    /**
+     * @description Allows anyone to read provision data, but restricts writes.
+     * @path /provisions/{provisionId}
+     * @allow (read) any signed in user can read provision data.
+     * @deny (write) any writes are forbidden until proper authorization is set up.
+     * @principle Permits public read access while restricting write operations to authorized users.
+     */
+    match /provisions/{provisionId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false; // TODO: Add authorization for provision creation.
+      allow update: if false; // TODO: Add authorization for provision updates.
+      allow delete: if false; // TODO: Add authorization for provision deletion.
+    }
+
+   /**
+     * @description Allows anyone to read material data, but restricts writes.
      * @path /materials/{materialId}
-     * @allow (get, list) - Any signed-in user can read a material.
-     * @deny (create, update, delete) - No one can create, update, or delete materials.
-     * @principle Grants public read access to materials.
+     * @allow (read) any signed in user can read material data.
+     * @deny (write) any writes are forbidden until proper authorization is set up.
+     * @principle Permits public read access while restricting write operations to authorized users.
      */
     match /materials/{materialId} {
-      // Allow any authenticated user to read material data
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-
-      // Do not allow anyone to create, update, or delete material data
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if false; // TODO: Add authorization for material creation.
+      allow update: if false; // TODO: Add authorization for material updates.
+      allow delete: if false; // TODO: Add authorization for material deletion.
     }
-
-    /**
-     * @description Allows any authenticated user to read storm simulation data, but restricts creation, updates, and deletion.
-     * @path /stormSimulations/{stormSimulationId}
-     * @allow (get, list) - Any signed-in user can read a storm simulation.
-     * @deny (create, update, delete) - No one can create, update, or delete storm simulations.
-     * @principle Grants public read access to storm simulations.
-     */
-    match /stormSimulations/{stormSimulationId} {
-      // Allow any authenticated user to read storm simulation data
-      allow get: if isSignedIn();
-      allow list: if isSignedIn();
-
-      // Do not allow anyone to create, update, or delete storm simulation data
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-  }
-
-  // Helper function to check if the user is signed in
-  function isSignedIn() {
-    return request.auth != null;
   }
 }
