@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { crewData, sectorData } from "@/lib/sector-data"
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -41,38 +42,6 @@ const chartConfig = {
     color: "hsl(var(--chart-2))",
   },
 }
-
-const crewData = [
-  { id: 'cmdr-alex', name: 'Cmdr. Alex Reyes', role: 'Comandante de Misión', vitals: { hr: 68, spo2: 99, temp: 36.8 }, sector: 'command-center' },
-  { id: 'dr-lena', name: 'Dra. Lena Petrova', role: 'Oficial Científico', vitals: { hr: 72, spo2: 98, temp: 37.0 }, sector: 'science-lab' },
-  { id: 'ken-sato', name: 'Ken Sato', role: 'Ingeniero de Sistemas', vitals: { hr: 75, spo2: 99, temp: 36.9 }, sector: 'eclss' },
-  { id: 'maya-singh', name: 'Maya Singh', role: 'Especialista de Hábitat', vitals: { hr: 65, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'javier-rodriguez', name: 'Javier Rodriguez', role: 'Geólogo', vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'chen-liang', name: 'Chen Liang', role: 'Médico', vitals: { hr: 66, spo2: 99, temp: 36.8 }, sector: 'residential' },
-  { id: 'olivia-garcia', name: 'Olivia Garcia', role: 'Técnico de Robótica', vitals: { hr: 78, spo2: 97, temp: 37.1 }, sector: 'eclss' },
-  { id: 'ben-carter', name: 'Ben Carter', role: 'Piloto', vitals: { hr: 71, spo2: 99, temp: 36.9 }, sector: 'command-center' },
-  { id: 'fatima-al-sayed', name: 'Fatima Al-Sayed', role: 'Botánica', vitals: { hr: 69, spo2: 99, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'ivan-dubov', name: 'Ivan Dubov', role: 'Ingeniero Estructural', vitals: { hr: 73, spo2: 98, temp: 37.0 }, sector: 'storage' },
-  { id: 'sophia-rossi', name: 'Sophia Rossi', role: 'Psicóloga', vitals: { hr: 67, spo2: 100, temp: 36.8 }, sector: 'residential' },
-  { id: 'leo-schmidt', name: 'Leo Schmidt', role: 'Técnico de Comunicaciones', vitals: { hr: 74, spo2: 99, temp: 37.0 }, sector: 'command-center' },
-  { id: 'emily-white', name: 'Emily White', role: 'Astrobióloga', vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'david-chen', name: 'David Chen', role: 'Técnico de Soporte Vital', vitals: { hr: 76, spo2: 99, temp: 37.1 }, sector: 'eclss' },
-  { id: 'chloe-kim', name: 'Chloe Kim', role: 'Nutricionista', vitals: { hr: 68, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'omar-badawi', name: 'Omar Badawi', role: 'Ingeniero de Software', vitals: { hr: 72, spo2: 98, temp: 36.9 }, sector: 'command-center' },
-  { id: 'ana-silva', name: 'Ana Silva', role: 'Paramédico', vitals: { hr: 69, spo2: 99, temp: 36.8 }, sector: 'residential' },
-  { id: 'daniel-jones', name: 'Daniel Jones', role: 'Técnico de Mantenimiento', vitals: { hr: 79, spo2: 97, temp: 37.2 }, sector: 'storage' },
-  { id: 'sara-nilsson', name: 'Sara Nilsson', role: 'Investigadora', vitals: { hr: 71, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'wei-zhang', name: 'Wei Zhang', role: 'Especialista Agrónomo', vitals: { hr: 66, spo2: 100, temp: 36.6 }, sector: 'greenhouses' },
-];
-
-const sectorData = [
-    { id: "command-center", name: "Centro de Mando", status: "Nominal", color: "bg-green-500" },
-    { id: "residential", name: "Módulos Residenciales", status: "Nominal", color: "bg-green-500" },
-    { id: "science-lab", name: "Laboratorio Científico", status: "Activo", color: "bg-blue-500" },
-    { id: "greenhouses", name: "Invernaderos", status: "Nominal", color: "bg-green-500" },
-    { id: "eclss", name: "Soporte Vital (ECLSS)", status: "Nominal", color: "bg-green-500" },
-    { id: "storage", name: "Almacenamiento", status: "En Espera", color: "bg-yellow-500" },
-]
 
 
 export function Dashboard() {

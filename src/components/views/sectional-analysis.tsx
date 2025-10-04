@@ -49,101 +49,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { sectorAnalysisData } from "@/lib/sector-data"
 
-const sectorData = {
-  "command-center": {
-    name: "Centro de Mando (A)",
-    status: {
-      label: "Nominal",
-      color: "text-green-400",
-      bgColor: "bg-green-400/10",
-    },
-    activityLevel: 85,
-    crewCondition: 92,
-    energy: {
-      consumption: 12.5,
-      capacity: 15,
-      internalSourcePct: 78,
-      systemTemp: 45,
-      thermalEfficiency: 99.1,
-      alerts: [],
-    },
-    environment: {
-      lighting: 450,
-      emergencyLights: "OK",
-      temperature: 21.5,
-      airQuality: 99.8,
-      co2: 410,
-      noise: 40,
-    },
-    infrastructure: {
-      integrity: 99.9,
-      vibrations: "None",
-      maintenance: [],
-      lifeSupport: "Nominal",
-    },
-    events: [
-      { id: 1, type: "info", text: "J. Rodriguez ingresó al sector.", time: "hace 2m" },
-      { id: 2, type: "info", text: "Sistema de navegación activado.", time: "hace 5m" },
-      { id: 3, type: "system", text: "Calibración de antena completada.", time: "hace 15m" },
-    ],
-    crew: {
-      assigned: 5,
-      status: "Activo",
-      occupation: 100,
-      comfort: 4.8,
-    },
-  },
-  "science-lab": {
-    name: "Laboratorio Científico (B)",
-    status: {
-      label: "En Revisión",
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-400/10",
-    },
-    activityLevel: 60,
-    crewCondition: 88,
-    energy: {
-      consumption: 18.2,
-      capacity: 20,
-      internalSourcePct: 65,
-      systemTemp: 52,
-      thermalEfficiency: 98.5,
-      alerts: ["Pico de consumo en espectrómetro"],
-    },
-    environment: {
-      lighting: 600,
-      emergencyLights: "OK",
-      temperature: 20.1,
-      airQuality: 99.5,
-      co2: 450,
-      noise: 55,
-    },
-    infrastructure: {
-      integrity: 99.7,
-      vibrations: "Low",
-      maintenance: ["Calibrar sensor de gases #3"],
-      lifeSupport: "Nominal",
-    },
-    events: [
-        { id: 1, type: "warning", text: "Pico de consumo detectado en espectrómetro.", time: "hace 1m" },
-        { id: 2, type: "info", text: "Análisis de muestra #A-34 iniciado.", time: "hace 8m" },
-        { id: 3, type: "info", text: "Dr. Petrova ingresó al sector.", time: "hace 12m" },
-    ],
-    crew: {
-      assigned: 4,
-      status: "Activo",
-      occupation: 75,
-      comfort: 4.5,
-    },
-  },
-}
-
-type SectorId = keyof typeof sectorData
+type SectorId = keyof typeof sectorAnalysisData
 
 export function SectionalAnalysis() {
   const [selectedSector, setSelectedSector] = React.useState<SectorId>("command-center")
-  const data = sectorData[selectedSector]
+  const data = sectorAnalysisData[selectedSector]
 
   const StatusIndicator = ({
     icon: Icon,
@@ -194,7 +106,7 @@ export function SectionalAnalysis() {
                 <SelectValue placeholder="Seleccionar Sector" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(sectorData).map(([id, { name }]) => (
+                {Object.entries(sectorAnalysisData).map(([id, { name }]) => (
                   <SelectItem key={id} value={id}>
                     {name}
                   </SelectItem>
@@ -310,5 +222,3 @@ export function SectionalAnalysis() {
     </div>
   )
 }
-
-    
