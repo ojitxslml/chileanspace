@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -12,14 +12,76 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { materials, Material } from "@/lib/materials-data";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+import { Skeleton } from "../ui/skeleton";
+
+interface Material {
+  id: string;
+  name: string;
+  type: string;
+  description: string;
+  details: string;
+  images: {
+    src: string;
+    alt: string;
+    hint: string;
+  }[];
+}
 
 export function MaterialViewer() {
-  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
-    materials[0]
-  );
+  const { firestore } = useFirebase();
+  const materialsRef = useMemoFirebase(() => firestore ? collection(firestore, 'materials') : null, [firestore]);
+  const { data: materials, isLoading } = useCollection<Material>(materialsRef);
+
+  const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
+
+  const selectedMaterial = useMemo(() => {
+    if (!materials) return null;
+    if (selectedMaterialId) {
+      return materials.find(m => m.id === selectedMaterialId) ?? null;
+    }
+    return materials[0] ?? null;
+  }, [materials, selectedMaterialId]);
+
+  if (isLoading) {
+    return (
+       <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 h-full flex flex-col">
+        <div className="flex items-center justify-between space-y-2">
+           <Skeleton className="h-10 w-1/4" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-20" />)}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-2 flex flex-col">
+             <CardHeader>
+                <Skeleton className="h-8 w-1/2" />
+                <Skeleton className="h-4 w-1/4" />
+              </CardHeader>
+              <CardContent className="flex-1">
+                  <div className="space-y-4">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-40 w-full" />
+                  </div>
+              </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 h-full flex flex-col">
@@ -39,16 +101,16 @@ export function MaterialViewer() {
           <CardContent>
             <ScrollArea className="h-[calc(100vh-20rem)]">
               <div className="space-y-2 pr-4">
-                {materials.map((material) => (
+                {materials?.map((material) => (
                   <div
-                    key={material.name}
+                    key={material.id}
                     className={cn(
                       "p-3 border rounded-lg cursor-pointer transition-colors",
-                      selectedMaterial?.name === material.name
+                      selectedMaterial?.id === material.id
                         ? "bg-accent border-primary"
                         : "hover:bg-accent/50"
                     )}
-                    onClick={() => setSelectedMaterial(material)}
+                    onClick={() => setSelectedMaterialId(material.id)}
                   >
                     <div className="flex justify-between items-start">
                       <h3 className="font-semibold">{material.name}</h3>

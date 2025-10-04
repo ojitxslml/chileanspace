@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import {
   Card,
   CardContent,
@@ -22,10 +22,11 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { crewData, sectorData } from "@/lib/sector-data"
 import { getWeather } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
 import { WeatherDataPoint } from "@/ai/schemas/weather-schemas"
+import { useCollection, useFirebase, useMemoFirebase } from "@/firebase"
+import { collection, query, where } from "firebase/firestore"
 
 const energyChartData = [
   { month: "January", solar: 186, piezoelectric: 80 },
@@ -48,23 +49,42 @@ const energyChartConfig = {
 };
 
 export function Dashboard() {
+  const { firestore } = useFirebase();
   const [selectedSectorId, setSelectedSectorId] = useState("all");
-  const filteredCrew = selectedSectorId === "all" ? crewData : crewData.filter(c => c.sector === selectedSectorId);
-  const [selectedCrewMemberId, setSelectedCrewMemberId] = useState(filteredCrew.length > 0 ? filteredCrew[0].id : "");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loadingWindData, setLoadingWindData] = useState(true);
 
+  const sectorsRef = useMemoFirebase(() => firestore ? collection(firestore, 'sectors') : null, [firestore]);
+  const { data: sectorData, isLoading: sectorsLoading } = useCollection(sectorsRef);
 
-  const selectedCrewMember = crewData.find(m => m.id === selectedCrewMemberId) || (filteredCrew.length > 0 ? filteredCrew[0] : null);
+  const crewRef = useMemoFirebase(() => firestore ? collection(firestore, 'crew') : null, [firestore]);
+  const { data: crewData, isLoading: crewLoading } = useCollection(crewRef);
+
+  const filteredCrew = useMemo(() => {
+    if (!crewData) return [];
+    if (selectedSectorId === "all") return crewData;
+    return crewData.filter(c => c.sector === selectedSectorId);
+  }, [crewData, selectedSectorId]);
+
+  const [selectedCrewMemberId, setSelectedCrewMemberId] = useState("");
+
+  useEffect(() => {
+    if (filteredCrew.length > 0 && !selectedCrewMemberId) {
+      setSelectedCrewMemberId(filteredCrew[0].id);
+    } else if (filteredCrew.length > 0 && !filteredCrew.find(c => c.id === selectedCrewMemberId)) {
+      setSelectedCrewMemberId(filteredCrew[0].id);
+    } else if (filteredCrew.length === 0) {
+      setSelectedCrewMemberId("");
+    }
+  }, [filteredCrew, selectedCrewMemberId]);
+
+
+  const selectedCrewMember = useMemo(() => {
+    return crewData?.find(m => m.id === selectedCrewMemberId) || null;
+  }, [crewData, selectedCrewMemberId]);
 
   const handleSectorChange = (sectorId: string) => {
     setSelectedSectorId(sectorId);
-    const newFilteredCrew = sectorId === "all" ? crewData : crewData.filter(c => c.sector === sectorId);
-    if (newFilteredCrew.length > 0) {
-      setSelectedCrewMemberId(newFilteredCrew[0].id);
-    } else {
-      setSelectedCrewMemberId("");
-    }
   }
 
   useEffect(() => {
@@ -82,6 +102,28 @@ export function Dashboard() {
     fetchWeather();
   }, []);
   
+  if (sectorsLoading || crewLoading) {
+    return (
+        <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
+            <div className="flex items-center justify-between space-y-2">
+                <Skeleton className="h-8 w-1/3" />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24" />)}
+            </div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <Skeleton className="h-72" />
+                <Skeleton className="lg:col-span-2 h-72" />
+            </div>
+             <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+                 <Skeleton className="col-span-1 lg:col-span-4 h-80" />
+                 <Skeleton className="col-span-1 lg:col-span-3 h-80" />
+            </div>
+             <Skeleton className="h-80" />
+        </div>
+    )
+  }
+
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between space-y-2">
@@ -110,7 +152,7 @@ export function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">20/20</div>
+            <div className="text-2xl font-bold">{crewData?.length || 0}/20</div>
             <p className="text-xs text-muted-foreground">All systems nominal</p>
           </CardContent>
         </Card>
@@ -161,7 +203,7 @@ export function Dashboard() {
                         <span className="font-medium">Todos los Sectores</span>
                     </div>
                 </div>
-                {sectorData.map(sector => (
+                {sectorData?.map(sector => (
                     <div 
                         key={sector.id}
                         onClick={() => handleSectorChange(sector.id)}
@@ -186,7 +228,7 @@ export function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Tripulación</CardTitle>
-            <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
+            <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData?.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             {filteredCrew.length > 0 ? (

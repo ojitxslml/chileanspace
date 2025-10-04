@@ -40,21 +40,36 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { provisionsData, provisionTypes } from "@/lib/provisions-data";
+import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+import { Skeleton } from "../ui/skeleton";
+
+interface Provision {
+  id: string;
+  name: string;
+  type: string;
+  quantity: number;
+  unit: string;
+  status: string;
+}
 
 export function ProvisionsManagement() {
-  const [provisions, setProvisions] = React.useState(provisionsData.inventory);
+  const { firestore } = useFirebase();
+  const provisionsRef = useMemoFirebase(() => firestore ? collection(firestore, 'provisions') : null, [firestore]);
+  const { data: provisions, isLoading } = useCollection<Provision>(provisionsRef);
+  
   const [filter, setFilter] = React.useState("All");
   const { toast } = useToast();
 
-  const filteredProvisions =
-    filter === "All"
-      ? provisions
-      : provisions.filter((p) => p.type === filter);
+  const filteredProvisions = React.useMemo(() => {
+    if (!provisions) return [];
+    if (filter === "All") return provisions;
+    return provisions.filter((p) => p.type === filter);
+  }, [provisions, filter]);
 
   const handleRequestSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -89,6 +104,32 @@ export function ProvisionsManagement() {
       case "Parts": return <Wrench className="h-4 w-4 text-muted-foreground" />;
       default: return <Package className="h-4 w-4 text-muted-foreground" />;
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 space-y-4 p-4 md:p-6 pt-6">
+        <Skeleton className="h-8 w-1/3" />
+         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+        </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <Card className="lg:col-span-2">
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-96 w-full" />
+                </CardContent>
+            </Card>
+            <div className="space-y-4">
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-48 w-full" />
+            </div>
+        </div>
+      </div>
+    )
   }
 
   return (
