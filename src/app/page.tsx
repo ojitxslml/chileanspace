@@ -1,50 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { MainNav } from "@/components/main-nav";
-import { Dashboard } from "@/components/views/dashboard";
-import { HabitatExplorer } from "@/components/views/habitat-explorer";
-import { InteriorDesigner } from "@/components/views/interior-designer";
-import { SectionalAnalysis } from "@/components/views/sectional-analysis";
-import { MaterialViewer } from "@/components/views/material-viewer";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { ArrowRight } from "lucide-react";
 
-export default function Home() {
-  const [activeView, setActiveView] = useState("dashboard");
-
-  const renderActiveView = () => {
-    switch (activeView) {
-      case "dashboard":
-        return <Dashboard />;
-      case "explorer":
-        return <HabitatExplorer />;
-      case "designer":
-        return <InteriorDesigner />;
-      case "analysis":
-        return <SectionalAnalysis />;
-      case "materials":
-        return <MaterialViewer />;
-      default:
-        return <Dashboard />;
-    }
-  };
+export default function LandingPage() {
+  const heroImage = PlaceHolderImages.find(
+    (img) => img.id === "mars-landscape"
+  );
 
   return (
-    <SidebarProvider>
-      <MainNav activeView={activeView} setActiveView={setActiveView} />
-      <SidebarInset>
-        <div className="flex h-screen flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-background/80 px-6 backdrop-blur-sm md:hidden">
-            <SidebarTrigger />
-            <h1 className="text-lg font-semibold font-headline">CHILEANSPACE</h1>
-          </header>
-          <main className="flex-1 overflow-auto">{renderActiveView()}</main>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="relative flex h-screen w-full flex-col items-center justify-center bg-background text-foreground">
+      <div className="absolute inset-0 z-0">
+        {heroImage && (
+          <Image
+            src={heroImage.imageUrl}
+            alt={heroImage.description}
+            fill
+            className="object-cover"
+            data-ai-hint={heroImage.imageHint}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center text-center text-white p-4">
+        <h1 className="text-5xl font-bold tracking-tight font-headline md:text-7xl lg:text-8xl">
+          CHILEANSPACE
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-white/80 md:text-xl">
+          Diseñando un futuro sostenible en Marte. Explore nuestro innovador
+          concepto de hábitat, diseñado para la resiliencia y la habitabilidad
+          en el Planeta Rojo.
+        </p>
+        <Link href="/habitat" className="mt-8">
+          <Button size="lg" className="text-lg">
+            Explorar el Hábitat
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </Link>
+      </div>
+      <footer className="absolute bottom-4 z-10 text-center text-xs text-white/50">
+        Un proyecto de exploración conceptual.
+      </footer>
+    </div>
   );
 }
