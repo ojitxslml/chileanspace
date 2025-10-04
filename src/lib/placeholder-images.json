@@ -23,6 +23,18 @@
       "description": "Solar panels array on the Martian surface.",
       "imageUrl": "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzb2xhciUyMHBhbmVsc3xlbnwwfHx8fDE3NTk1NjI1Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "solar panels"
+    },
+    {
+      "id": "regolith-concrete-1",
+      "description": "A 3D printed structure made from a reddish, concrete-like material.",
+      "imageUrl": "https://images.unsplash.com/photo-1706520005428-04d1096c1d1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHwzZC1wcmludGVkJTIwc3RydWN0dXJlfGVufDB8fHx8MTc1OTYwNzY4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "3d-printed structure"
+    },
+    {
+      "id": "regolith-concrete-2",
+      "description": "Close-up texture of Martian regolith concrete.",
+      "imageUrl": "https://images.unsplash.com/photo-1751888085618-f102e99e87d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyZWQlMjBjb25jcmV0ZXxlbnwwfHx8fDE3NTk2MDc2ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red concrete"
     }
   ]
 }
