@@ -166,7 +166,7 @@ export function HabitatExplorer() {
     piezoRef.current = piezo;
 
     // Storm particles
-    const particleCount = 5000;
+    const particleCount = 20000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
@@ -175,7 +175,7 @@ export function HabitatExplorer() {
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particleMaterial = new THREE.PointsMaterial({
         color: 0xffae8b,
-        size: 0.1,
+        size: 0.15,
         transparent: true,
         opacity: 0.7,
         blending: THREE.AdditiveBlending
