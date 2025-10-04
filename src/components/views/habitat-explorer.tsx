@@ -166,7 +166,7 @@ export function HabitatExplorer() {
     piezoRef.current = piezo;
 
     // Storm particles
-    const particleCount = 20000;
+    const particleCount = 50000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
@@ -175,7 +175,7 @@ export function HabitatExplorer() {
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particleMaterial = new THREE.PointsMaterial({
         color: 0xffae8b,
-        size: 0.15,
+        size: 0.2,
         transparent: true,
         opacity: 0.7,
         blending: THREE.AdditiveBlending
@@ -195,7 +195,7 @@ export function HabitatExplorer() {
         const positions = stormParticlesRef.current.geometry.attributes.position.array as Float32Array;
         const intensity = stormIntensityValue.current / 100;
         for (let i = 0; i < positions.length; i += 3) {
-            positions[i] -= (2 + intensity * 20) * delta; // X direction
+            positions[i] -= (5 + intensity * 50) * delta; // X direction
             if (positions[i] < -50) {
                 positions[i] = 50;
             }
@@ -279,3 +279,4 @@ export function HabitatExplorer() {
   );
 }
 
+    
