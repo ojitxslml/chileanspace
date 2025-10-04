@@ -13,9 +13,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { RotateCcw, Download, Share2 } from "lucide-react";
+import { RotateCcw, Download, Share2, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type Option<T> = {
   value: T;
@@ -271,27 +275,36 @@ export function InteriorDesigner() {
         </div>
       </div>
       <Card>
-        <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {Object.entries(categories).map(([key, category]) => (
-                <div key={key} className="space-y-3">
-                    <h3 className="font-semibold text-sm">{category.title}</h3>
-                    <RadioGroup
-                        value={design[key as keyof DesignState]}
-                        onValueChange={(value) => handleOptionChange(key as keyof DesignState, value)}
-                        aria-label={category.title}
-                        className="flex flex-row flex-wrap gap-2"
-                    >
-                        {category.options.map((option) => (
-                            <div key={option.value}>
-                                <RadioGroupItem value={option.value} id={`${key}-${option.value}`} className="sr-only peer" />
-                                <Label htmlFor={`${key}-${option.value}`} className="cursor-pointer rounded-md border-2 border-muted bg-popover px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                    {option.label}
-                                </Label>
-                            </div>
-                        ))}
-                    </RadioGroup>
-                </div>
-            ))}
+        <CardContent className="p-4 flex flex-wrap items-center gap-2">
+          {Object.entries(categories).map(([key, category]) => (
+            <Popover key={key}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <span>{category.title}:</span>
+                  <span className="font-semibold">{design[key as keyof DesignState]}</span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-2">
+                <RadioGroup
+                  value={design[key as keyof DesignState]}
+                  onValueChange={(value) => handleOptionChange(key as keyof DesignState, value)}
+                  aria-label={category.title}
+                  className="grid gap-2"
+                >
+                  {category.options.map((option) => (
+                    <div key={option.value}>
+                      <RadioGroupItem value={option.value} id={`${key}-${option.value}`} className="sr-only peer" />
+                      <Label htmlFor={`${key}-${option.value}`} className="flex flex-col gap-1 cursor-pointer rounded-md border-2 border-transparent bg-popover p-3 text-sm hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <span className="font-semibold">{option.label}</span>
+                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </PopoverContent>
+            </Popover>
+          ))}
         </CardContent>
       </Card>
       <Card className="flex-1 flex flex-col">
@@ -308,5 +321,3 @@ export function InteriorDesigner() {
     </div>
   );
 }
-
-    
