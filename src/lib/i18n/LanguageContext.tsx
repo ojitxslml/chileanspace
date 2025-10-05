@@ -22,16 +22,6 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>('en');
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const browserLang = navigator.language.split('-')[0];
-      if (browserLang === 'es') {
-        setLocale('es');
-      }
-    }
-  }, []);
-
-
   const t = (key: string, variables?: TranslationVariables): string => {
     const getTranslation = (lang: Locale, transKey: string): string | undefined => {
       const keys = transKey.split('.');
