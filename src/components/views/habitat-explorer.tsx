@@ -205,7 +205,7 @@ export function HabitatExplorer() {
               if ((child as THREE.Mesh).isMesh) {
                   child.castShadow = true;
                   child.receiveShadow = true;
-                  (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ color: 0x808080 });
+                  (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ color: 0xCCCCCC });
               }
           });
           scene.add(reactorModel);
@@ -439,6 +439,8 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
 
     
 
