@@ -1,13 +1,17 @@
 
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { getWeather } from "@/ai/flows/weather-flow";
+import { type WeatherDataPoint } from "@/ai/schemas/weather-schemas";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function HabitatExplorer() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -15,6 +19,39 @@ export function HabitatExplorer() {
   const piezoGroupRef = useRef<THREE.Group>();
   const stormParticlesRef = useRef<THREE.Points>();
   const stormIntensityValue = useRef(0);
+
+  const [mode, setMode] = useState<"simulated" | "live">("simulated");
+  const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const latestWindSpeed = useMemo(() => {
+    if (!windData || windData.length === 0) return 0;
+    return windData[windData.length - 1].speed10m;
+  }, [windData]);
+
+  useEffect(() => {
+    async function fetchWindData() {
+      try {
+        setLoading(true);
+        const data = await getWeather();
+        setWindData(data);
+      } catch (error) {
+        console.error("Failed to fetch weather data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchWindData();
+  }, []);
+
+  useEffect(() => {
+    if (mode === 'live') {
+        // Map wind speed (m/s) to intensity slider (0-100). Assuming max expected wind is ~40 m/s.
+        const maxWind = 40;
+        const intensity = Math.min(100, (latestWindSpeed / maxWind) * 100);
+        handleStormChange([intensity]);
+    }
+  }, [mode, latestWindSpeed])
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -165,7 +202,7 @@ export function HabitatExplorer() {
         color: 0xffae8b,
         size: 0.25,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0,
         blending: THREE.AdditiveBlending
     });
     const stormParticles = new THREE.Points(particles, particleMaterial);
@@ -203,9 +240,11 @@ export function HabitatExplorer() {
 
     // Handle resize
     const handleResize = () => {
-      camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      if (currentMount) {
+        camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      }
     };
     window.addEventListener("resize", handleResize);
 
@@ -246,12 +285,34 @@ export function HabitatExplorer() {
       <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
         <CardContent className="p-4 space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="storm-intensity">Storm Intensity: <span ref={stormIntensityRef}>0.0</span> m/s</Label>
-                <Slider defaultValue={[0]} max={100} step={1} onValueChange={handleStormChange}/>
+                <Label>Modo de Intensidad</Label>
+                <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="simulated" id="simulated" />
+                        <Label htmlFor="simulated">Simulado</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="live" id="live" />
+                        <Label htmlFor="live">En vivo</Label>
+                    </div>
+                </RadioGroup>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="storm-intensity">
+                  Intensidad de Tormenta: {' '}
+                  {loading && mode === 'live' ? <Skeleton className="h-4 w-8 inline-block" /> : <span ref={stormIntensityRef}>0.0</span>} m/s
+                </Label>
+                <Slider 
+                  defaultValue={[0]} 
+                  max={100} 
+                  step={1} 
+                  onValueChange={handleStormChange}
+                  disabled={mode === 'live'}
+                />
             </div>
              <div className="flex items-center space-x-2">
                 <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
-                <Label htmlFor="piezo-toggle">Show Piezoelectric Layer</Label>
+                <Label htmlFor="piezo-toggle">Mostrar capa piezoeléctrica</Label>
             </div>
         </CardContent>
       </Card>
