@@ -5,15 +5,16 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { getWeather } from "@/ai/flows/weather-flow";
-import { type WeatherDataPoint } from "@/ai/schemas/weather-schemas";
+import { getWeather, getTemperature, getRadiation } from "@/ai/flows/weather-flow";
+import { type WeatherDataPoint, type TemperatureDataPoint, type RadiationDataPoint } from "@/ai/schemas/weather-schemas";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { Thermometer, Wind, Sun } from "lucide-react";
 
 export function HabitatExplorer() {
   const { t } = useTranslation();
@@ -22,39 +23,56 @@ export function HabitatExplorer() {
   const piezoGroupRef = useRef<THREE.Group>();
   const stormParticlesRef = useRef<THREE.Points>();
   const stormIntensityValue = useRef(0);
+  const flashLightsRef = useRef<THREE.PointLight[]>([]);
+  const modelRef = useRef<THREE.Object3D>();
 
   const [mode, setMode] = useState<"simulated" | "live">("live");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
+  const [temperatureData, setTemperatureData] = useState<TemperatureDataPoint[]>([]);
+  const [radiationData, setRadiationData] = useState<RadiationDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const latestWindSpeed = useMemo(() => {
-    if (!windData || windData.length === 0) return 0;
-    return windData[windData.length - 1].speed10m;
-  }, [windData]);
+  const currentConditions = useMemo(() => {
+    const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
+    const latestTemp = temperatureData.length > 0 ? temperatureData[temperatureData.length - 1].temp2m : 0;
+    const latestRadiation = radiationData.length > 0 ? radiationData[radiationData.length - 1].global : 0;
+
+    return {
+      wind: latestWind.toFixed(1),
+      temperature: latestTemp.toFixed(1),
+      radiation: latestRadiation.toFixed(1),
+    };
+  }, [windData, temperatureData, radiationData]);
 
   useEffect(() => {
-    async function fetchWindData() {
+    async function fetchAllData() {
       try {
         setLoading(true);
-        const data = await getWeather();
-        setWindData(data);
+        const [wind, temp, rad] = await Promise.all([
+          getWeather(),
+          getTemperature(),
+          getRadiation(),
+        ]);
+        setWindData(wind);
+        setTemperatureData(temp);
+        setRadiationData(rad);
       } catch (error) {
         console.error("Failed to fetch weather data:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchWindData();
+    fetchAllData();
   }, []);
 
   useEffect(() => {
     if (mode === 'live') {
-        // Map wind speed (m/s) to intensity slider (0-100). Assuming max expected wind is ~40 m/s.
+        const latestWindSpeed = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
         const maxWind = 40;
         const intensity = Math.min(100, (latestWindSpeed / maxWind) * 100);
         handleStormChange([intensity]);
     }
-  }, [mode, latestWindSpeed])
+  }, [mode, windData])
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -105,7 +123,6 @@ export function HabitatExplorer() {
     ground.receiveShadow = true;
     scene.add(ground);
     
-    // Add rocks
     const rockGeometry = new THREE.DodecahedronGeometry(1, 0);
     const rockMaterial = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.8 });
     for (let i = 0; i < 50; i++) {
@@ -129,10 +146,8 @@ export function HabitatExplorer() {
         emissive: 0x00ffff,
         emissiveIntensity: 0,
         depthWrite: false,
-        depthTest: false,
     });
 
-    // Load custom model
     const loader = new GLTFLoader();
     loader.load(
         '/white_mesh.glb',
@@ -147,15 +162,13 @@ export function HabitatExplorer() {
                 }
             });
             scene.add(model);
+            modelRef.current = model;
 
-            // Create piezoelectric layer from model's geometry
             const piezoGroup = new THREE.Group();
             model.traverse((object) => {
               if ((object as THREE.Mesh).isMesh) {
                 const mesh = object as THREE.Mesh;
                 const piezoMesh = new THREE.Mesh(mesh.geometry, piezoMaterial);
-                piezoMesh.castShadow = false;
-                piezoMesh.receiveShadow = false;
                 piezoGroup.add(piezoMesh);
               }
             });
@@ -174,7 +187,6 @@ export function HabitatExplorer() {
         }
     );
 
-    // Storm particles
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -192,26 +204,34 @@ export function HabitatExplorer() {
     const stormParticles = new THREE.Points(particles, particleMaterial);
     scene.add(stormParticles);
     stormParticlesRef.current = stormParticles;
+    
+    const flashPoolSize = 30;
+    for (let i = 0; i < flashPoolSize; i++) {
+        const light = new THREE.PointLight(0xffffff, 0, 5);
+        light.userData.life = 0;
+        flashLightsRef.current.push(light);
+        scene.add(light);
+    }
+    
+    const raycaster = new THREE.Raycaster();
 
-
-    // Animation loop
     const clock = new THREE.Clock();
     const animate = function () {
       requestAnimationFrame(animate);
 
       const delta = clock.getDelta();
-      if(stormParticlesRef.current && stormIntensityValue.current > 0) {
+      const intensity = stormIntensityValue.current / 100;
+
+      if(stormParticlesRef.current && intensity > 0) {
         const positions = stormParticlesRef.current.geometry.attributes.position.array as Float32Array;
-        const intensity = stormIntensityValue.current / 100;
         const speed = (10 + intensity * 100) * delta;
         for (let i = 0; i < positions.length; i += 3) {
-            positions[i] -= speed; // X direction
+            positions[i] -= speed;
             if (positions[i] < -50) {
                 positions[i] = 50;
             }
         }
         stormParticlesRef.current.geometry.attributes.position.needsUpdate = true;
-        // Use a power function with a base value for a more gradual increase in density
         (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = Math.min(0.7, 0.02 + Math.pow(intensity, 2) * 0.68);
 
       } else if (stormParticlesRef.current) {
@@ -219,7 +239,6 @@ export function HabitatExplorer() {
       }
       
       if (piezoGroupRef.current) {
-        const intensity = stormIntensityValue.current / 100;
         piezoGroupRef.current.traverse(child => {
             if((child as THREE.Mesh).isMesh) {
                 const material = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
@@ -227,6 +246,36 @@ export function HabitatExplorer() {
             }
         })
       }
+      
+      if (modelRef.current && intensity > 0) {
+          if (Math.random() < intensity * 0.5) { // Probability based on intensity
+              const availableLight = flashLightsRef.current.find(l => l.userData.life <= 0);
+              if (availableLight) {
+                  const model = modelRef.current;
+                  const mesh = model.children[0] as THREE.Mesh;
+                  if (mesh && mesh.geometry) {
+                      const positionAttribute = mesh.geometry.attributes.position;
+                      const randomIndex = Math.floor(Math.random() * positionAttribute.count);
+                      const randomVertex = new THREE.Vector3().fromBufferAttribute(positionAttribute, randomIndex);
+                      randomVertex.applyMatrix4(model.matrixWorld); // Transform to world coordinates
+                      
+                      availableLight.position.copy(randomVertex);
+                      availableLight.intensity = 5 + Math.random() * 5;
+                      availableLight.userData.life = 1; // Start life
+                  }
+              }
+          }
+      }
+
+      flashLightsRef.current.forEach(light => {
+          if (light.userData.life > 0) {
+              light.userData.life -= delta * 5; // Fade over ~0.2 seconds
+              light.intensity = Math.max(0, light.intensity - delta * 50);
+          } else {
+              light.userData.life = 0;
+              light.intensity = 0;
+          }
+      });
 
 
       controls.update();
@@ -235,7 +284,6 @@ export function HabitatExplorer() {
 
     animate();
 
-    // Handle resize
     const handleResize = () => {
       if (currentMount) {
         camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
@@ -272,6 +320,35 @@ export function HabitatExplorer() {
   return (
     <div className="relative h-full w-full flex-1">
       <div ref={mountRef} className="absolute inset-0" />
+      <div className="absolute top-4 left-4 space-y-2">
+        <Card className="w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+                <Wind className="h-6 w-6 text-muted-foreground"/>
+                <div className="truncate">
+                    <CardTitle className="text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
+                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.wind} m/s`}</p>
+                </div>
+            </CardHeader>
+        </Card>
+        <Card className="w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+                <Thermometer className="h-6 w-6 text-muted-foreground"/>
+                <div>
+                    <CardTitle className="text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
+                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.temperature} °C`}</p>
+                </div>
+            </CardHeader>
+        </Card>
+        <Card className="w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+                <Sun className="h-6 w-6 text-muted-foreground"/>
+                <div>
+                    <CardTitle className="text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
+                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</p>
+                </div>
+            </CardHeader>
+        </Card>
+      </div>
       <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
         <CardContent className="p-4 space-y-4">
             <div className="space-y-2">
@@ -309,7 +386,3 @@ export function HabitatExplorer() {
     </div>
   );
 }
-
-    
-
-    
