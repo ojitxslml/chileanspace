@@ -147,14 +147,22 @@ export function HabitatExplorer() {
             scene.add(model);
 
             // Create piezoelectric layer from model's geometry
-            const piezoGroup = model.clone();
-            piezoGroup.visible = false;
-            piezoGroup.scale.multiplyScalar(1.05); // Slightly larger
-            piezoGroup.traverse((child) => {
-              if ((child as THREE.Mesh).isMesh) {
-                child.material = piezoMaterial;
+            const piezoGroup = new THREE.Group();
+            model.traverse((object) => {
+              if ((object as THREE.Mesh).isMesh) {
+                const mesh = object as THREE.Mesh;
+                const piezoMesh = new THREE.Mesh(mesh.geometry, piezoMaterial);
+                piezoMesh.castShadow = false;
+                piezoMesh.receiveShadow = false;
+                piezoGroup.add(piezoMesh);
               }
             });
+
+            piezoGroup.position.copy(model.position);
+            piezoGroup.rotation.copy(model.rotation);
+            piezoGroup.scale.copy(model.scale).multiplyScalar(1.05);
+
+            piezoGroup.visible = false;
             scene.add(piezoGroup);
             piezoGroupRef.current = piezoGroup;
         },
