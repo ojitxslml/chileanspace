@@ -195,26 +195,6 @@ export function HabitatExplorer() {
         }
     );
 
-    loader.load(
-        '/reactor.glb',
-        function (gltf) {
-            const model = gltf.scene;
-            model.scale.set(3, 3, 3);
-            model.position.set(15, 3, 0);
-            model.traverse(function (child) {
-                if ((child as THREE.Mesh).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-            scene.add(model);
-        },
-        undefined,
-        function (error) {
-            console.error('An error happened while loading the reactor model:', error);
-        }
-    );
-
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
