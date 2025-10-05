@@ -326,30 +326,30 @@ export function HabitatExplorer() {
     <div className="relative h-full w-full flex-1">
       <div ref={mountRef} className="absolute inset-0" />
       <div className="absolute top-4 right-4 space-y-2">
-        <Card className="w-40 md:w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
+        <Card className="w-40 lg:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 lg:gap-4 space-y-0 p-3">
                 <Wind className="h-6 w-6 text-muted-foreground"/>
                 <div className="truncate">
-                    <CardTitle className="text-xs md:text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
-                    <div className="text-base md:text-2xl font-bold">{loading ? <Skeleton className="h-6 md:h-8 w-20" /> : `${currentConditions.wind} m/s`}</div>
+                    <CardTitle className="text-xs lg:text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
+                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.wind} m/s`}</div>
                 </div>
             </CardHeader>
         </Card>
-        <Card className="w-40 md:w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
+        <Card className="w-40 lg:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 lg:gap-4 space-y-0 p-3">
                 <Thermometer className="h-6 w-6 text-muted-foreground"/>
                 <div>
-                    <CardTitle className="text-xs md:text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
-                    <div className="text-base md:text-2xl font-bold">{loading ? <Skeleton className="h-6 md:h-8 w-20" /> : `${currentConditions.temperature} °C`}</div>
+                    <CardTitle className="text-xs lg:text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
+                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.temperature} °C`}</div>
                 </div>
             </CardHeader>
         </Card>
-        <Card className="w-40 md:w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
+        <Card className="w-40 lg:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 lg:gap-4 space-y-0 p-3">
                 <Sun className="h-6 w-6 text-muted-foreground"/>
                 <div>
-                    <CardTitle className="text-xs md:text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
-                    <div className="text-base md:text-2xl font-bold">{loading ? <Skeleton className="h-6 md:h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</div>
+                    <CardTitle className="text-xs lg:text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
+                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -445,4 +445,6 @@ export function HabitatExplorer() {
 }
 
     
+    
+
     
