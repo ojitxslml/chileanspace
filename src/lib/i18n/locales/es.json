@@ -332,8 +332,9 @@
     "cam_maintenance_workshop": "Taller de Mantenimiento",
     "cam_exterior_solar": "Exterior - Paneles Solares",
     "cam_gym": "Gimnasio",
-    "cam_rover_bay": "Bahía de Rovers"
+    "cam_rover_bay": "Bahía de Rovers",
+    "cam_recreational_pool": "Piscina Recreativa",
+    "cam_training_pool": "Piscina de Entrenamiento",
+    "cam_social_hub": "Centro Social"
   }
 }
-
-    

@@ -332,8 +332,9 @@
     "cam_maintenance_workshop": "Maintenance Workshop",
     "cam_exterior_solar": "Exterior - Solar Panels",
     "cam_gym": "Gymnasium",
-    "cam_rover_bay": "Rover Bay"
+    "cam_rover_bay": "Rover Bay",
+    "cam_recreational_pool": "Recreational Pool",
+    "cam_training_pool": "Training Pool",
+    "cam_social_hub": "Social Hub"
   }
 }
-
-    

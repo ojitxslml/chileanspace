@@ -36,7 +36,7 @@ export function CameraViewer() {
             <CardTitle>
               {t('camera_viewer.live_feed')}: {selectedCamera.name}
             </CardTitle>
-            <CardDescription>{selectedCamera.location}</CardDescription>
+            <CardDescription>{t(`camera_viewer.${selectedCamera.location}`)}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="relative aspect-video">
@@ -84,7 +84,7 @@ export function CameraViewer() {
                     <div className="flex-1">
                       <h3 className="font-semibold">{camera.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {camera.location}
+                        {t(`camera_viewer.${camera.location}`)}
                       </p>
                     </div>
                      <div
