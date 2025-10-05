@@ -1,13 +1,12 @@
 
 "use client";
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import en from './locales/en.json';
 import es from './locales/es.json';
 
 type Locale = 'en' | 'es';
 
-// Allows for dynamic values in translations, e.g. t('key', { name: 'World' })
 type TranslationVariables = { [key: string]: string | number };
 
 interface LanguageContextType {
@@ -22,6 +21,16 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>('en');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const browserLang = navigator.language.split('-')[0];
+      if (browserLang === 'es') {
+        setLocale('es');
+      }
+    }
+  }, []);
+
 
   const t = (key: string, variables?: TranslationVariables): string => {
     const getTranslation = (lang: Locale, transKey: string): string | undefined => {
