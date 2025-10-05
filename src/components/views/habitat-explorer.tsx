@@ -331,7 +331,7 @@ export function HabitatExplorer() {
                 <Wind className="h-6 w-6 text-muted-foreground"/>
                 <div className="truncate">
                     <CardTitle className="text-sm md:text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
-                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.wind} m/s`}</p>
+                    <div className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.wind} m/s`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -340,7 +340,7 @@ export function HabitatExplorer() {
                 <Thermometer className="h-6 w-6 text-muted-foreground"/>
                 <div>
                     <CardTitle className="text-sm md:text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
-                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.temperature} °C`}</p>
+                    <div className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.temperature} °C`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -349,7 +349,7 @@ export function HabitatExplorer() {
                 <Sun className="h-6 w-6 text-muted-foreground"/>
                 <div>
                     <CardTitle className="text-sm md:text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
-                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</p>
+                    <div className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -444,4 +444,5 @@ export function HabitatExplorer() {
   );
 }
 
+    
     
