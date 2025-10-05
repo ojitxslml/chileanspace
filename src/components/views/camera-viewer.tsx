@@ -30,8 +30,8 @@ export function CameraViewer() {
         </h2>
         <p className="text-muted-foreground">{t('camera_viewer.subtitle')}</p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
-        <Card className="lg:col-span-2 flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1">
+        <Card className="lg:col-span-3 flex flex-col">
           <CardHeader>
             <CardTitle>
               {t('camera_viewer.live_feed')}: {selectedCamera.name}
