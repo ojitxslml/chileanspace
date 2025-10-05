@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   SidebarProvider,
@@ -31,7 +31,7 @@ import { EnergyGeneration } from "@/components/views/energy-generation";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 
-function HabitatContent() {
+export default function HabitatContent() {
   const searchParams = useSearchParams();
   const initialView = searchParams.get("view") || "explorer";
   const [activeView, setActiveView] = useState(initialView);
@@ -95,13 +95,4 @@ function HabitatContent() {
         </SidebarInset>
       </SidebarProvider>
   );
-}
-
-
-export default function Home() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <HabitatContent />
-    </Suspense>
-  )
 }
