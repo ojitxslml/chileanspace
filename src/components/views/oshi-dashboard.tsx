@@ -124,7 +124,7 @@ export function OshiDashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <ScrollArea className="flex-1 h-[calc(4*88px)]">
+            <ScrollArea className="flex-1 h-[432px]">
               <div className="space-y-2 p-2">
                 {filteredCrew.map((crew) => (
                   <div
