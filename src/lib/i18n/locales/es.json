@@ -120,7 +120,13 @@
     "consumption_greenhouse": "Invernadero",
     "consumption_eclss": "ECLSS",
     "consumption_storage": "Almacén",
-    "chart_consumption": "Consumo"
+    "chart_consumption": "Consumo",
+    "month_jan": "Ene",
+    "month_feb": "Feb",
+    "month_mar": "Mar",
+    "month_apr": "Abr",
+    "month_may": "May",
+    "month_jun": "Jun"
   },
   "explorer": {
     "intensity_mode": "Modo de Intensidad",
@@ -147,7 +153,11 @@
     "piezo_module_details": "<h3>Diseño del Módulo (250-300 mm de lado)</h3><ul><li><strong>A) Película EDS Anti-Polvo/Hielo:</strong> Una capa superior con Sistema de Eliminación de Polvo electrodinámico para autolimpieza.</li><li><strong>B) Material Piezoeléctrico:</strong> Película de PVDF-TrFE o parches de PZT (Titanato Zirconato de Plomo) encapsulados que convierten la presión y vibración en electricidad.</li><li><strong>C) Sustrato:</strong> Base de GFRP (Polímero Reforzado con Fibra de Vidrio) o un compuesto impreso de Nylon y basalto.</li><li><strong>D) Electrónica Integrada:</strong> Incluye un ASIC (Circuito Integrado de Aplicación Específica), un rectificador de corriente y un supercondensador para almacenamiento temporal de energía.</li><li><strong>E) Placa Trasera:</strong> Equipada con clips de bayoneta para una instalación y mantenimiento rápidos (hot-swap).</li></ul><h3>Rendimiento y Especificaciones</h3><ul><li><strong>Producción Esperada:</strong> 1–20 mW/m². Su uso primario es para sensado de impacto, pero contribuye a la micro-generación de energía.</li><li><strong>Bus de Corriente:</strong> Se conecta a un bus de 12 V DC que recorre la estructura en un anillo.</li><li><strong>Encapsulado:</strong> Protegido con fluoropolímero (FEP/ETFE) resistente a la radiación UV y al polvo.</li></ul>",
     "bom_name": "Lista Rápida de Materiales (BoM)",
     "bom_desc": "Un resumen de los materiales primarios utilizados en la construcción del hábitat.",
-    "bom_details": "<h3>Muro de la Torre</h3><ul><li><strong>Cascarón impreso:</strong> Geopolímero / Azufre-concreto + Fibra de basalto.</li><li><strong>Aislación:</strong> Aerogel / Fibra de basalto (50–100 mm).</li><li><strong>Cámara técnica:</strong> Espacio de 80–120 mm.</li><li><strong>Liner hermético:</strong> ETFE/Vectran + MLI (Aislamiento Multicapa).</li><li><strong>Panel interior:</strong> Sándwich de Al/CFRP en formato nido de abeja.</li></ul><h3>Base y Entorno</h3><ul><li><strong>Anillo base:</strong> Geopolímero (resistencia f’c 20–40 MPa).</li><li><strong>Juntas:</strong> Silicona fluorada (resistente hasta –120 °C).</li><li><strong>Berma:</strong> Regolito marciano compactado (0.5–1.0 m).</li></ul><h3>Piel de Panal (Módulo Piezoeléctrico)</h3><ul><li><strong>Sustrato:</strong> GFRP / Nylon-basalto.</li><li><strong>Capa activa:</strong> Lámina de PVDF-TrFE o parches de PZT.</li><li><strong>Capa protectora:</strong> Película EDS anti-polvo/hielo.</li><li><strong>Electrónica:</strong> ASIC, rectificador y supercondensador.</li></ul>"
+    "bom_details": "<h3>Muro de la Torre</h3><ul><li><strong>Cascarón impreso:</strong> Geopolímero / Azufre-concreto + Fibra de basalto.</li><li><strong>Aislación:</strong> Aerogel / Fibra de basalto (50–100 mm).</li><li><strong>Cámara técnica:</strong> Espacio de 80–120 mm.</li><li><strong>Liner hermético:</strong> ETFE/Vectran + MLI (Aislamiento Multicapa).</li><li><strong>Panel interior:</strong> Sándwich de Al/CFRP en formato nido de abeja.</li></ul><h3>Base y Entorno</h3><ul><li><strong>Anillo base:</strong> Geopolímero (resistencia f’c 20–40 MPa).</li><li><strong>Juntas:</strong> Silicona fluorada (resistente hasta –120 °C).</li><li><strong>Berma:</strong> Regolito marciano compactado (0.5–1.0 m).</li></ul><h3>Piel de Panal (Módulo Piezoeléctrico)</h3><ul><li><strong>Sustrato:</strong> GFRP / Nylon-basalto.</li><li><strong>Capa activa:</strong> Lámina de PVDF-TrFE o parches de PZT.</li><li><strong>Capa protectora:</strong> Película EDS anti-polvo/hielo.</li><li><strong>Electrónica:</strong> ASIC, rectificador y supercondensador.</li></ul>",
+    "image_alt_wall_diagram": "Diagrama de una sección de muro de hábitat espacial.",
+    "image_alt_regolith_berm": "Una berma de tierra rojiza rodeando una estructura.",
+    "image_alt_piezo_hex": "Patrón hexagonal de módulos tecnológicos.",
+    "image_alt_circuit_board": "Un pequeño circuito electrónico con chips."
   },
   "oshi": {
     "title": "Dashboard OSHI",
@@ -241,6 +251,12 @@
     "title": "Análisis Sectorial",
     "subtitle": "Estado de infraestructura y condiciones ambientales.",
     "select_sector": "Seleccionar Sector",
+    "sector_command-center_name": "Centro de Comando",
+    "sector_residential_name": "Residencial",
+    "sector_science-lab_name": "Laboratorio Científico",
+    "sector_greenhouses_name": "Invernaderos",
+    "sector_eclss_name": "ECLSS",
+    "sector_storage_name": "Almacenamiento",
     "general_status_title": "Estado General: {sectorName}",
     "activity_level": "Nivel de Actividad",
     "crew_condition": "Condición del Personal",
@@ -270,7 +286,31 @@
     "vibrations_none": "Ninguna",
     "vibrations_low": "Bajas",
     "vibrations_high": "Altas",
-    "ls_alert": "Alerta"
+    "ls_alert": "Alerta",
+    "event_cm_1": "Señal de enlace ascendente con la Tierra óptima.",
+    "event_cm_2": "Nuevos parámetros de misión recibidos desde el comando.",
+    "event_cm_3": "Diagnósticos del sistema completos. Todo nominal.",
+    "time_2m": "hace 2m",
+    "time_5m": "hace 5m",
+    "time_15m": "hace 15m",
+    "alert_sl_1": "Alto consumo de energía en el espectrómetro.",
+    "maint_sl_1": "Calibrar sensor atmosférico #3.",
+    "event_sl_1": "El experimento #78B muestra datos anómalos.",
+    "event_sl_2": "Análisis de muestra completo para el lote de regolito #42.",
+    "event_sl_3": "Niveles de CO2 ligeramente elevados. Ventilación aumentada.",
+    "time_1m": "hace 1m",
+    "time_8m": "hace 8m",
+    "time_12m": "hace 12m",
+    "event_res_1": "La unidad de reciclaje de agua 2B completó el ciclo.",
+    "time_2h": "hace 2h",
+    "crew_status_rest": "Descansando",
+    "event_gh_1": "Ciclo de polinización automatizado iniciado en la bahía A.",
+    "time_30m": "hace 30m",
+    "alert_eclss_1": "El generador de oxígeno B opera al 110% de su capacidad.",
+    "maint_eclss_1": "Reemplazar filtro de agua primario #1.",
+    "event_eclss_1": "Fluctuación de presión detectada en el tanque principal.",
+    "event_stor_1": "Rover-2 regresó a la bahía para cargarse.",
+    "time_8h": "hace 8h"
   },
   "camera_viewer": {
     "title": "Visor de Cámaras",
@@ -278,8 +318,17 @@
     "live_feed": "Señal en Vivo",
     "select_camera": "Seleccionar Cámara",
     "online": "En Línea",
-    "offline": "Fuera de Línea"
+    "offline": "Fuera de Línea",
+    "cam_main_entrance": "Entrada Principal",
+    "cam_science_lab": "Laboratorio Científico",
+    "cam_greenhouse_a": "Invernadero A",
+    "cam_command_center": "Centro de Comando",
+    "cam_residential_b": "Módulo Residencial B",
+    "cam_storage_area": "Área de Almacenamiento",
+    "cam_launch_pad": "Plataforma de Lanzamiento",
+    "cam_maintenance_workshop": "Taller de Mantenimiento",
+    "cam_exterior_solar": "Exterior - Paneles Solares",
+    "cam_gym": "Gimnasio",
+    "cam_rover_bay": "Bahía de Rovers"
   }
 }
-
-    

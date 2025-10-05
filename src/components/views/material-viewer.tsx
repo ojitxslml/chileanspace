@@ -13,12 +13,13 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { materials, Material } from "@/lib/materials-data";
+import { getMaterialsData, type Material } from "@/lib/materials-data";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export function MaterialViewer() {
   const { t } = useTranslation();
+  const materials = useMemo(() => getMaterialsData(t), [t]);
   const [selectedMaterial, setSelectedMaterial] = useState<Material>(
     materials[0]
   );
@@ -33,7 +34,7 @@ export function MaterialViewer() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle>Construction Materials</CardTitle>
+            <CardTitle>{t('materials.construction_materials')}</CardTitle>
             <CardDescription>
               {t('materials.select_material_desc')}
             </CardDescription>
