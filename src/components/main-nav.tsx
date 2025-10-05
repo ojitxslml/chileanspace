@@ -19,12 +19,14 @@ import {
 
 import { cn } from "@/lib/utils";
 import {
+  Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -62,12 +64,11 @@ export function MainNav({
   ];
 
   return (
-    <div
+    <Sidebar
       className={cn(
-        "group peer hidden text-sidebar-foreground md:block border-r",
+        "border-r",
         className
       )}
-      data-state="expanded"
     >
       <div className="flex h-full min-h-screen flex-col">
         <SidebarHeader>
@@ -119,6 +120,7 @@ export function MainNav({
           </SidebarMenu>
         </SidebarFooter>
       </div>
-    </div>
+      <SidebarRail />
+    </Sidebar>
   );
 }

@@ -63,8 +63,8 @@ function HabitatContent() {
       <SidebarProvider>
         <MainNav activeView={activeView} setActiveView={setActiveView} />
         <SidebarInset>
+          <AppHeader />
           <div className="flex h-screen flex-col animate-fade-in">
-            <AppHeader />
             <main className="flex-1 overflow-auto">{renderActiveView()}</main>
           </div>
           <div className="fixed bottom-4 right-4 z-50">
