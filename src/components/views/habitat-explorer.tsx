@@ -214,27 +214,39 @@ export function HabitatExplorer() {
       function (error) {
           console.error("Error loading reactor.glb: ", error);
       }
-  );
+    );
 
     loader.load(
-        '/solar.glb',
-        function (gltf) {
-            const solarPanelModel = gltf.scene;
-            solarPanelModel.scale.set(2, 2, 2);
-            solarPanelModel.position.set(-12, 0, 5);
-            solarPanelModel.traverse(function (child) {
-                if ((child as THREE.Mesh).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-            scene.add(solarPanelModel);
-        },
-        undefined,
-        function (error) {
-            console.error("Error loading solar.glb: ", error);
-        }
-    );
+      '/solar.glb',
+      function (gltf) {
+          const basePanel = gltf.scene;
+          basePanel.traverse(function (child) {
+              if ((child as THREE.Mesh).isMesh) {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+              }
+          });
+          
+          const panel1 = basePanel.clone();
+          panel1.scale.set(3, 3, 3);
+          panel1.position.set(-12, 0, 5);
+          scene.add(panel1);
+
+          const panel2 = basePanel.clone();
+          panel2.scale.set(3, 3, 3);
+          panel2.position.set(-18, 0, 5);
+          scene.add(panel2);
+
+          const panel3 = basePanel.clone();
+          panel3.scale.set(3, 3, 3);
+          panel3.position.set(-6, 0, 5);
+          scene.add(panel3);
+      },
+      undefined,
+      function (error) {
+          console.error("Error loading solar.glb: ", error);
+      }
+  );
 
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
