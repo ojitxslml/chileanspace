@@ -20,17 +20,18 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const energyProductionChartData = [
-  { month: "January", solar: 186, piezoelectric: 80 },
-  { month: "February", solar: 305, piezoelectric: 200 },
-  { month: "March", solar: 237, piezoelectric: 120 },
-  { month: "April", solar: 73, piezoelectric: 190 },
-  { month: "May", solar: 209, piezoelectric: 130 },
-  { month: "June", solar: 214, piezoelectric: 140 },
+  { month: "January", solar: 186, piezoelectric: 80, nuclear: 150 },
+  { month: "February", solar: 305, piezoelectric: 200, nuclear: 150 },
+  { month: "March", solar: 237, piezoelectric: 120, nuclear: 150 },
+  { month: "April", solar: 73, piezoelectric: 190, nuclear: 150 },
+  { month: "May", solar: 209, piezoelectric: 130, nuclear: 150 },
+  { month: "June", solar: 214, piezoelectric: 140, nuclear: 150 },
 ];
 
 const energyProductionChartConfig = {
   solar: { label: "Solar", color: "hsl(var(--chart-1))" },
   piezoelectric: { label: "Piezoelectric", color: "hsl(var(--chart-2))" },
+  nuclear: { label: "Nuclear", color: "hsl(var(--chart-4))" },
 };
 
 const energyConsumptionChartData = [
@@ -67,7 +68,7 @@ export function EnergyGeneration() {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45.2 kWe</div>
+            <div className="text-2xl font-bold">58.2 kWe</div>
             <p className="text-xs text-muted-foreground">
               {t('energy.output_stat')}
             </p>
@@ -101,12 +102,16 @@ export function EnergyGeneration() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('energy.battery_storage')}</CardTitle>
-            <BatteryFull className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              {t('energy.nuclear_status')}
+            </CardTitle>
+            <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">78%</div>
-            <p className="text-xs text-muted-foreground">{t('energy.battery_time_full')}</p>
+            <div className="text-2xl font-bold">Stable</div>
+            <p className="text-xs text-muted-foreground">
+              {t('energy.nuclear_output')}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -141,12 +146,9 @@ export function EnergyGeneration() {
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Bar dataKey="solar" fill="var(--color-solar)" radius={4} />
-                <Bar
-                  dataKey="piezoelectric"
-                  fill="var(--color-piezoelectric)"
-                  radius={4}
-                />
+                <Bar dataKey="solar" fill="var(--color-solar)" radius={4} stackId="a" />
+                <Bar dataKey="piezoelectric" fill="var(--color-piezoelectric)" radius={4} stackId="a" />
+                <Bar dataKey="nuclear" fill="var(--color-nuclear)" radius={4} stackId="a" />
               </BarChart>
             </ChartContainer>
           </CardContent>

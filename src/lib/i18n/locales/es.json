@@ -94,9 +94,11 @@
     "battery_storage": "Almacenamiento en Baterías",
     "battery_time_full": "Tiempo para carga completa: 3 horas",
     "production_title": "Producción de Energía (Últimos 6 Meses)",
-    "production_desc": "Producción Solar vs. Piezoeléctrica",
+    "production_desc": "Producción Solar, Piezoeléctrica y Nuclear",
     "consumption_title": "Consumo de Energía por Sector",
-    "consumption_desc": "Consumo de energía actual por sector del hábitat."
+    "consumption_desc": "Consumo de energía actual por sector del hábitat.",
+    "nuclear_status": "Estado del Reactor Nuclear",
+    "nuclear_output": "13 kWe @ 85% de capacidad"
   },
   "explorer": {
     "intensity_mode": "Modo de Intensidad",

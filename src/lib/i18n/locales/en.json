@@ -94,9 +94,11 @@
     "battery_storage": "Battery Storage",
     "battery_time_full": "Time to full: 3 hours",
     "production_title": "Energy Production (Last 6 Months)",
-    "production_desc": "Solar vs. Piezoelectric Output",
+    "production_desc": "Solar, Piezoelectric, and Nuclear Output",
     "consumption_title": "Energy Consumption by Sector",
-    "consumption_desc": "Current power draw per habitat sector."
+    "consumption_desc": "Current power draw per habitat sector.",
+    "nuclear_status": "Nuclear Reactor Status",
+    "nuclear_output": "13 kWe @ 85% capacity"
   },
   "explorer": {
     "intensity_mode": "Intensity Mode",
