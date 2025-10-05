@@ -38,24 +38,26 @@ export function CameraViewer() {
             </CardTitle>
             <CardDescription>{selectedCamera.location}</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1 relative">
-            <Image
-              src={selectedCamera.imageUrl}
-              alt={`View from ${selectedCamera.name}`}
-              fill
-              className="object-cover rounded-md border"
-              data-ai-hint={selectedCamera.imageHint}
-            />
-            <Badge
-              className={cn(
-                "absolute top-2 left-2",
-                selectedCamera.status === "Online"
-                  ? "bg-green-500/80 text-white"
-                  : "bg-red-500/80 text-white"
-              )}
-            >
-              {selectedCamera.status === "Online" ? t('camera_viewer.online') : t('camera_viewer.offline')}
-            </Badge>
+          <CardContent>
+            <div className="relative aspect-video">
+              <Image
+                src={selectedCamera.imageUrl}
+                alt={`View from ${selectedCamera.name}`}
+                fill
+                className="object-cover rounded-md border"
+                data-ai-hint={selectedCamera.imageHint}
+              />
+              <Badge
+                className={cn(
+                  "absolute top-2 left-2",
+                  selectedCamera.status === "Online"
+                    ? "bg-green-500/80 text-white"
+                    : "bg-red-500/80 text-white"
+                )}
+              >
+                {selectedCamera.status === "Online" ? t('camera_viewer.online') : t('camera_viewer.offline')}
+              </Badge>
+            </div>
           </CardContent>
         </Card>
         <Card className="lg:col-span-1 flex flex-col">
