@@ -82,17 +82,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-@layer utilities {
-  @keyframes zoom-pan {
-    0% {
-      transform: scale(1) translateX(0);
-    }
-    50% {
-      transform: scale(1.15) translateX(5%);
-    }
-    100% {
-      transform: scale(1) translateX(0);
-    }
-  }
-}
