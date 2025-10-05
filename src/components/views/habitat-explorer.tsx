@@ -216,6 +216,26 @@ export function HabitatExplorer() {
       }
   );
 
+    loader.load(
+        '/solar.glb',
+        function (gltf) {
+            const solarPanelModel = gltf.scene;
+            solarPanelModel.scale.set(2, 2, 2);
+            solarPanelModel.position.set(-12, 0, 5);
+            solarPanelModel.traverse(function (child) {
+                if ((child as THREE.Mesh).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            scene.add(solarPanelModel);
+        },
+        undefined,
+        function (error) {
+            console.error("Error loading solar.glb: ", error);
+        }
+    );
+
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -439,5 +459,3 @@ export function HabitatExplorer() {
     </div>
   );
 }
-
-    
