@@ -30,12 +30,12 @@ import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 
 const energyChartData = [
-  { month: "January", solar: 186, piezoelectric: 80 },
-  { month: "February", solar: 305, piezoelectric: 200 },
-  { month: "March", solar: 237, piezoelectric: 120 },
-  { month: "April", solar: 73, piezoelectric: 190 },
-  { month: "May", solar: 209, piezoelectric: 130 },
-  { month: "June", solar: 214, piezoelectric: 140 },
+  { month: "January", solar: 186, piezoelectric: 80, nuclear: 350 },
+  { month: "February", solar: 305, piezoelectric: 200, nuclear: 400 },
+  { month: "March", solar: 237, piezoelectric: 120, nuclear: 370 },
+  { month: "April", solar: 73, piezoelectric: 190, nuclear: 300 },
+  { month: "May", solar: 209, piezoelectric: 130, nuclear: 380 },
+  { month: "June", solar: 214, piezoelectric: 140, nuclear: 390 },
 ];
 
 const energyChartConfig = {
@@ -46,6 +46,10 @@ const energyChartConfig = {
   piezoelectric: {
     label: "Piezoelectric",
     color: "hsl(var(--chart-2))",
+  },
+  nuclear: {
+    label: "Nuclear",
+    color: "hsl(var(--chart-4))",
   },
 };
 
@@ -341,11 +345,19 @@ export function Dashboard() {
                   dataKey="solar"
                   fill="var(--color-solar)"
                   radius={4}
+                  stackId="a"
                 />
                  <Bar
                   dataKey="piezoelectric"
                   fill="var(--color-piezoelectric)"
                   radius={4}
+                  stackId="a"
+                />
+                <Bar
+                  dataKey="nuclear"
+                  fill="var(--color-nuclear)"
+                  radius={4}
+                  stackId="a"
                 />
               </BarChart>
             </ChartContainer>
@@ -512,3 +524,5 @@ export function Dashboard() {
     </div>
   )
 }
+
+    
