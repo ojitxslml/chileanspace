@@ -11,3 +11,15 @@ export const WeatherDataPointSchema = z.object({
 export type WeatherDataPoint = z.infer<typeof WeatherDataPointSchema>;
 
 export const WeatherResponseSchema = z.array(WeatherDataPointSchema);
+
+
+export const TemperatureDataPointSchema = z.object({
+  hour: z.string(),
+  temp2m: z.number(),
+  temp20m: z.number(),
+  temp100m: z.number(),
+});
+
+export type TemperatureDataPoint = z.infer<typeof TemperatureDataPointSchema>;
+
+export const TemperatureResponseSchema = z.array(TemperatureDataPointSchema);

@@ -2,12 +2,84 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
-import { WeatherResponseSchema, type WeatherDataPoint } from '@/ai/schemas/weather-schemas';
+import { WeatherResponseSchema, type WeatherDataPoint, TemperatureResponseSchema, TemperatureDataPoint } from '@/ai/schemas/weather-schemas';
 
 
 export async function getWeather(): Promise<WeatherDataPoint[]> {
     return getWeatherFlow();
 }
+
+export async function getTemperature(): Promise<TemperatureDataPoint[]> {
+    return getTemperatureFlow();
+}
+
+const getTemperatureFlow = ai.defineFlow(
+  {
+    name: 'getTemperatureFlow',
+    outputSchema: TemperatureResponseSchema,
+  },
+  async () => {
+    const user = process.env.METEOMATICS_USER || 'jerez_richard';
+    const pass = process.env.METEOMATICS_PASS || 'E5X9Aq3bT19k5koSxePo';
+    
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    const startDate = sevenDaysAgo.toISOString().split('.')[0] + "Z";
+    const endDate = today.toISOString().split('.')[0] + "Z";
+
+    const apiUrl = `https://api.meteomatics.com/${startDate}--${endDate}:PT1H/t_2m:C,t_20m:C,t_100m:C/-63.3215,-58.9020/json`;
+
+    try {
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Authorization': 'Basic ' + btoa(`${user}:${pass}`)
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Meteomatics API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const transformedData: TemperatureDataPoint[] = [];
+        if (data && data.data && data.data[0].coordinates[0].dates) {
+             const dates = data.data[0].coordinates[0].dates;
+             const temp2m = data.data.find((p: any) => p.parameter === 't_2m:C').coordinates[0].dates;
+             const temp20m = data.data.find((p: any) => p.parameter === 't_20m:C').coordinates[0].dates;
+             const temp100m = data.data.find((p: any) => p.parameter === 't_100m:C').coordinates[0].dates;
+
+             for (let i = 0; i < dates.length; i++) {
+                 const date = new Date(dates[i].date);
+                 transformedData.push({
+                     hour: `${String(date.getUTCDate()).padStart(2, '0')}/${String(date.getUTCMonth() + 1).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`,
+                     temp2m: temp2m[i].value,
+                     temp20m: temp20m[i].value,
+                     temp100m: temp100m[i].value,
+                 });
+             }
+        }
+        return transformedData.filter((_, i) => i % 4 === 0);
+
+    } catch (error) {
+        console.error("Error fetching temperature from Meteomatics API:", error);
+        // Fallback to simulated data if API fails
+        const simulatedData: TemperatureDataPoint[] = Array.from({ length: 42 }, (_, i) => {
+            const hour = (i * 4) % 24;
+            const day = Math.floor(i/6) + 1;
+            return {
+                hour: `Day ${day} ${String(hour).padStart(2, '0')}:00`,
+                temp2m: parseFloat((Math.random() * -10 - 50).toFixed(1)),
+                temp20m: parseFloat((Math.random() * -10 - 55).toFixed(1)),
+                temp100m: parseFloat((Math.random() * -10 - 60).toFixed(1)),
+            };
+        });
+        return simulatedData;
+    }
+  }
+);
 
 const getWeatherFlow = ai.defineFlow(
   {

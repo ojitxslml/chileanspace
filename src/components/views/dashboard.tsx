@@ -22,9 +22,9 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { getWeather } from "@/ai/flows/weather-flow"
+import { getWeather, getTemperature } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
-import { WeatherDataPoint } from "@/ai/schemas/weather-schemas"
+import { WeatherDataPoint, TemperatureDataPoint } from "@/ai/schemas/weather-schemas"
 import { sectorData, crewData } from "@/lib/sector-data";
 
 
@@ -52,6 +52,8 @@ export function Dashboard() {
   const [selectedSectorId, setSelectedSectorId] = useState("all");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loadingWindData, setLoadingWindData] = useState(true);
+  const [temperatureData, setTemperatureData] = useState<TemperatureDataPoint[]>([]);
+  const [loadingTemperatureData, setLoadingTemperatureData] = useState(true);
 
   const filteredCrew = useMemo(() => {
     if (selectedSectorId === "all") return crewData;
@@ -75,6 +77,18 @@ export function Dashboard() {
   }
 
   useEffect(() => {
+    async function fetchTemperature() {
+      try {
+        setLoadingTemperatureData(true);
+        const data = await getTemperature();
+        setTemperatureData(data);
+      } catch (error) {
+        console.error("Failed to fetch temperature data:", error);
+      } finally {
+        setLoadingTemperatureData(false);
+      }
+    }
+
     async function fetchWeather() {
       try {
         setLoadingWindData(true);
@@ -86,7 +100,9 @@ export function Dashboard() {
         setLoadingWindData(false);
       }
     }
+
     fetchWeather();
+    fetchTemperature();
   }, []);
 
   return (
@@ -371,6 +387,40 @@ export function Dashboard() {
               <Line type="monotone" dataKey="speed2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="speed10m" name="10m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
               <Line type="monotone" dataKey="speed100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+            </LineChart>
+          </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Temperature (Last 7 Days)</CardTitle>
+          <CardDescription>Temperature at different altitudes from the surface.</CardDescription>
+        </CardHeader>
+        <CardContent>
+           {loadingTemperatureData ? (
+            <div className="h-[300px] flex items-center justify-center">
+              <div className="space-y-4 w-full p-4">
+                <Skeleton className="h-8 w-1/4" />
+                <Skeleton className="h-48 w-full" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                </div>
+              </div>
+            </div>
+          ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={temperatureData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
+              <YAxis label={{ value: '°C', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="temp2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="temp20m" name="20m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="temp100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
           )}
