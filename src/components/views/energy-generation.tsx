@@ -20,12 +20,12 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const energyProductionChartData = [
-  { month: "January", solar: 186, piezoelectric: 80, nuclear: 150 },
-  { month: "February", solar: 305, piezoelectric: 200, nuclear: 150 },
-  { month: "March", solar: 237, piezoelectric: 120, nuclear: 150 },
-  { month: "April", solar: 73, piezoelectric: 190, nuclear: 150 },
-  { month: "May", solar: 209, piezoelectric: 130, nuclear: 150 },
-  { month: "June", solar: 214, piezoelectric: 140, nuclear: 150 },
+  { month: "January", solar: 186, piezoelectric: 40, nuclear: 350 },
+  { month: "February", solar: 305, piezoelectric: 60, nuclear: 350 },
+  { month: "March", solar: 237, piezoelectric: 50, nuclear: 350 },
+  { month: "April", solar: 173, piezoelectric: 80, nuclear: 350 },
+  { month: "May", solar: 209, piezoelectric: 55, nuclear: 350 },
+  { month: "June", solar: 214, piezoelectric: 65, nuclear: 350 },
 ];
 
 const energyProductionChartConfig = {
