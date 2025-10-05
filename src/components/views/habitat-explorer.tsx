@@ -127,7 +127,7 @@ export function HabitatExplorer() {
         function (gltf) {
             const model = gltf.scene;
             model.scale.set(5, 5, 5); // Adjust scale if necessary
-            model.position.y = 0; // Adjust position if necessary
+            model.position.y = 1; // Adjust position if necessary
             model.traverse(function (child) {
                 if ((child as THREE.Mesh).isMesh) {
                     child.castShadow = true;
@@ -304,3 +304,5 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
