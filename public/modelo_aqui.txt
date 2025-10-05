@@ -1,1 +1,0 @@
-Por favor, elimina este archivo y coloca tu modelo .glb en esta carpeta 'public'. Luego, dime el nombre exacto del archivo.

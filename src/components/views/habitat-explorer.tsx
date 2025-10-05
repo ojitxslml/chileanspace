@@ -4,6 +4,7 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -85,9 +86,9 @@ export function HabitatExplorer() {
     controls.maxPolarAngle = Math.PI / 2 - 0.05;
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffae8b, 1.5);
+    const directionalLight = new THREE.DirectionalLight(0xffae8b, 2);
     directionalLight.position.set(10, 20, 5);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048;
@@ -119,33 +120,30 @@ export function HabitatExplorer() {
         scene.add(rock);
     }
     
-    const habitatGroup = new THREE.Group();
-    scene.add(habitatGroup);
+    // Load custom model
+    const loader = new GLTFLoader();
+    loader.load(
+        '/white_mesh.glb',
+        function (gltf) {
+            const model = gltf.scene;
+            model.scale.set(5, 5, 5); // Adjust scale if necessary
+            model.position.y = 0; // Adjust position if necessary
+            model.traverse(function (child) {
+                if ((child as THREE.Mesh).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            scene.add(model);
+        },
+        undefined, // onProgress callback (optional)
+        function (error) {
+            console.error(error);
+        }
+    );
 
-    const mainMaterial = new THREE.MeshStandardMaterial({ color: 0x8b5e34 });
 
-    // Central Hub
-    const hubGeometry = new THREE.CylinderGeometry(4, 4, 1.5, 64);
-    const hub = new THREE.Mesh(hubGeometry, mainMaterial);
-    hub.position.y = 0.75;
-    hub.castShadow = true;
-    hub.receiveShadow = true;
-    habitatGroup.add(hub);
-
-    const hubRoofGeometry = new THREE.CylinderGeometry(4, 4, 0.2, 64);
-    const hubRoofMaterial = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.5, roughness: 0.5 });
-    const hubRoof = new THREE.Mesh(hubRoofGeometry, hubRoofMaterial);
-    hubRoof.position.y = 1.6;
-    hubRoof.castShadow = true;
-    habitatGroup.add(hubRoof);
-
-    // Towers and Piezoelectric layers
-    const towerRadius = 1.5;
-    const towerHeight = 5;
-    const towerDistance = 10;
-    const towerCount = 6;
-    const towerGeometry = new THREE.CylinderGeometry(towerRadius, towerRadius, towerHeight, 48);
-
+    // Piezoelectric layers (kept for visualization toggle)
     const piezoGroup = new THREE.Group();
     piezoGroup.visible = false;
     scene.add(piezoGroup);
@@ -158,38 +156,23 @@ export function HabitatExplorer() {
         emissive: 0x00ffff,
         emissiveIntensity: 0
     });
+    // This geometry is just a placeholder now, you might want to wrap your actual model parts
+    const towerRadius = 1.5;
+    const towerHeight = 5;
+    const towerDistance = 10;
+    const towerCount = 6;
     const piezoGeometry = new THREE.CylinderGeometry(towerRadius + 0.05, towerRadius + 0.05, towerHeight, 48);
-
 
     for (let i = 0; i < towerCount; i++) {
         const angle = (i / towerCount) * Math.PI * 2;
         const x = Math.cos(angle) * towerDistance;
         const z = Math.sin(angle) * towerDistance;
 
-        const tower = new THREE.Mesh(towerGeometry, mainMaterial);
-        tower.position.set(x, towerHeight / 2, z);
-        tower.castShadow = true;
-        tower.receiveShadow = true;
-        habitatGroup.add(tower);
-
         const piezoLayer = new THREE.Mesh(piezoGeometry, piezoMaterial);
-        piezoLayer.position.copy(tower.position);
+        piezoLayer.position.set(x, towerHeight/2, z);
         piezoGroup.add(piezoLayer);
     }
     
-    // Greenhouses
-    const greenhouseGeo = new THREE.BoxGeometry(4, 3, 6);
-    const greenhouseMat = new THREE.MeshStandardMaterial({ color: 0x90a955 });
-    const greenhouse1 = new THREE.Mesh(greenhouseGeo, greenhouseMat);
-    greenhouse1.position.set(0, 1.5, -10);
-    greenhouse1.castShadow = true;
-    habitatGroup.add(greenhouse1);
-
-    const greenhouse2 = new THREE.Mesh(greenhouseGeo, greenhouseMat);
-    greenhouse2.position.set(0, 1.5, 10);
-    greenhouse2.castShadow = true;
-    habitatGroup.add(greenhouse2);
-
     // Storm particles
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
@@ -321,5 +304,3 @@ export function HabitatExplorer() {
     </div>
   );
 }
-
-  
