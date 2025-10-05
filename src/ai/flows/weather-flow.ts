@@ -22,8 +22,8 @@ const getWeatherFlow = ai.defineFlow(
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 7);
     
-    const startDate = sevenDaysAgo.toISOString();
-    const endDate = today.toISOString();
+    const startDate = sevenDaysAgo.toISOString().split('.')[0] + "Z";
+    const endDate = today.toISOString().split('.')[0] + "Z";
 
     const apiUrl = `https://api.meteomatics.com/${startDate}--${endDate}:PT1H/wind_speed_2m:ms,wind_speed_10m:ms,wind_speed_100m:ms/-63.3215,-58.9020/json`;
 
