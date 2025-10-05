@@ -38,7 +38,7 @@ const getRadiationFlow = ai.defineFlow(
       try {
           const response = await fetch(apiUrl, {
               headers: {
-                  'Authorization': 'Basic ' + btoa(`${user}:${pass}`)
+                  'Authorization': 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
               }
           });
   
@@ -109,7 +109,7 @@ const getTemperatureFlow = ai.defineFlow(
     try {
         const response = await fetch(apiUrl, {
             headers: {
-                'Authorization': 'Basic ' + btoa(`${user}:${pass}`)
+                'Authorization': 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
             }
         });
 
@@ -177,7 +177,7 @@ const getWeatherFlow = ai.defineFlow(
     try {
         const response = await fetch(apiUrl, {
             headers: {
-                'Authorization': 'Basic ' + btoa(`${user}:${pass}`)
+                'Authorization': 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
             }
         });
 
@@ -223,3 +223,5 @@ const getWeatherFlow = ai.defineFlow(
     }
   }
 );
+
+    
