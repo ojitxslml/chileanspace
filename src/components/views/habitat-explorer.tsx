@@ -23,7 +23,7 @@ export function HabitatExplorer() {
   const stormParticlesRef = useRef<THREE.Points>();
   const stormIntensityValue = useRef(0);
 
-  const [mode, setMode] = useState<"simulated" | "live">("simulated");
+  const [mode, setMode] = useState<"simulated" | "live">("live");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -309,5 +309,7 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
 
     
