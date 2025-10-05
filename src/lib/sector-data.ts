@@ -46,15 +46,15 @@ export const getSectorAnalysisData = (t: TranslatorAnalysis) => ({
     activityLevel: 85,
     crewCondition: 92,
     energy: {
-      consumption: 12.5,
-      capacity: 15,
+      consumption: 120,
+      capacity: 150,
       internalSourcePct: 78,
       systemTemp: 45,
       thermalEfficiency: 99.1,
       alerts: [],
     },
     environment: {
-      lighting: 450,
+      lighting: 800,
       emergencyLights: "OK",
       temperature: 21.5,
       airQuality: 99.8,
