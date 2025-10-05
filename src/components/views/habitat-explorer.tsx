@@ -200,12 +200,12 @@ export function HabitatExplorer() {
       function (gltf) {
           const reactorModel = gltf.scene;
           reactorModel.scale.set(2, 2, 2);
-          reactorModel.position.set(10, 1, 0); 
+          reactorModel.position.set(6, 1, 0); 
           reactorModel.traverse(function (child) {
               if ((child as THREE.Mesh).isMesh) {
                   child.castShadow = true;
                   child.receiveShadow = true;
-                  (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ color: 0xCCCCCC });
+                  (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ color: 0xE5E5E5 });
               }
           });
           scene.add(reactorModel);
@@ -439,6 +439,8 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
 
     
 
