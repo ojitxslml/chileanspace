@@ -35,14 +35,14 @@ export function Dashboard() {
   const crewData = getCrewData(t);
 
   const energyChartData = [
-    { month: t('energy.month_jan'), solar: 186, piezoelectric: 80, nuclear: 350 },
-    { month: t('energy.month_feb'), solar: 305, piezoelectric: 200, nuclear: 400 },
-    { month: t('energy.month_mar'), solar: 237, piezoelectric: 120, nuclear: 370 },
-    { month: t('energy.month_apr'), solar: 73, piezoelectric: 190, nuclear: 300 },
-    { month: t('energy.month_may'), solar: 209, piezoelectric: 130, nuclear: 380 },
-    { month: t('energy.month_jun'), solar: 214, piezoelectric: 140, nuclear: 390 },
+    { month: t('energy.month_apr'), solar: 73, piezoelectric: 190, nuclear: 350 },
+    { month: t('energy.month_may'), solar: 209, piezoelectric: 130, nuclear: 350 },
+    { month: t('energy.month_jun'), solar: 214, piezoelectric: 140, nuclear: 350 },
+    { month: t('energy.month_jul'), solar: 250, piezoelectric: 150, nuclear: 350 },
+    { month: t('energy.month_aug'), solar: 280, piezoelectric: 160, nuclear: 350 },
+    { month: t('energy.month_sep'), solar: 310, piezoelectric: 110, nuclear: 350 },
   ];
-
+  
   const energyChartConfig = {
     solar: {
       label: t('dashboard.chart_solar'),
@@ -172,14 +172,14 @@ export function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('dashboard.total_energy_output')}
+              {t('dashboard.total_energy_demand')}
             </CardTitle>
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45.2 kWe</div>
+            <div className="text-2xl font-bold">130 kW</div>
             <p className="text-xs text-muted-foreground">
-              {t('dashboard.energy_stat')}
+              {t('dashboard.demand_stat')}
             </p>
           </CardContent>
         </Card>
@@ -535,5 +535,7 @@ export function Dashboard() {
     </div>
   )
 }
+
+    
 
     

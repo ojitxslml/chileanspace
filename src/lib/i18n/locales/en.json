@@ -37,8 +37,8 @@
   },
   "dashboard": {
     "title": "Habitability Dashboard",
-    "total_energy_output": "Total Energy Output",
-    "energy_stat": "+20.1% from last hour",
+    "total_energy_demand": "Total Energy Demand",
+    "demand_stat": "Current operational load",
     "crew_members": "Crew Members",
     "crew_stat": "All systems nominal",
     "water_reserves": "Water Reserves",
@@ -126,7 +126,10 @@
     "month_mar": "Mar",
     "month_apr": "Apr",
     "month_may": "May",
-    "month_jun": "Jun"
+    "month_jun": "Jun",
+    "month_jul": "Jul",
+    "month_aug": "Aug",
+    "month_sep": "Sep"
   },
   "explorer": {
     "intensity_mode": "Intensity Mode",
@@ -332,3 +335,5 @@
     "cam_rover_bay": "Rover Bay"
   }
 }
+
+    
