@@ -200,7 +200,7 @@ export function HabitatExplorer() {
         function (gltf) {
             const model = gltf.scene;
             model.scale.set(3, 3, 3);
-            model.position.set(15, 1, 0);
+            model.position.set(15, 3, 0);
             model.traverse(function (child) {
                 if ((child as THREE.Mesh).isMesh) {
                     child.castShadow = true;
