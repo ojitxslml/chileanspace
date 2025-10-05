@@ -25,36 +25,39 @@ import { Separator } from "@/components/ui/separator"
 import { getWeather, getTemperature, getRadiation } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
 import { WeatherDataPoint, TemperatureDataPoint, RadiationDataPoint } from "@/ai/schemas/weather-schemas"
-import { sectorData, crewData } from "@/lib/sector-data";
+import { getSectorData, getCrewData } from "@/lib/sector-data";
 import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 
-const energyChartData = [
-  { month: "January", solar: 186, piezoelectric: 80, nuclear: 350 },
-  { month: "February", solar: 305, piezoelectric: 200, nuclear: 400 },
-  { month: "March", solar: 237, piezoelectric: 120, nuclear: 370 },
-  { month: "April", solar: 73, piezoelectric: 190, nuclear: 300 },
-  { month: "May", solar: 209, piezoelectric: 130, nuclear: 380 },
-  { month: "June", solar: 214, piezoelectric: 140, nuclear: 390 },
-];
-
-const energyChartConfig = {
-  solar: {
-    label: "Solar",
-    color: "hsl(var(--chart-1))",
-  },
-  piezoelectric: {
-    label: "Piezoelectric",
-    color: "hsl(var(--chart-2))",
-  },
-  nuclear: {
-    label: "Nuclear",
-    color: "hsl(var(--chart-4))",
-  },
-};
-
 export function Dashboard() {
   const { t } = useTranslation();
+  const sectorData = getSectorData(t);
+  const crewData = getCrewData(t);
+
+  const energyChartData = [
+    { month: t('energy.month_jan'), solar: 186, piezoelectric: 80, nuclear: 350 },
+    { month: t('energy.month_feb'), solar: 305, piezoelectric: 200, nuclear: 400 },
+    { month: t('energy.month_mar'), solar: 237, piezoelectric: 120, nuclear: 370 },
+    { month: t('energy.month_apr'), solar: 73, piezoelectric: 190, nuclear: 300 },
+    { month: t('energy.month_may'), solar: 209, piezoelectric: 130, nuclear: 380 },
+    { month: t('energy.month_jun'), solar: 214, piezoelectric: 140, nuclear: 390 },
+  ];
+
+  const energyChartConfig = {
+    solar: {
+      label: t('dashboard.chart_solar'),
+      color: "hsl(var(--chart-1))",
+    },
+    piezoelectric: {
+      label: t('dashboard.chart_piezoelectric'),
+      color: "hsl(var(--chart-2))",
+    },
+    nuclear: {
+      label: t('dashboard.chart_nuclear'),
+      color: "hsl(var(--chart-4))",
+    },
+  };
+
   const [selectedSectorId, setSelectedSectorId] = useState("all");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loadingWindData, setLoadingWindData] = useState(true);
@@ -66,19 +69,19 @@ export function Dashboard() {
   const filteredCrew = useMemo(() => {
     if (selectedSectorId === "all") return crewData;
     return crewData.filter(c => c.sector === selectedSectorId);
-  }, [selectedSectorId]);
+  }, [selectedSectorId, crewData]);
 
   const [selectedCrewMemberId, setSelectedCrewMemberId] = useState("");
 
   useEffect(() => {
-    if (filteredCrew.length > 0) {
+    if (filteredCrew.length > 0 && !filteredCrew.find(c => c.id === selectedCrewMemberId)) {
       setSelectedCrewMemberId(filteredCrew[0].id);
     }
-  }, [filteredCrew]);
+  }, [filteredCrew, selectedCrewMemberId]);
 
   const selectedCrewMember = useMemo(() => {
     return crewData.find(m => m.id === selectedCrewMemberId) || null;
-  }, [selectedCrewMemberId]);
+  }, [selectedCrewMemberId, crewData]);
   
   const currentConditions = useMemo(() => {
     const latestTemp = temperatureData.length > 0 ? temperatureData[temperatureData.length - 1].temp2m : -63;
@@ -92,16 +95,16 @@ export function Dashboard() {
       radiationStatus = "Moderate";
     }
     
-    const windAlert = latestWind > 20 ? `High wind speed detected: ${latestWind.toFixed(1)} m/s` : null;
+    const windAlert = latestWind > 20 ? t('dashboard.wind_alert', { windSpeed: latestWind.toFixed(1) }) : null;
 
     return {
       temperature: latestTemp.toFixed(1),
       pressure: "0.6",
       radiation: radiationStatus,
-      uvIndex: "Extreme", // This remains static as we don't have a UV index API
+      uvIndex: "Extreme", 
       windAlert: windAlert,
     };
-  }, [temperatureData, radiationData, windData]);
+  }, [temperatureData, radiationData, windData, t]);
 
 
   const handleSectorChange = (sectorId: string) => {
@@ -139,7 +142,7 @@ export function Dashboard() {
         const data = await getWeather();
         setWindData(data);
       } catch (error) {
-        console.error("Failed to fetch weather data:", error);
+        console.error("Error fetching from Meteomatics API:", error);
       } finally {
         setLoadingWindData(false);
       }
@@ -149,6 +152,14 @@ export function Dashboard() {
     fetchTemperature();
     fetchRadiation();
   }, []);
+
+  const getRadiationStatusText = (status: "High" | "Moderate" | "Low") => {
+    switch (status) {
+      case 'High': return t('dashboard.radiation_high');
+      case 'Moderate': return t('dashboard.radiation_moderate');
+      case 'Low': return t('dashboard.radiation_low');
+    }
+  }
 
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
@@ -202,7 +213,7 @@ export function Dashboard() {
             <ShieldCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Active</div>
+            <div className="text-2xl font-bold">{t('dashboard.sector_active')}</div>
             <p className="text-xs text-muted-foreground">
               {t('dashboard.eclss_stat')}
             </p>
@@ -242,9 +253,9 @@ export function Dashboard() {
                             <Building className="h-5 w-5 text-muted-foreground" />
                             <span className="font-medium">{sector.name}</span>
                         </div>
-                        <Badge variant={sector.status === "Nominal" ? "default": "secondary"} className={
-                            sector.status === "Nominal" ? "bg-green-500/20 text-green-700 dark:text-green-400 border-green-500/30" : 
-                            sector.status === "Activo" ? "bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-500/30" : 
+                        <Badge variant={sector.status === t('dashboard.sector_nominal') ? "default": "secondary"} className={
+                            sector.status === t('dashboard.sector_nominal') ? "bg-green-500/20 text-green-700 dark:text-green-400 border-green-500/30" : 
+                            sector.status === t('dashboard.sector_active') ? "bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-500/30" : 
                             "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-500/30"
                         }>{sector.status}</Badge>
                     </div>
@@ -329,7 +340,6 @@ export function Dashboard() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <YAxis
                     tickLine={false}
@@ -341,6 +351,7 @@ export function Dashboard() {
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
+                <Legend />
                 <Bar
                   dataKey="solar"
                   fill="var(--color-solar)"
@@ -385,11 +396,11 @@ export function Dashboard() {
                           <span>{t('dashboard.radiation')}: <Badge variant="outline" className={cn(
                             currentConditions.radiation === "High" && "text-yellow-500 border-yellow-500/50",
                             currentConditions.radiation === "Moderate" && "text-orange-500 border-orange-500/50",
-                          )}>{currentConditions.radiation}</Badge></span>
+                          )}>{getRadiationStatusText(currentConditions.radiation)}</Badge></span>
                       </div>
                        <div className="flex items-center gap-2">
                           <Sunrise className="h-4 w-4 text-muted-foreground" />
-                          <span>{t('dashboard.uv_index')}: <Badge variant="outline" className="text-red-500 border-red-500/50">{currentConditions.uvIndex}</Badge></span>
+                          <span>{t('dashboard.uv_index')}: <Badge variant="outline" className="text-red-500 border-red-500/50">{t('dashboard.uv_extreme')}</Badge></span>
                       </div>
                   </div>
               </div>

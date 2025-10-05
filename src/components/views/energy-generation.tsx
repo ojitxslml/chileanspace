@@ -13,45 +13,43 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { BatteryFull, BatteryCharging, Sun, Wind, Zap, Building } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
-
-const energyProductionChartData = [
-  { month: "January", solar: 186, piezoelectric: 40, nuclear: 350 },
-  { month: "February", solar: 305, piezoelectric: 60, nuclear: 350 },
-  { month: "March", solar: 237, piezoelectric: 50, nuclear: 350 },
-  { month: "April", solar: 173, piezoelectric: 80, nuclear: 350 },
-  { month: "May", solar: 209, piezoelectric: 55, nuclear: 350 },
-  { month: "June", solar: 214, piezoelectric: 65, nuclear: 350 },
-];
-
-const energyProductionChartConfig = {
-  solar: { label: "Solar", color: "hsl(var(--chart-1))" },
-  piezoelectric: { label: "Piezoelectric", color: "hsl(var(--chart-2))" },
-  nuclear: { label: "Nuclear", color: "hsl(var(--chart-4))" },
-};
-
-const energyConsumptionChartData = [
-  { name: "Command", consumption: 450 },
-  { name: "Science", consumption: 780 },
-  { name: "Residential", consumption: 600 },
-  { name: "Greenhouse", consumption: 920 },
-  { name: "ECLSS", consumption: 1100 },
-  { name: "Storage", consumption: 150 },
-];
-
-const energyConsumptionChartConfig = {
-    consumption: {
-        label: "Consumption",
-        color: "hsl(var(--chart-3))"
-    }
-}
+import { Zap, Sun, Wind } from "lucide-react";
 
 export function EnergyGeneration() {
   const { t } = useTranslation();
+
+  const energyProductionChartData = [
+    { month: t('energy.month_jan'), solar: 186, piezoelectric: 40, nuclear: 350 },
+    { month: t('energy.month_feb'), solar: 305, piezoelectric: 60, nuclear: 350 },
+    { month: t('energy.month_mar'), solar: 237, piezoelectric: 50, nuclear: 350 },
+    { month: t('energy.month_apr'), solar: 173, piezoelectric: 80, nuclear: 350 },
+    { month: t('energy.month_may'), solar: 209, piezoelectric: 55, nuclear: 350 },
+    { month: t('energy.month_jun'), solar: 214, piezoelectric: 65, nuclear: 350 },
+  ];
+
+  const energyProductionChartConfig = {
+    solar: { label: t('energy.chart_solar'), color: "hsl(var(--chart-1))" },
+    piezoelectric: { label: t('energy.chart_piezoelectric'), color: "hsl(var(--chart-2))" },
+    nuclear: { label: t('energy.chart_nuclear'), color: "hsl(var(--chart-4))" },
+  };
+
+  const energyConsumptionChartData = [
+    { name: t('energy.consumption_command'), consumption: 450 },
+    { name: t('energy.consumption_science'), consumption: 780 },
+    { name: t('energy.consumption_residential'), consumption: 600 },
+    { name: t('energy.consumption_greenhouse'), consumption: 920 },
+    { name: t('energy.consumption_eclss'), consumption: 1100 },
+    { name: t('energy.consumption_storage'), consumption: 150 },
+  ];
+
+  const energyConsumptionChartConfig = {
+    consumption: {
+        label: t('energy.chart_consumption'),
+        color: "hsl(var(--chart-3))"
+    }
+  }
 
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
@@ -82,7 +80,7 @@ export function EnergyGeneration() {
             <Sun className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Optimal</div>
+            <div className="text-2xl font-bold">{t('oshi.status_optimal')}</div>
             <p className="text-xs text-muted-foreground">{t('energy.solar_efficiency')}</p>
           </CardContent>
         </Card>
@@ -94,7 +92,7 @@ export function EnergyGeneration() {
             <Wind className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Active</div>
+            <div className="text-2xl font-bold">{t('dashboard.sector_active')}</div>
             <p className="text-xs text-muted-foreground">
               {t('energy.piezo_generating')}
             </p>
@@ -108,7 +106,7 @@ export function EnergyGeneration() {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Stable</div>
+            <div className="text-2xl font-bold">{t('oshi.status_stable')}</div>
             <p className="text-xs text-muted-foreground">
               {t('energy.nuclear_output')}
             </p>
@@ -127,14 +125,13 @@ export function EnergyGeneration() {
               config={energyProductionChartConfig}
               className="h-[300px] w-full"
             >
-              <BarChart data={energyProductionChartData}>
+              <BarChart data={energyProductionChartData} stackOffset="sign">
                 <CartesianGrid vertical={false} />
                 <XAxis
                   dataKey="month"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <YAxis
                   tickLine={false}
@@ -142,10 +139,11 @@ export function EnergyGeneration() {
                   tickMargin={8}
                   tickFormatter={(value) => `${value} kWe`}
                 />
-                <ChartTooltip
+                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
+                <Legend />
                 <Bar dataKey="solar" fill="var(--color-solar)" radius={4} stackId="a" />
                 <Bar dataKey="piezoelectric" fill="var(--color-piezoelectric)" radius={4} stackId="a" />
                 <Bar dataKey="nuclear" fill="var(--color-nuclear)" radius={4} stackId="a" />
@@ -191,3 +189,5 @@ export function EnergyGeneration() {
     </div>
   );
 }
+
+    

@@ -398,7 +398,7 @@ export function HabitatExplorer() {
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-4">
             <Icons.logo className="h-16 w-16 text-primary animate-pulse-subtle" />
-            <p className="text-foreground">Cargando Escena...</p>
+            <p className="text-foreground">{t('explorer.loading_scene')}</p>
           </div>
         </div>
       )}
@@ -485,3 +485,5 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    

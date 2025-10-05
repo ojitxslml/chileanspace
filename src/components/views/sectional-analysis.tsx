@@ -49,13 +49,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { sectorAnalysisData } from "@/lib/sector-data"
+import { getSectorAnalysisData } from "@/lib/sector-data"
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
-type SectorId = keyof typeof sectorAnalysisData
+type SectorId = keyof ReturnType<typeof getSectorAnalysisData>
 
 export function SectionalAnalysis() {
   const { t } = useTranslation();
+  const sectorAnalysisData = getSectorAnalysisData(t);
+
   const [selectedSector, setSelectedSector] = React.useState<SectorId>("command-center")
   const data = sectorAnalysisData[selectedSector]
 
@@ -90,6 +92,12 @@ export function SectionalAnalysis() {
       {badgeText && <Badge variant={badgeVariant}>{badgeText}</Badge>}
     </div>
   )
+
+  const getBadgeVariant = (label: string) => {
+    if (label === t('analysis.status_nominal')) return 'success';
+    if (label === t('analysis.ls_alert')) return 'destructive';
+    return 'outline';
+  }
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-6 pt-6 bg-background text-foreground">
@@ -204,7 +212,7 @@ export function SectionalAnalysis() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <StatusIndicator icon={ShieldCheck} label={t('analysis.structural_integrity')} value={`${data.infrastructure.integrity}%`} />
-                <StatusIndicator icon={Droplets} label={t('analysis.life_support')} badgeText={data.infrastructure.lifeSupport} badgeVariant={data.infrastructure.lifeSupport === 'Nominal' ? 'success' : 'destructive'} />
+                <StatusIndicator icon={Droplets} label={t('analysis.life_support')} badgeText={data.infrastructure.lifeSupport} badgeVariant={getBadgeVariant(data.infrastructure.lifeSupport)} />
                 <StatusIndicator icon={Vibrate} label={t('analysis.anomalous_vibrations')} badgeText={data.infrastructure.vibrations} />
                 <Card className="bg-muted/50">
                     <CardHeader className="p-3">
@@ -224,3 +232,5 @@ export function SectionalAnalysis() {
     </div>
   )
 }
+
+    

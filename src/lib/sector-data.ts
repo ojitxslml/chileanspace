@@ -1,40 +1,45 @@
-export const sectorData = [
-    { id: "command-center", name: "Centro de Mando", status: "Nominal", color: "bg-green-500" },
-    { id: "residential", name: "Módulos Residenciales", status: "Nominal", color: "bg-green-500" },
-    { id: "science-lab", name: "Laboratorio Científico", status: "Activo", color: "bg-blue-500" },
-    { id: "greenhouses", name: "Invernaderos", status: "Nominal", color: "bg-green-500" },
-    { id: "eclss", name: "Soporte Vital (ECLSS)", status: "Nominal", color: "bg-green-500" },
-    { id: "storage", name: "Almacenamiento", status: "En Espera", color: "bg-yellow-500" },
+
+type Translator = (key: string) => string;
+
+export const getSectorData = (t: Translator) => [
+    { id: "command-center", name: t('analysis.sector_command-center_name'), status: t('dashboard.sector_nominal'), color: "bg-green-500" },
+    { id: "residential", name: t('analysis.sector_residential_name'), status: t('dashboard.sector_nominal'), color: "bg-green-500" },
+    { id: "science-lab", name: t('analysis.sector_science-lab_name'), status: t('dashboard.sector_active'), color: "bg-blue-500" },
+    { id: "greenhouses", name: t('analysis.sector_greenhouses_name'), status: t('dashboard.sector_nominal'), color: "bg-green-500" },
+    { id: "eclss", name: t('analysis.sector_eclss_name'), status: t('dashboard.sector_nominal'), color: "bg-green-500" },
+    { id: "storage", name: t('analysis.sector_storage_name'), status: t('dashboard.sector_standby'), color: "bg-yellow-500" },
 ];
 
-export const crewData = [
-  { id: 'cmdr-alex', name: 'Cmdr. Alex Reyes', role: 'Comandante de Misión', vitals: { hr: 68, spo2: 99, temp: 36.8 }, sector: 'command-center' },
-  { id: 'dr-lena', name: 'Dra. Lena Petrova', role: 'Oficial Científico', vitals: { hr: 72, spo2: 98, temp: 37.0 }, sector: 'science-lab' },
-  { id: 'ken-sato', name: 'Ken Sato', role: 'Ingeniero de Sistemas', vitals: { hr: 75, spo2: 99, temp: 36.9 }, sector: 'eclss' },
-  { id: 'maya-singh', name: 'Maya Singh', role: 'Especialista de Hábitat', vitals: { hr: 65, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'javier-rodriguez', name: 'Javier Rodriguez', role: 'Geólogo', vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'chen-liang', name: 'Chen Liang', role: 'Médico', vitals: { hr: 66, spo2: 99, temp: 36.8 }, sector: 'residential' },
-  { id: 'olivia-garcia', name: 'Olivia Garcia', role: 'Técnico de Robótica', vitals: { hr: 78, spo2: 97, temp: 37.1 }, sector: 'eclss' },
-  { id: 'ben-carter', name: 'Ben Carter', role: 'Piloto', vitals: { hr: 71, spo2: 99, temp: 36.9 }, sector: 'command-center' },
-  { id: 'fatima-al-sayed', name: 'Fatima Al-Sayed', role: 'Botánica', vitals: { hr: 69, spo2: 99, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'ivan-dubov', name: 'Ivan Dubov', role: 'Ingeniero Estructural', vitals: { hr: 73, spo2: 98, temp: 37.0 }, sector: 'storage' },
-  { id: 'sophia-rossi', name: 'Sophia Rossi', role: 'Psicóloga', vitals: { hr: 67, spo2: 100, temp: 36.8 }, sector: 'residential' },
-  { id: 'leo-schmidt', name: 'Leo Schmidt', role: 'Técnico de Comunicaciones', vitals: { hr: 74, spo2: 99, temp: 37.0 }, sector: 'command-center' },
-  { id: 'emily-white', name: 'Emily White', role: 'Astrobióloga', vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'david-chen', name: 'David Chen', role: 'Técnico de Soporte Vital', vitals: { hr: 76, spo2: 99, temp: 37.1 }, sector: 'eclss' },
-  { id: 'chloe-kim', name: 'Chloe Kim', role: 'Nutricionista', vitals: { hr: 68, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
-  { id: 'omar-badawi', name: 'Omar Badawi', role: 'Ingeniero de Software', vitals: { hr: 72, spo2: 98, temp: 36.9 }, sector: 'command-center' },
-  { id: 'ana-silva', name: 'Ana Silva', role: 'Paramédico', vitals: { hr: 69, spo2: 99, temp: 36.8 }, sector: 'residential' },
-  { id: 'daniel-jones', name: 'Daniel Jones', role: 'Técnico de Mantenimiento', vitals: { hr: 79, spo2: 97, temp: 37.2 }, sector: 'storage' },
-  { id: 'sara-nilsson', name: 'Sara Nilsson', role: 'Investigadora', vitals: { hr: 71, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
-  { id: 'wei-zhang', name: 'Wei Zhang', role: 'Especialista Agrónomo', vitals: { hr: 66, spo2: 100, temp: 36.6 }, sector: 'greenhouses' },
+export const getCrewData = (t: Translator) => [
+  { id: 'cmdr-alex', name: 'Cmdr. Alex Reyes', role: t('oshi.commander'), vitals: { hr: 68, spo2: 99, temp: 36.8 }, sector: 'command-center' },
+  { id: 'dr-lena', name: 'Dra. Lena Petrova', role: t('oshi.science_officer'), vitals: { hr: 72, spo2: 98, temp: 37.0 }, sector: 'science-lab' },
+  { id: 'ken-sato', name: 'Ken Sato', role: t('oshi.systems_engineer'), vitals: { hr: 75, spo2: 99, temp: 36.9 }, sector: 'eclss' },
+  { id: 'maya-singh', name: 'Maya Singh', role: t('oshi.habitat_specialist'), vitals: { hr: 65, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
+  { id: 'javier-rodriguez', name: 'Javier Rodriguez', role: t('oshi.geologist'), vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
+  { id: 'chen-liang', name: 'Chen Liang', role: t('oshi.doctor'), vitals: { hr: 66, spo2: 99, temp: 36.8 }, sector: 'residential' },
+  { id: 'olivia-garcia', name: 'Olivia Garcia', role: t('oshi.robotics_technician'), vitals: { hr: 78, spo2: 97, temp: 37.1 }, sector: 'eclss' },
+  { id: 'ben-carter', name: 'Ben Carter', role: t('oshi.pilot'), vitals: { hr: 71, spo2: 99, temp: 36.9 }, sector: 'command-center' },
+  { id: 'fatima-al-sayed', name: 'Fatima Al-Sayed', role: t('oshi.botanist'), vitals: { hr: 69, spo2: 99, temp: 36.7 }, sector: 'greenhouses' },
+  { id: 'ivan-dubov', name: 'Ivan Dubov', role: t('oshi.structural_engineer'), vitals: { hr: 73, spo2: 98, temp: 37.0 }, sector: 'storage' },
+  { id: 'sophia-rossi', name: 'Sophia Rossi', role: t('oshi.psychologist'), vitals: { hr: 67, spo2: 100, temp: 36.8 }, sector: 'residential' },
+  { id: 'leo-schmidt', name: 'Leo Schmidt', role: t('oshi.comms_technician'), vitals: { hr: 74, spo2: 99, temp: 37.0 }, sector: 'command-center' },
+  { id: 'emily-white', name: 'Emily White', role: t('oshi.astrobiologist'), vitals: { hr: 70, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
+  { id: 'david-chen', name: 'David Chen', role: t('oshi.life_support_technician'), vitals: { hr: 76, spo2: 99, temp: 37.1 }, sector: 'eclss' },
+  { id: 'chloe-kim', name: 'Chloe Kim', role: t('oshi.nutritionist'), vitals: { hr: 68, spo2: 100, temp: 36.7 }, sector: 'greenhouses' },
+  { id: 'omar-badawi', name: 'Omar Badawi', role: t('oshi.software_engineer'), vitals: { hr: 72, spo2: 98, temp: 36.9 }, sector: 'command-center' },
+  { id: 'ana-silva', name: 'Ana Silva', role: t('oshi.paramedic'), vitals: { hr: 69, spo2: 99, temp: 36.8 }, sector: 'residential' },
+  { id: 'daniel-jones', name: 'Daniel Jones', role: t('oshi.maintenance_technician'), vitals: { hr: 79, spo2: 97, temp: 37.2 }, sector: 'storage' },
+  { id: 'sara-nilsson', name: 'Sara Nilsson', role: t('oshi.researcher'), vitals: { hr: 71, spo2: 98, temp: 36.9 }, sector: 'science-lab' },
+  { id: 'wei-zhang', name: 'Wei Zhang', role: t('oshi.agronomy_specialist'), vitals: { hr: 66, spo2: 100, temp: 36.6 }, sector: 'greenhouses' },
 ];
 
-export const sectorAnalysisData = {
+type TranslatorAnalysis = (key: string, args?: { [key: string]: string | number }) => string;
+
+export const getSectorAnalysisData = (t: TranslatorAnalysis) => ({
   "command-center": {
-    name: "Centro de Mando (A)",
+    name: t('analysis.sector_command-center_name'),
     status: {
-      label: "Nominal",
+      label: t('analysis.status_nominal'),
       color: "text-green-400",
       bgColor: "bg-green-400/10",
     },
@@ -58,26 +63,26 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 99.9,
-      vibrations: "None",
+      vibrations: t('analysis.vibrations_none'),
       maintenance: [],
-      lifeSupport: "Nominal",
+      lifeSupport: t('analysis.status_nominal'),
     },
     events: [
-      { id: 1, type: "info", text: "J. Rodriguez ingresó al sector.", time: "hace 2m" },
-      { id: 2, type: "info", text: "Sistema de navegación activado.", time: "hace 5m" },
-      { id: 3, type: "system", text: "Calibración de antena completada.", time: "hace 15m" },
+      { id: 1, type: "info", text: t('analysis.event_cm_1'), time: t('analysis.time_2m') },
+      { id: 2, type: "info", text: t('analysis.event_cm_2'), time: t('analysis.time_5m') },
+      { id: 3, type: "system", text: t('analysis.event_cm_3'), time: t('analysis.time_15m') },
     ],
     crew: {
       assigned: 5,
-      status: "Activo",
+      status: t('dashboard.sector_active'),
       occupation: 100,
       comfort: 4.8,
     },
   },
   "science-lab": {
-    name: "Laboratorio Científico (B)",
+    name: t('analysis.sector_science-lab_name'),
     status: {
-      label: "En Revisión",
+      label: t('analysis.status_review'),
       color: "text-yellow-400",
       bgColor: "bg-yellow-400/10",
     },
@@ -89,7 +94,7 @@ export const sectorAnalysisData = {
       internalSourcePct: 65,
       systemTemp: 52,
       thermalEfficiency: 98.5,
-      alerts: ["Pico de consumo en espectrómetro"],
+      alerts: [t('analysis.alert_sl_1')],
     },
     environment: {
       lighting: 600,
@@ -101,26 +106,26 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 99.7,
-      vibrations: "Low",
-      maintenance: ["Calibrar sensor de gases #3"],
-      lifeSupport: "Nominal",
+      vibrations: t('analysis.vibrations_low'),
+      maintenance: [t('analysis.maint_sl_1')],
+      lifeSupport: t('analysis.status_nominal'),
     },
     events: [
-        { id: 1, type: "warning", text: "Pico de consumo detectado en espectrómetro.", time: "hace 1m" },
-        { id: 2, type: "info", text: "Análisis de muestra #A-34 iniciado.", time: "hace 8m" },
-        { id: 3, type: "info", text: "Dr. Petrova ingresó al sector.", time: "hace 12m" },
+        { id: 1, type: "warning", text: t('analysis.event_sl_1'), time: t('analysis.time_1m') },
+        { id: 2, type: "info", text: t('analysis.event_sl_2'), time: t('analysis.time_8m') },
+        { id: 3, type: "info", text: t('analysis.event_sl_3'), time: t('analysis.time_12m') },
     ],
     crew: {
       assigned: 4,
-      status: "Activo",
+      status: t('dashboard.sector_active'),
       occupation: 75,
       comfort: 4.5,
     },
   },
   "residential": {
-    name: "Módulos Residenciales (C)",
+    name: t('analysis.sector_residential_name'),
     status: {
-      label: "Nominal",
+      label: t('analysis.status_nominal'),
       color: "text-green-400",
       bgColor: "bg-green-400/10",
     },
@@ -144,24 +149,24 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 99.9,
-      vibrations: "None",
+      vibrations: t('analysis.vibrations_none'),
       maintenance: [],
-      lifeSupport: "Nominal",
+      lifeSupport: t('analysis.status_nominal'),
     },
     events: [
-      { id: 1, type: "info", text: "Ciclo de sueño iniciado para la mayoría de la tripulación.", time: "hace 2h" },
+      { id: 1, type: "info", text: t('analysis.event_res_1'), time: t('analysis.time_2h') },
     ],
     crew: {
       assigned: 11,
-      status: "Descanso",
+      status: t('analysis.crew_status_rest'),
       occupation: 50,
       comfort: 4.9,
     },
   },
   "greenhouses": {
-    name: "Invernaderos (D)",
+    name: t('analysis.sector_greenhouses_name'),
     status: {
-      label: "Nominal",
+      label: t('analysis.status_nominal'),
       color: "text-green-400",
       bgColor: "bg-green-400/10",
     },
@@ -185,24 +190,24 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 99.8,
-      vibrations: "None",
+      vibrations: t('analysis.vibrations_none'),
       maintenance: [],
-      lifeSupport: "Nominal",
+      lifeSupport: t('analysis.status_nominal'),
     },
     events: [
-        { id: 1, type: "system", text: "Ciclo de riego automático completado.", time: "hace 30m" },
+        { id: 1, type: "system", text: t('analysis.event_gh_1'), time: t('analysis.time_30m') },
     ],
     crew: {
       assigned: 4,
-      status: "Activo",
+      status: t('dashboard.sector_active'),
       occupation: 100,
       comfort: 4.7,
     },
   },
   "eclss": {
-    name: "Soporte Vital (E)",
+    name: t('analysis.sector_eclss_name'),
     status: {
-      label: "Crítico",
+      label: t('analysis.status_critical'),
       color: "text-red-400",
       bgColor: "bg-red-400/10",
     },
@@ -214,7 +219,7 @@ export const sectorAnalysisData = {
       internalSourcePct: 50,
       systemTemp: 65,
       thermalEfficiency: 97,
-      alerts: ["Fallo en el reciclador de agua #2"],
+      alerts: [t('analysis.alert_eclss_1')],
     },
     environment: {
       lighting: 500,
@@ -226,24 +231,24 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 99,
-      vibrations: "High",
-      maintenance: ["Revisar reciclador de agua #2"],
-      lifeSupport: "Alerta",
+      vibrations: t('analysis.vibrations_high'),
+      maintenance: [t('analysis.maint_eclss_1')],
+      lifeSupport: t('analysis.ls_alert'),
     },
     events: [
-        { id: 1, type: "warning", text: "Fallo en el reciclador de agua #2. Sistema de respaldo activado.", time: "hace 5m" },
+        { id: 1, type: "warning", text: t('analysis.event_eclss_1'), time: t('analysis.time_5m') },
     ],
     crew: {
       assigned: 3,
-      status: "Activo",
+      status: t('dashboard.sector_active'),
       occupation: 100,
       comfort: 3.5,
     },
   },
   "storage": {
-    name: "Almacenamiento (F)",
+    name: t('analysis.sector_storage_name'),
     status: {
-      label: "En Espera",
+      label: t('analysis.status_standby'),
       color: "text-yellow-400",
       bgColor: "bg-yellow-400/10",
     },
@@ -267,18 +272,20 @@ export const sectorAnalysisData = {
     },
     infrastructure: {
       integrity: 100,
-      vibrations: "None",
+      vibrations: t('analysis.vibrations_none'),
       maintenance: [],
-      lifeSupport: "Nominal",
+      lifeSupport: t('analysis.status_nominal'),
     },
     events: [
-        { id: 1, type: "info", text: "Sector en modo de bajo consumo.", time: "hace 8h" },
+        { id: 1, type: "info", text: t('analysis.event_stor_1'), time: t('analysis.time_8h') },
     ],
     crew: {
       assigned: 2,
-      status: "Descanso",
+      status: t('analysis.crew_status_rest'),
       occupation: 10,
       comfort: 4.6,
     },
   },
-};
+});
+
+    
