@@ -355,96 +355,55 @@ export function HabitatExplorer() {
         </Card>
       </div>
 
-      {isMobile ? (
-        <>
-          <Button 
-            size="icon" 
-            className="absolute bottom-4 left-4 z-10"
-            onClick={() => setControlsOpen(!controlsOpen)}
-          >
-            <Settings className="h-5 w-5" />
-          </Button>
-          {controlsOpen && (
-             <Card className="absolute bottom-20 left-4 w-80 bg-background/80 backdrop-blur-sm">
-              <CardContent className="p-4 space-y-4">
-                  <div className="space-y-2">
-                      <Label>{t('explorer.intensity_mode')}</Label>
-                      <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
-                          <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="simulated" id="simulated-mobile" />
-                              <Label htmlFor="simulated-mobile">{t('explorer.simulated')}</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="live" id="live-mobile" />
-                              <Label htmlFor="live-mobile">{t('explorer.live')}</Label>
-                          </div>
-                      </RadioGroup>
-                  </div>
-                  <div className="space-y-2">
-                      <Label>
-                        {t('explorer.storm_intensity')}: {' '}
-                        <span ref={stormIntensityRef}>
-                           {loading && mode === 'live' ? '...' : ((stormIntensityValue.current / 100) * 40).toFixed(1)}
-                        </span> m/s
-                      </Label>
-                      <Slider 
-                        defaultValue={[stormIntensityValue.current]} 
-                        max={100} 
-                        step={1} 
-                        onValueChange={handleStormChange}
-                        disabled={mode === 'live'}
-                      />
-                  </div>
-                   <div className="flex items-center space-x-2">
-                      <Switch id="piezo-toggle-mobile" onCheckedChange={togglePiezo}/>
-                      <Label htmlFor="piezo-toggle-mobile">{t('explorer.show_piezo_layer')}</Label>
-                  </div>
-              </CardContent>
-            </Card>
-          )}
-        </>
-      ) : (
-        <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
-          <CardContent className="p-4 space-y-4">
-              <div className="space-y-2">
-                  <Label>{t('explorer.intensity_mode')}</Label>
-                  <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
-                      <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="simulated" id="simulated" />
-                          <Label htmlFor="simulated">{t('explorer.simulated')}</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="live" id="live" />
-                          <Label htmlFor="live">{t('explorer.live')}</Label>
-                      </div>
-                  </RadioGroup>
-              </div>
-              <div className="space-y-2">
-                  <Label htmlFor="storm-intensity">
-                    {t('explorer.storm_intensity')}: {' '}
-                    <span ref={stormIntensityRef}>{((stormIntensityValue.current / 100) * 40).toFixed(1)}</span> m/s
-                  </Label>
-                  <Slider 
-                    defaultValue={[stormIntensityValue.current]} 
-                    max={100} 
-                    step={1} 
-                    onValueChange={handleStormChange}
-                    disabled={mode === 'live'}
-                    value={mode === 'live' ? [stormIntensityValue.current] : undefined}
-                  />
-              </div>
-               <div className="flex items-center space-x-2">
-                  <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
-                  <Label htmlFor="piezo-toggle">{t('explorer.show_piezo_layer')}</Label>
-              </div>
-          </CardContent>
-        </Card>
-      )}
+      <div className="absolute bottom-4 left-4">
+        <Button 
+          size="icon" 
+          className="z-10"
+          onClick={() => setControlsOpen(!controlsOpen)}
+        >
+          <Settings className="h-5 w-5" />
+        </Button>
+        {controlsOpen && (
+           <Card className="absolute bottom-0 left-12 w-80 bg-background/80 backdrop-blur-sm">
+            <CardContent className="p-4 space-y-4">
+                <div className="space-y-2">
+                    <Label>{t('explorer.intensity_mode')}</Label>
+                    <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="simulated" id="simulated" />
+                            <Label htmlFor="simulated">{t('explorer.simulated')}</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="live" id="live" />
+                            <Label htmlFor="live">{t('explorer.live')}</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="storm-intensity">
+                      {t('explorer.storm_intensity')}: {' '}
+                      <span ref={stormIntensityRef}>
+                         {loading && mode === 'live' ? '...' : ((stormIntensityValue.current / 100) * 40).toFixed(1)}
+                      </span> m/s
+                    </Label>
+                    <Slider 
+                      id="storm-intensity"
+                      defaultValue={[stormIntensityValue.current]} 
+                      max={100} 
+                      step={1} 
+                      onValueChange={handleStormChange}
+                      disabled={mode === 'live'}
+                      value={mode === 'live' ? [stormIntensityValue.current] : undefined}
+                    />
+                </div>
+                 <div className="flex items-center space-x-2">
+                    <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
+                    <Label htmlFor="piezo-toggle">{t('explorer.show_piezo_layer')}</Label>
+                </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
-
-    
-    
-
-    
