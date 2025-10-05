@@ -1,10 +1,10 @@
 
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, Suspense } from "react";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { type OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { type GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -35,8 +35,25 @@ export function HabitatExplorer() {
   const [apiDataLoading, setApiDataLoading] = useState(true);
   const [modelLoaded, setModelLoaded] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
+  
+  const [loaders, setLoaders] = useState<{
+    GLTFLoader?: typeof GLTFLoader;
+    OrbitControls?: typeof OrbitControls;
+  }>({});
 
-  const isLoading = apiDataLoading || !modelLoaded;
+  useEffect(() => {
+    Promise.all([
+      import("three/examples/jsm/loaders/GLTFLoader.js"),
+      import("three/examples/jsm/controls/OrbitControls.js"),
+    ]).then(([gltf, orbit]) => {
+      setLoaders({
+        GLTFLoader: gltf.GLTFLoader,
+        OrbitControls: orbit.OrbitControls,
+      });
+    });
+  }, []);
+
+  const isLoading = apiDataLoading || !modelLoaded || !loaders.GLTFLoader;
 
   const currentConditions = useMemo(() => {
     const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
@@ -81,8 +98,10 @@ export function HabitatExplorer() {
   }, [mode, windData]);
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    if (!mountRef.current || !loaders.GLTFLoader || !loaders.OrbitControls) return;
 
+    const { GLTFLoader } = loaders;
+    const { OrbitControls } = loaders;
     const currentMount = mountRef.current;
 
     // Scene setup
@@ -357,7 +376,7 @@ export function HabitatExplorer() {
       renderer.dispose();
       controls.dispose();
     };
-  }, []);
+  }, [loaders]);
   
   const handleStormChange = (value: number[]) => {
     const intensity = value[0];
@@ -466,5 +485,3 @@ export function HabitatExplorer() {
     </div>
   );
 }
-
-    
