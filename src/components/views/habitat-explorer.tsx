@@ -120,30 +120,7 @@ export function HabitatExplorer() {
         scene.add(rock);
     }
     
-    // Load custom model
-    const loader = new GLTFLoader();
-    loader.load(
-        '/white_mesh.glb',
-        function (gltf) {
-            const model = gltf.scene;
-            model.scale.set(5, 5, 5); // Adjust scale if necessary
-            model.position.y = 2; // Adjust position if necessary
-            model.traverse(function (child) {
-                if ((child as THREE.Mesh).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
-            scene.add(model);
-        },
-        undefined, // onProgress callback (optional)
-        function (error) {
-            console.error(error);
-        }
-    );
-
-
-    // Piezoelectric layers (kept for visualization toggle)
+    // Piezoelectric layers
     const piezoGroup = new THREE.Group();
     piezoGroup.visible = false;
     scene.add(piezoGroup);
@@ -156,23 +133,35 @@ export function HabitatExplorer() {
         emissive: 0x00ffff,
         emissiveIntensity: 0
     });
-    // This geometry is just a placeholder now, you might want to wrap your actual model parts
-    const towerRadius = 1.5;
-    const towerHeight = 5;
-    const towerDistance = 10;
-    const towerCount = 6;
-    const piezoGeometry = new THREE.CylinderGeometry(towerRadius + 0.05, towerRadius + 0.05, towerHeight, 48);
 
-    for (let i = 0; i < towerCount; i++) {
-        const angle = (i / towerCount) * Math.PI * 2;
-        const x = Math.cos(angle) * towerDistance;
-        const z = Math.sin(angle) * towerDistance;
+    // Load custom model
+    const loader = new GLTFLoader();
+    loader.load(
+        '/white_mesh.glb',
+        function (gltf) {
+            const model = gltf.scene;
+            model.scale.set(5, 5, 5);
+            model.position.y = 2;
+            model.traverse(function (child) {
+                if ((child as THREE.Mesh).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    
+                    // Create piezoelectric layer from model's geometry
+                    const piezoClone = child.clone() as THREE.Mesh;
+                    piezoClone.material = piezoMaterial;
+                    piezoClone.scale.set(1.02, 1.02, 1.02); // Slightly larger
+                    piezoGroup.add(piezoClone);
+                }
+            });
+            scene.add(model);
+        },
+        undefined, 
+        function (error) {
+            console.error(error);
+        }
+    );
 
-        const piezoLayer = new THREE.Mesh(piezoGeometry, piezoMaterial);
-        piezoLayer.position.set(x, towerHeight/2, z);
-        piezoGroup.add(piezoLayer);
-    }
-    
     // Storm particles
     const particleCount = 200000;
     const particles = new THREE.BufferGeometry();
@@ -304,3 +293,5 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
