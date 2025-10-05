@@ -14,7 +14,10 @@ import { type WeatherDataPoint, type TemperatureDataPoint, type RadiationDataPoi
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
-import { Thermometer, Wind, Sun } from "lucide-react";
+import { Thermometer, Wind, Sun, Settings } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function HabitatExplorer() {
   const { t } = useTranslation();
@@ -31,6 +34,8 @@ export function HabitatExplorer() {
   const [temperatureData, setTemperatureData] = useState<TemperatureDataPoint[]>([]);
   const [radiationData, setRadiationData] = useState<RadiationDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
+  const [controlsOpen, setControlsOpen] = useState(false);
 
   const currentConditions = useMemo(() => {
     const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
@@ -66,13 +71,13 @@ export function HabitatExplorer() {
   }, []);
 
   useEffect(() => {
-    if (mode === 'live') {
-        const latestWindSpeed = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
+    if (mode === 'live' && windData.length > 0) {
+        const latestWindSpeed = windData[windData.length - 1].speed10m;
         const maxWind = 40;
         const intensity = Math.min(100, (latestWindSpeed / maxWind) * 100);
         handleStormChange([intensity]);
     }
-  }, [mode, windData])
+  }, [mode, windData]);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -320,69 +325,123 @@ export function HabitatExplorer() {
   return (
     <div className="relative h-full w-full flex-1">
       <div ref={mountRef} className="absolute inset-0" />
-      <div className="absolute top-4 left-4 space-y-2">
-        <Card className="w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+      <div className="absolute top-4 right-4 space-y-2">
+        <Card className="w-48 md:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
                 <Wind className="h-6 w-6 text-muted-foreground"/>
                 <div className="truncate">
-                    <CardTitle className="text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
-                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.wind} m/s`}</p>
+                    <CardTitle className="text-sm md:text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
+                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.wind} m/s`}</p>
                 </div>
             </CardHeader>
         </Card>
-        <Card className="w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+        <Card className="w-48 md:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
                 <Thermometer className="h-6 w-6 text-muted-foreground"/>
                 <div>
-                    <CardTitle className="text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
-                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.temperature} °C`}</p>
+                    <CardTitle className="text-sm md:text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
+                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.temperature} °C`}</p>
                 </div>
             </CardHeader>
         </Card>
-        <Card className="w-60 bg-background/80 backdrop-blur-sm">
-            <CardHeader className="flex-row items-center gap-4 space-y-0 p-3">
+        <Card className="w-48 md:w-60 bg-background/80 backdrop-blur-sm">
+            <CardHeader className="flex-row items-center gap-2 md:gap-4 space-y-0 p-3">
                 <Sun className="h-6 w-6 text-muted-foreground"/>
                 <div>
-                    <CardTitle className="text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
-                    <p className="text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</p>
+                    <CardTitle className="text-sm md:text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
+                    <p className="text-lg md:text-2xl font-bold">{loading ? <Skeleton className="h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</p>
                 </div>
             </CardHeader>
         </Card>
       </div>
-      <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
-        <CardContent className="p-4 space-y-4">
-            <div className="space-y-2">
-                <Label>{t('explorer.intensity_mode')}</Label>
-                <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="simulated" id="simulated" />
-                        <Label htmlFor="simulated">{t('explorer.simulated')}</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="live" id="live" />
-                        <Label htmlFor="live">{t('explorer.live')}</Label>
-                    </div>
-                </RadioGroup>
-            </div>
-            <div className="space-y-2">
-                <Label htmlFor="storm-intensity">
-                  {t('explorer.storm_intensity')}: {' '}
-                  {loading && mode === 'live' ? <Skeleton className="h-4 w-8 inline-block" /> : <span ref={stormIntensityRef}>0.0</span>} m/s
-                </Label>
-                <Slider 
-                  defaultValue={[0]} 
-                  max={100} 
-                  step={1} 
-                  onValueChange={handleStormChange}
-                  disabled={mode === 'live'}
-                />
-            </div>
-             <div className="flex items-center space-x-2">
-                <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
-                <Label htmlFor="piezo-toggle">{t('explorer.show_piezo_layer')}</Label>
-            </div>
-        </CardContent>
-      </Card>
+
+      {isMobile ? (
+        <>
+          <Button 
+            size="icon" 
+            className="absolute bottom-4 left-4 z-10"
+            onClick={() => setControlsOpen(!controlsOpen)}
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
+          {controlsOpen && (
+             <Card className="absolute bottom-20 left-4 w-80 bg-background/80 backdrop-blur-sm">
+              <CardContent className="p-4 space-y-4">
+                  <div className="space-y-2">
+                      <Label>{t('explorer.intensity_mode')}</Label>
+                      <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
+                          <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="simulated" id="simulated-mobile" />
+                              <Label htmlFor="simulated-mobile">{t('explorer.simulated')}</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="live" id="live-mobile" />
+                              <Label htmlFor="live-mobile">{t('explorer.live')}</Label>
+                          </div>
+                      </RadioGroup>
+                  </div>
+                  <div className="space-y-2">
+                      <Label>
+                        {t('explorer.storm_intensity')}: {' '}
+                        <span ref={stormIntensityRef}>
+                           {loading && mode === 'live' ? '...' : ((stormIntensityValue.current / 100) * 40).toFixed(1)}
+                        </span> m/s
+                      </Label>
+                      <Slider 
+                        defaultValue={[stormIntensityValue.current]} 
+                        max={100} 
+                        step={1} 
+                        onValueChange={handleStormChange}
+                        disabled={mode === 'live'}
+                      />
+                  </div>
+                   <div className="flex items-center space-x-2">
+                      <Switch id="piezo-toggle-mobile" onCheckedChange={togglePiezo}/>
+                      <Label htmlFor="piezo-toggle-mobile">{t('explorer.show_piezo_layer')}</Label>
+                  </div>
+              </CardContent>
+            </Card>
+          )}
+        </>
+      ) : (
+        <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
+          <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                  <Label>{t('explorer.intensity_mode')}</Label>
+                  <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
+                      <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="simulated" id="simulated" />
+                          <Label htmlFor="simulated">{t('explorer.simulated')}</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="live" id="live" />
+                          <Label htmlFor="live">{t('explorer.live')}</Label>
+                      </div>
+                  </RadioGroup>
+              </div>
+              <div className="space-y-2">
+                  <Label htmlFor="storm-intensity">
+                    {t('explorer.storm_intensity')}: {' '}
+                    <span ref={stormIntensityRef}>{((stormIntensityValue.current / 100) * 40).toFixed(1)}</span> m/s
+                  </Label>
+                  <Slider 
+                    defaultValue={[stormIntensityValue.current]} 
+                    max={100} 
+                    step={1} 
+                    onValueChange={handleStormChange}
+                    disabled={mode === 'live'}
+                    value={mode === 'live' ? [stormIntensityValue.current] : undefined}
+                  />
+              </div>
+               <div className="flex items-center space-x-2">
+                  <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
+                  <Label htmlFor="piezo-toggle">{t('explorer.show_piezo_layer')}</Label>
+              </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
+
+    
