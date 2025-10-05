@@ -13,6 +13,7 @@ import { HabitatExplorer } from "@/components/views/habitat-explorer";
 import { SectionalAnalysis } from "@/components/views/sectional-analysis";
 import { MaterialViewer } from "@/components/views/material-viewer";
 import { ProvisionsManagement } from "@/components/views/provisions-management";
+import { CameraViewer } from "@/components/views/camera-viewer";
 import { AppHeader } from "@/components/app-header";
 import {
   DropdownMenu,
@@ -51,6 +52,8 @@ function HabitatContent() {
         return <SectionalAnalysis />;
       case "materials":
         return <MaterialViewer />;
+      case "cameras":
+        return <CameraViewer />;
       default:
         return <HabitatExplorer />;
     }

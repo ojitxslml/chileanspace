@@ -14,6 +14,7 @@ import {
   Package,
   HeartPulse,
   Zap,
+  Camera,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -57,6 +58,7 @@ export function MainNav({
     { id: "energy", label: t('common.energy_generation'), icon: Zap },
     { id: "analysis", label: t('common.sectional_analysis'), icon: SquareGanttChart },
     { id: "materials", label: t('common.material_viewer'), icon: Layers },
+    { id: "cameras", label: t('common.camera_viewer'), icon: Camera },
   ];
 
   return (

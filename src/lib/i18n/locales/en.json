@@ -8,6 +8,7 @@
     "explorer_3d": "3D Explorer",
     "sectional_analysis": "Sectional Analysis",
     "material_viewer": "Material Viewer",
+    "camera_viewer": "Camera Viewer",
     "language": "Language",
     "english": "English",
     "spanish": "Español",
@@ -178,5 +179,13 @@
     "anomalous_vibrations": "Anomalous Vibrations",
     "pending_maintenance": "Pending Maintenance",
     "no_pending_tasks": "No pending tasks."
+  },
+  "camera_viewer": {
+    "title": "Camera Viewer",
+    "subtitle": "Live feeds from cameras around the habitat.",
+    "live_feed": "Live Feed",
+    "select_camera": "Select Camera",
+    "online": "Online",
+    "offline": "Offline"
   }
 }

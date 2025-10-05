@@ -8,6 +8,7 @@
     "explorer_3d": "Explorador 3D",
     "sectional_analysis": "Análisis Sectorial",
     "material_viewer": "Visor de Materiales",
+    "camera_viewer": "Visor de Cámaras",
     "language": "Idioma",
     "english": "English",
     "spanish": "Español",
@@ -178,5 +179,13 @@
     "anomalous_vibrations": "Vibraciones Anómalas",
     "pending_maintenance": "Mantenimiento Pendiente",
     "no_pending_tasks": "No hay tareas pendientes."
+  },
+  "camera_viewer": {
+    "title": "Visor de Cámaras",
+    "subtitle": "Señales en vivo de las cámaras alrededor del hábitat.",
+    "live_feed": "Señal en Vivo",
+    "select_camera": "Seleccionar Cámara",
+    "online": "En Línea",
+    "offline": "Fuera de Línea"
   }
 }
