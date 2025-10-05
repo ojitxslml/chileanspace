@@ -23,14 +23,14 @@ export function CameraViewer() {
   );
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 h-full flex flex-col">
+    <div className="flex-1 space-y-4 p-4 md:p-6 pt-6 h-full flex flex-col">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight font-headline">
           {t('camera_viewer.title')}
         </h2>
         <p className="text-muted-foreground">{t('camera_viewer.subtitle')}</p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 min-h-0">
         <Card className="lg:col-span-3 flex flex-col">
           <CardHeader>
             <CardTitle>
@@ -58,12 +58,12 @@ export function CameraViewer() {
             </Badge>
           </CardContent>
         </Card>
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 flex flex-col">
           <CardHeader>
             <CardTitle>{t('camera_viewer.select_camera')}</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ScrollArea className="h-[calc(100vh-20rem)]">
+          <CardContent className="flex-1 min-h-0">
+            <ScrollArea className="h-full">
               <div className="space-y-2 pr-4">
                 {cameraData.map((camera) => (
                   <div
