@@ -13,6 +13,7 @@ import {
   Globe,
   Package,
   HeartPulse,
+  Zap,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ export function MainNav({
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "oshi", label: "OSHI Dashboard", icon: HeartPulse },
     { id: "provisions", label: "Provisions", icon: Package },
+    { id: "energy", label: "Energy Generation", icon: Zap },
     { id: "explorer", label: "3D Explorer", icon: Box },
     { id: "analysis", label: "Sectional Analysis", icon: SquareGanttChart },
     { id: "materials", label: "Material Viewer", icon: Layers },

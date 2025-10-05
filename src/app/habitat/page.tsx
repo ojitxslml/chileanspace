@@ -26,6 +26,7 @@ import { Settings, Globe, Save } from "lucide-react";
 import { OshiDashboard } from "@/components/views/oshi-dashboard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { EnergyGeneration } from "@/components/views/energy-generation";
 
 
 export default function Home() {
@@ -39,6 +40,8 @@ export default function Home() {
         return <OshiDashboard />;
       case "provisions":
         return <ProvisionsManagement />;
+      case "energy":
+        return <EnergyGeneration />;
       case "explorer":
         return <HabitatExplorer />;
       case "analysis":
