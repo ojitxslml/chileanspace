@@ -23,3 +23,16 @@ export const TemperatureDataPointSchema = z.object({
 export type TemperatureDataPoint = z.infer<typeof TemperatureDataPointSchema>;
 
 export const TemperatureResponseSchema = z.array(TemperatureDataPointSchema);
+
+
+export const RadiationDataPointSchema = z.object({
+    hour: z.string(),
+    direct: z.number(),
+    diffuse: z.number(),
+    global: z.number(),
+    clearSky: z.number(),
+});
+
+export type RadiationDataPoint = z.infer<typeof RadiationDataPointSchema>;
+
+export const RadiationResponseSchema = z.array(RadiationDataPointSchema);

@@ -15,16 +15,16 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Legend, Tooltip } from "recharts"
-import { Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building, Sunrise, Sunset, RadioTower, AlertTriangle } from "lucide-react"
+import { Droplets, ShieldCheck, Users, Zap, HeartPulse, Wind, Thermometer, Building, Sunrise, Sunset, RadioTower, AlertTriangle, Sun } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { getWeather, getTemperature } from "@/ai/flows/weather-flow"
+import { getWeather, getTemperature, getRadiation } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
-import { WeatherDataPoint, TemperatureDataPoint } from "@/ai/schemas/weather-schemas"
+import { WeatherDataPoint, TemperatureDataPoint, RadiationDataPoint } from "@/ai/schemas/weather-schemas"
 import { sectorData, crewData } from "@/lib/sector-data";
 
 
@@ -54,6 +54,8 @@ export function Dashboard() {
   const [loadingWindData, setLoadingWindData] = useState(true);
   const [temperatureData, setTemperatureData] = useState<TemperatureDataPoint[]>([]);
   const [loadingTemperatureData, setLoadingTemperatureData] = useState(true);
+  const [radiationData, setRadiationData] = useState<RadiationDataPoint[]>([]);
+  const [loadingRadiationData, setLoadingRadiationData] = useState(true);
 
   const filteredCrew = useMemo(() => {
     if (selectedSectorId === "all") return crewData;
@@ -77,6 +79,18 @@ export function Dashboard() {
   }
 
   useEffect(() => {
+    async function fetchRadiation() {
+      try {
+        setLoadingRadiationData(true);
+        const data = await getRadiation();
+        setRadiationData(data);
+      } catch (error) {
+        console.error("Failed to fetch radiation data:", error);
+      } finally {
+        setLoadingRadiationData(false);
+      }
+    }
+    
     async function fetchTemperature() {
       try {
         setLoadingTemperatureData(true);
@@ -103,6 +117,7 @@ export function Dashboard() {
 
     fetchWeather();
     fetchTemperature();
+    fetchRadiation();
   }, []);
 
   return (
@@ -328,12 +343,12 @@ export function Dashboard() {
                           <span>Pressure: <span className="font-semibold">0.6 kPa</span></span>
                       </div>
                       <div className="flex items-center gap-2">
-                          <Sunrise className="h-4 w-4 text-muted-foreground" />
+                          <Sun className="h-4 w-4 text-muted-foreground" />
                           <span>Radiation: <Badge variant="outline" className="text-yellow-500 border-yellow-500/50">High</Badge></span>
                       </div>
                        <div className="flex items-center gap-2">
-                          <Sunset className="h-4 w-4 text-muted-foreground" />
-                          <span>Storms: <Badge variant="outline">Clear</Badge></span>
+                          <Sunrise className="h-4 w-4 text-muted-foreground" />
+                          <span>UV Index: <Badge variant="outline" className="text-red-500 border-red-500/50">Extreme</Badge></span>
                       </div>
                   </div>
               </div>
@@ -421,6 +436,41 @@ export function Dashboard() {
               <Line type="monotone" dataKey="temp2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="temp20m" name="20m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
               <Line type="monotone" dataKey="temp100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+            </LineChart>
+          </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Radiation (Last 7 Days)</CardTitle>
+          <CardDescription>Solar radiation levels in J/m².</CardDescription>
+        </CardHeader>
+        <CardContent>
+           {loadingRadiationData ? (
+            <div className="h-[300px] flex items-center justify-center">
+              <div className="space-y-4 w-full p-4">
+                <Skeleton className="h-8 w-1/4" />
+                <Skeleton className="h-48 w-full" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                  <Skeleton className="h-6 w-1/6" />
+                </div>
+              </div>
+            </div>
+          ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={radiationData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" tick={{ fontSize: 12 }} />
+              <YAxis label={{ value: 'J/m²', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="direct" name="Direct" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="diffuse" name="Diffuse" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="global" name="Global" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="clearSky" name="Clear Sky" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
           )}

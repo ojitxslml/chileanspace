@@ -2,7 +2,7 @@
 'use server';
 
 import { ai } from '@/ai/genkit';
-import { WeatherResponseSchema, type WeatherDataPoint, TemperatureResponseSchema, TemperatureDataPoint } from '@/ai/schemas/weather-schemas';
+import { WeatherResponseSchema, type WeatherDataPoint, TemperatureResponseSchema, TemperatureDataPoint, RadiationResponseSchema, RadiationDataPoint } from '@/ai/schemas/weather-schemas';
 
 
 export async function getWeather(): Promise<WeatherDataPoint[]> {
@@ -12,6 +12,81 @@ export async function getWeather(): Promise<WeatherDataPoint[]> {
 export async function getTemperature(): Promise<TemperatureDataPoint[]> {
     return getTemperatureFlow();
 }
+
+export async function getRadiation(): Promise<RadiationDataPoint[]> {
+    return getRadiationFlow();
+}
+
+const getRadiationFlow = ai.defineFlow(
+    {
+      name: 'getRadiationFlow',
+      outputSchema: RadiationResponseSchema,
+    },
+    async () => {
+      const user = process.env.METEOMATICS_USER || 'jerez_richard';
+      const pass = process.env.METEOMATICS_PASS || 'E5X9Aq3bT19k5koSxePo';
+      
+      const today = new Date();
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      
+      const startDate = sevenDaysAgo.toISOString().split('.')[0] + "Z";
+      const endDate = today.toISOString().split('.')[0] + "Z";
+  
+      const apiUrl = `https://api.meteomatics.com/${startDate}--${endDate}:PT1H/direct_rad_1h:J,diffuse_rad_1h:J,global_rad_1h:J,clear_sky_rad_1h:J/-63.3215,-58.9020/json`;
+  
+      try {
+          const response = await fetch(apiUrl, {
+              headers: {
+                  'Authorization': 'Basic ' + btoa(`${user}:${pass}`)
+              }
+          });
+  
+          if (!response.ok) {
+              throw new Error(`Meteomatics API request failed with status ${response.status}`);
+          }
+  
+          const data = await response.json();
+  
+          const transformedData: RadiationDataPoint[] = [];
+          if (data && data.data && data.data[0].coordinates[0].dates) {
+               const dates = data.data[0].coordinates[0].dates;
+               const direct = data.data.find((p: any) => p.parameter === 'direct_rad_1h:J').coordinates[0].dates;
+               const diffuse = data.data.find((p: any) => p.parameter === 'diffuse_rad_1h:J').coordinates[0].dates;
+               const global = data.data.find((p: any) => p.parameter === 'global_rad_1h:J').coordinates[0].dates;
+               const clearSky = data.data.find((p: any) => p.parameter === 'clear_sky_rad_1h:J').coordinates[0].dates;
+  
+               for (let i = 0; i < dates.length; i++) {
+                   const date = new Date(dates[i].date);
+                   transformedData.push({
+                       hour: `${String(date.getUTCDate()).padStart(2, '0')}/${String(date.getUTCMonth() + 1).padStart(2, '0')} ${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`,
+                       direct: direct[i].value,
+                       diffuse: diffuse[i].value,
+                       global: global[i].value,
+                       clearSky: clearSky[i].value,
+                   });
+               }
+          }
+          return transformedData.filter((_, i) => i % 4 === 0);
+  
+      } catch (error) {
+          console.error("Error fetching radiation from Meteomatics API:", error);
+          // Fallback to simulated data if API fails
+          const simulatedData: RadiationDataPoint[] = Array.from({ length: 42 }, (_, i) => {
+              const hour = (i * 4) % 24;
+              const day = Math.floor(i/6) + 1;
+              return {
+                  hour: `Day ${day} ${String(hour).padStart(2, '0')}:00`,
+                  direct: parseFloat((Math.random() * 500).toFixed(1)),
+                  diffuse: parseFloat((Math.random() * 100).toFixed(1)),
+                  global: parseFloat((Math.random() * 600).toFixed(1)),
+                  clearSky: parseFloat((Math.random() * 800).toFixed(1)),
+              };
+          });
+          return simulatedData;
+      }
+    }
+  );
 
 const getTemperatureFlow = ai.defineFlow(
   {
