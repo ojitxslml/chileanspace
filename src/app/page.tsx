@@ -14,15 +14,16 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-center bg-background text-foreground">
+    <div className="relative flex h-screen w-full flex-col items-center justify-center bg-background text-foreground overflow-hidden">
       <div className="absolute inset-0 z-0">
         {heroImage && (
           <Image
             src={heroImage.imageUrl}
             alt={heroImage.description}
             fill
-            className="object-cover"
+            className="object-cover animate-zoom-pan"
             data-ai-hint={heroImage.imageHint}
+            priority
           />
         )}
         <div className="absolute inset-0 bg-black/60" />
