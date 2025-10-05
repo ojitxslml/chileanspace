@@ -14,7 +14,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-01',
     location: 'Entrada Principal',
     status: 'Online',
-    imageUrl: '/camera/processed-image-1.png',
+    imageUrl: '/camera/processed-image-1.jpg',
     imageHint: 'habitat entrance',
   },
   {
@@ -22,7 +22,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-02',
     location: 'Laboratorio Científico',
     status: 'Online',
-    imageUrl: '/camera/processed-image-2.png',
+    imageUrl: '/camera/processed-image-2.jpg',
     imageHint: 'science laboratory',
   },
   {
@@ -30,7 +30,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-03',
     location: 'Invernadero A',
     status: 'Online',
-    imageUrl: '/camera/processed-image-3.png',
+    imageUrl: '/camera/processed-image-3.jpg',
     imageHint: 'greenhouse plants',
   },
   {
@@ -38,7 +38,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-04',
     location: 'Centro de Mando',
     status: 'Online',
-    imageUrl: '/camera/processed-image-4.png',
+    imageUrl: '/camera/processed-image-4.jpg',
     imageHint: 'control center',
   },
   {
@@ -46,7 +46,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-05',
     location: 'Módulo Residencial B',
     status: 'Offline',
-    imageUrl: '/camera/processed-image-5.png',
+    imageUrl: '/camera/processed-image-5.jpg',
     imageHint: 'sleeping quarters',
   },
   {
@@ -54,7 +54,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-06',
     location: 'Área de Almacenamiento',
     status: 'Online',
-    imageUrl: '/camera/processed-image-6.png',
+    imageUrl: '/camera/processed-image-6.jpg',
     imageHint: 'storage bay',
   },
     {
@@ -62,7 +62,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-07',
     location: 'Plataforma de Lanzamiento',
     status: 'Online',
-    imageUrl: '/camera/processed-image-7.png',
+    imageUrl: '/camera/processed-image-7.jpg',
     imageHint: 'launch pad',
   },
   {
@@ -70,7 +70,31 @@ export const cameraData: Camera[] = [
     name: 'CAM-08',
     location: 'Taller de Mantenimiento',
     status: 'Online',
-    imageUrl: '/camera/processed-image-8.png',
+    imageUrl: '/camera/processed-image-8.jpg',
     imageHint: 'maintenance workshop',
+  },
+  {
+    id: 'cam-09',
+    name: 'CAM-09',
+    location: 'Exterior - Paneles Solares',
+    status: 'Online',
+    imageUrl: '/camera/processed-image-9.jpg',
+    imageHint: 'solar panels exterior',
+  },
+  {
+    id: 'cam-10',
+    name: 'CAM-10',
+    location: 'Gimnasio',
+    status: 'Online',
+    imageUrl: '/camera/processed-image-10.jpg',
+    imageHint: 'habitat gym',
+  },
+  {
+    id: 'cam-11',
+    name: 'CAM-11',
+    location: 'Bahía de Rovers',
+    status: 'Online',
+    imageUrl: '/camera/processed-image-11.jpg',
+    imageHint: 'rover bay',
   },
 ];
