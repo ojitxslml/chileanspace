@@ -120,12 +120,6 @@ export function HabitatExplorer() {
         scene.add(rock);
     }
     
-    // Piezoelectric layers
-    const piezoGroup = new THREE.Group();
-    piezoGroup.visible = false;
-    scene.add(piezoGroup);
-    piezoGroupRef.current = piezoGroup;
-
     const piezoMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x00ffff, 
         transparent: true, 
@@ -148,15 +142,21 @@ export function HabitatExplorer() {
                 if ((child as THREE.Mesh).isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
-                    
-                    // Create piezoelectric layer from model's geometry
-                    const piezoClone = child.clone() as THREE.Mesh;
-                    piezoClone.material = piezoMaterial;
-                    piezoClone.scale.set(1.05, 1.05, 1.05); // Slightly larger
-                    piezoGroup.add(piezoClone);
                 }
             });
             scene.add(model);
+
+            // Create piezoelectric layer from model's geometry
+            const piezoGroup = model.clone();
+            piezoGroup.visible = false;
+            piezoGroup.scale.multiplyScalar(1.05); // Slightly larger
+            piezoGroup.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                child.material = piezoMaterial;
+              }
+            });
+            scene.add(piezoGroup);
+            piezoGroupRef.current = piezoGroup;
         },
         undefined, 
         function (error) {
@@ -207,6 +207,17 @@ export function HabitatExplorer() {
       } else if (stormParticlesRef.current) {
         (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = 0;
       }
+      
+      if (piezoGroupRef.current) {
+        const intensity = stormIntensityValue.current / 100;
+        piezoGroupRef.current.traverse(child => {
+            if((child as THREE.Mesh).isMesh) {
+                const material = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+                material.emissiveIntensity = intensity;
+            }
+        })
+      }
+
 
       controls.update();
       renderer.render(scene, camera);
@@ -239,13 +250,6 @@ export function HabitatExplorer() {
     stormIntensityValue.current = intensity;
      if (stormIntensityRef.current) {
         stormIntensityRef.current.textContent = ((intensity / 100) * 40).toFixed(1);
-    }
-    if (piezoGroupRef.current) {
-        piezoGroupRef.current.children.forEach(child => {
-            const mesh = child as THREE.Mesh;
-            const material = mesh.material as THREE.MeshStandardMaterial;
-            material.emissiveIntensity = intensity / 100;
-        });
     }
   }
 
@@ -295,3 +299,5 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
