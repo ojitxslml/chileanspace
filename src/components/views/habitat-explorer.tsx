@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
@@ -150,7 +149,7 @@ export function HabitatExplorer() {
                     // Create piezoelectric layer from model's geometry
                     const piezoClone = child.clone() as THREE.Mesh;
                     piezoClone.material = piezoMaterial;
-                    piezoClone.scale.set(1.02, 1.02, 1.02); // Slightly larger
+                    piezoClone.scale.set(1.05, 1.05, 1.05); // Slightly larger
                     piezoGroup.add(piezoClone);
                 }
             });
@@ -293,5 +292,3 @@ export function HabitatExplorer() {
     </div>
   );
 }
-
-    
