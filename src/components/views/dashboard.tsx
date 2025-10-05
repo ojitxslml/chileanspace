@@ -73,6 +73,30 @@ export function Dashboard() {
   const selectedCrewMember = useMemo(() => {
     return crewData.find(m => m.id === selectedCrewMemberId) || null;
   }, [selectedCrewMemberId]);
+  
+  const currentConditions = useMemo(() => {
+    const latestTemp = temperatureData.length > 0 ? temperatureData[temperatureData.length - 1].temp2m : -63;
+    const latestRadiation = radiationData.length > 0 ? radiationData[radiationData.length - 1].global : 0;
+    const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
+
+    let radiationStatus: "High" | "Moderate" | "Low" = "Low";
+    if (latestRadiation > 400) {
+      radiationStatus = "High";
+    } else if (latestRadiation > 150) {
+      radiationStatus = "Moderate";
+    }
+    
+    const windAlert = latestWind > 20 ? `High wind speed detected: ${latestWind.toFixed(1)} m/s` : null;
+
+    return {
+      temperature: latestTemp.toFixed(1),
+      pressure: "0.6",
+      radiation: radiationStatus,
+      uvIndex: "Extreme", // This remains static as we don't have a UV index API
+      windAlert: windAlert,
+    };
+  }, [temperatureData, radiationData, windData]);
+
 
   const handleSectorChange = (sectorId: string) => {
     setSelectedSectorId(sectorId);
@@ -336,19 +360,22 @@ export function Dashboard() {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="flex items-center gap-2">
                           <Thermometer className="h-4 w-4 text-muted-foreground" />
-                          <span>Temp: <span className="font-semibold">-63°C</span></span>
+                          <span>Temp: <span className="font-semibold">{currentConditions.temperature}°C</span></span>
                       </div>
                        <div className="flex items-center gap-2">
                           <Wind className="h-4 w-4 text-muted-foreground" />
-                          <span>Pressure: <span className="font-semibold">0.6 kPa</span></span>
+                          <span>Pressure: <span className="font-semibold">{currentConditions.pressure} kPa</span></span>
                       </div>
                       <div className="flex items-center gap-2">
                           <Sun className="h-4 w-4 text-muted-foreground" />
-                          <span>Radiation: <Badge variant="outline" className="text-yellow-500 border-yellow-500/50">High</Badge></span>
+                          <span>Radiation: <Badge variant="outline" className={cn(
+                            currentConditions.radiation === "High" && "text-yellow-500 border-yellow-500/50",
+                            currentConditions.radiation === "Moderate" && "text-orange-500 border-orange-500/50",
+                          )}>{currentConditions.radiation}</Badge></span>
                       </div>
                        <div className="flex items-center gap-2">
                           <Sunrise className="h-4 w-4 text-muted-foreground" />
-                          <span>UV Index: <Badge variant="outline" className="text-red-500 border-red-500/50">Extreme</Badge></span>
+                          <span>UV Index: <Badge variant="outline" className="text-red-500 border-red-500/50">{currentConditions.uvIndex}</Badge></span>
                       </div>
                   </div>
               </div>
@@ -367,7 +394,11 @@ export function Dashboard() {
                     Active Alerts
                   </h4>
                   <ul className="space-y-1 text-sm list-disc pl-4 text-muted-foreground">
-                       <li><span className="font-semibold text-destructive">High radiation levels detected near Sector Gamma-7. EVA missions suspended.</span></li>
+                       {currentConditions.windAlert ? (
+                         <li><span className="font-semibold text-destructive">{currentConditions.windAlert}</span></li>
+                       ) : (
+                         <li><span className="font-semibold text-foreground">No critical alerts.</span></li>
+                       )}
                   </ul>
               </div>
           </CardContent>
