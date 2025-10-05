@@ -7,10 +7,13 @@ import es from './locales/es.json';
 
 type Locale = 'en' | 'es';
 
+// Allows for dynamic values in translations, e.g. t('key', { name: 'World' })
+type TranslationVariables = { [key: string]: string | number };
+
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: (key: string, variables?: TranslationVariables) => string;
 }
 
 const translations = { en, es };
@@ -20,22 +23,29 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>('es');
 
-  const t = (key: string): string => {
-    const keys = key.split('.');
-    let result: any = translations[locale];
-    for (const k of keys) {
-      result = result?.[k];
-      if (!result) {
-        // Fallback to English if translation is missing
-        let fallbackResult: any = translations.en;
-        for (const fk of keys) {
-          fallbackResult = fallbackResult?.[fk];
-          if (!fallbackResult) return key;
+  const t = (key: string, variables?: TranslationVariables): string => {
+    const getTranslation = (lang: Locale, transKey: string): string | undefined => {
+      const keys = transKey.split('.');
+      let result: any = translations[lang];
+      for (const k of keys) {
+        result = result?.[k];
+        if (typeof result !== 'string' && typeof result !== 'object') {
+            return undefined;
         }
-        return fallbackResult;
       }
+      return typeof result === 'string' ? result : undefined;
     }
-    return result;
+
+    let translation = getTranslation(locale, key) || getTranslation('en', key) || key;
+
+    if (variables) {
+      Object.keys(variables).forEach((varKey) => {
+        const regex = new RegExp(`{${varKey}}`, 'g');
+        translation = translation.replace(regex, String(variables[varKey]));
+      });
+    }
+
+    return translation;
   };
   
 
