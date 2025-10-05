@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -114,6 +115,10 @@ export default {
         'fade-in': {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        'pulse-subtle': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.05)', opacity: '0.7' },
         }
       },
       animation: {
@@ -121,8 +126,11 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'zoom-pan': 'zoom-pan 90s ease-in-out infinite',
         'fade-in': 'fade-in 0.5s ease-in-out',
+        'pulse-subtle': 'pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 } satisfies Config;
+
+    

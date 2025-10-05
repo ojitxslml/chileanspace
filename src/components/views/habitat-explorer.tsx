@@ -15,9 +15,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 import { Thermometer, Wind, Sun, Settings } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
 
 export function HabitatExplorer() {
   const { t } = useTranslation();
@@ -33,9 +32,11 @@ export function HabitatExplorer() {
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [temperatureData, setTemperatureData] = useState<TemperatureDataPoint[]>([]);
   const [radiationData, setRadiationData] = useState<RadiationDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const isMobile = useIsMobile();
+  const [apiDataLoading, setApiDataLoading] = useState(true);
+  const [modelLoaded, setModelLoaded] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
+
+  const isLoading = apiDataLoading || !modelLoaded;
 
   const currentConditions = useMemo(() => {
     const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
@@ -52,7 +53,7 @@ export function HabitatExplorer() {
   useEffect(() => {
     async function fetchAllData() {
       try {
-        setLoading(true);
+        setApiDataLoading(true);
         const [wind, temp, rad] = await Promise.all([
           getWeather(),
           getTemperature(),
@@ -64,7 +65,7 @@ export function HabitatExplorer() {
       } catch (error) {
         console.error("Failed to fetch weather data:", error);
       } finally {
-        setLoading(false);
+        setApiDataLoading(false);
       }
     }
     fetchAllData();
@@ -185,10 +186,12 @@ export function HabitatExplorer() {
             piezoGroup.visible = false;
             scene.add(piezoGroup);
             piezoGroupRef.current = piezoGroup;
+            setModelLoaded(true);
         },
         undefined, 
         function (error) {
             console.error(error);
+            setModelLoaded(true); // Still treat as loaded to not block forever
         }
     );
 
@@ -324,6 +327,14 @@ export function HabitatExplorer() {
 
   return (
     <div className="relative h-full w-full flex-1">
+      {isLoading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4">
+            <Icons.logo className="h-16 w-16 text-primary animate-pulse-subtle" />
+            <p className="text-foreground">Cargando Escena...</p>
+          </div>
+        </div>
+      )}
       <div ref={mountRef} className="absolute inset-0" />
       <div className="absolute top-4 right-4 space-y-2">
         <Card className="w-40 lg:w-60 bg-background/80 backdrop-blur-sm">
@@ -331,7 +342,7 @@ export function HabitatExplorer() {
                 <Wind className="h-6 w-6 text-muted-foreground"/>
                 <div className="truncate">
                     <CardTitle className="text-xs lg:text-base">{t('dashboard.wind_speed_title').split('(')[0]}</CardTitle>
-                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.wind} m/s`}</div>
+                    <div className="text-base lg:text-2xl font-bold">{apiDataLoading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.wind} m/s`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -340,7 +351,7 @@ export function HabitatExplorer() {
                 <Thermometer className="h-6 w-6 text-muted-foreground"/>
                 <div>
                     <CardTitle className="text-xs lg:text-base">{t('dashboard.temperature_title').split('(')[0]}</CardTitle>
-                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.temperature} °C`}</div>
+                    <div className="text-base lg:text-2xl font-bold">{apiDataLoading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.temperature} °C`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -349,7 +360,7 @@ export function HabitatExplorer() {
                 <Sun className="h-6 w-6 text-muted-foreground"/>
                 <div>
                     <CardTitle className="text-xs lg:text-base">{t('dashboard.radiation_title').split('(')[0]}</CardTitle>
-                    <div className="text-base lg:text-2xl font-bold">{loading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</div>
+                    <div className="text-base lg:text-2xl font-bold">{apiDataLoading ? <Skeleton className="h-6 lg:h-8 w-20" /> : `${currentConditions.radiation} J/m²`}</div>
                 </div>
             </CardHeader>
         </Card>
@@ -383,7 +394,7 @@ export function HabitatExplorer() {
                     <Label htmlFor="storm-intensity">
                       {t('explorer.storm_intensity')}: {' '}
                       <span ref={stormIntensityRef}>
-                         {loading && mode === 'live' ? '...' : ((stormIntensityValue.current / 100) * 40).toFixed(1)}
+                         {apiDataLoading && mode === 'live' ? '...' : ((stormIntensityValue.current / 100) * 40).toFixed(1)}
                       </span> m/s
                     </Label>
                     <Slider 
@@ -407,3 +418,5 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
