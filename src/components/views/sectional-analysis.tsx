@@ -50,10 +50,12 @@ import {
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { sectorAnalysisData } from "@/lib/sector-data"
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 type SectorId = keyof typeof sectorAnalysisData
 
 export function SectionalAnalysis() {
+  const { t } = useTranslation();
   const [selectedSector, setSelectedSector] = React.useState<SectorId>("command-center")
   const data = sectorAnalysisData[selectedSector]
 
@@ -94,16 +96,16 @@ export function SectionalAnalysis() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight font-headline">
-            Análisis Sectorial
+            {t('analysis.title')}
           </h2>
           <p className="text-muted-foreground">
-            Estado de infraestructura y condiciones ambientales.
+            {t('analysis.subtitle')}
           </p>
         </div>
         <div className="w-full md:w-64">
            <Select value={selectedSector} onValueChange={(val) => setSelectedSector(val as SectorId)}>
               <SelectTrigger>
-                <SelectValue placeholder="Seleccionar Sector" />
+                <SelectValue placeholder={t('analysis.select_sector')} />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(sectorAnalysisData).map(([id, { name }]) => (
@@ -121,22 +123,22 @@ export function SectionalAnalysis() {
         <Card className="lg:col-span-2">
             <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                    <span>Estado General: {data.name}</span>
+                    <span>{t('analysis.general_status_title', { sectorName: data.name })}</span>
                     <span className={`px-3 py-1 text-sm rounded-full ${data.status.bgColor} ${data.status.color}`}>{data.status.label}</span>
                 </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
-                 <StatusIndicator icon={Activity} label="Nivel de Actividad" value={data.activityLevel} unit="%" />
-                 <StatusIndicator icon={Users} label="Condición del Personal" value={data.crewCondition} unit="%" badgeText="Promedio" />
-                 <StatusIndicator icon={Users} label="Tripulación Asignada" value={data.crew.assigned} />
-                 <StatusIndicator icon={Gauge} label="Nivel de Confort" value={data.crew.comfort} unit="/ 5" />
+                 <StatusIndicator icon={Activity} label={t('analysis.activity_level')} value={data.activityLevel} unit="%" />
+                 <StatusIndicator icon={Users} label={t('analysis.crew_condition')} value={data.crewCondition} unit="%" badgeText={t('analysis.average')} />
+                 <StatusIndicator icon={Users} label={t('analysis.assigned_crew')} value={data.crew.assigned} />
+                 <StatusIndicator icon={Gauge} label={t('analysis.comfort_level')} value={data.crew.comfort} unit="/ 5" />
             </CardContent>
         </Card>
         
         {/* Events Card */}
         <Card className="lg:col-span-2 flex flex-col">
             <CardHeader>
-                <CardTitle>Issues y Acontecimientos Recientes</CardTitle>
+                <CardTitle>{t('analysis.recent_events_title')}</CardTitle>
             </CardHeader>
             <CardContent className="flex-grow">
                 <ScrollArea className="h-48">
@@ -162,18 +164,18 @@ export function SectionalAnalysis() {
         {/* Energy & Systems Card */}
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2"><PlugZap className="h-5 w-5"/> Energía y Sistemas</CardTitle>
+                <CardTitle className="flex items-center gap-2"><PlugZap className="h-5 w-5"/> {t('analysis.energy_systems_title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div>
                     <div className="flex justify-between text-sm mb-1">
-                        <p className="text-muted-foreground">Consumo</p>
+                        <p className="text-muted-foreground">{t('analysis.consumption')}</p>
                         <p><span className="font-semibold">{data.energy.consumption}</span> / {data.energy.capacity} kW</p>
                     </div>
                     <Progress value={(data.energy.consumption / data.energy.capacity) * 100} />
                 </div>
-                <StatusIndicator icon={BatteryCharging} label="Fuentes Internas" value={`${data.energy.internalSourcePct}%`} />
-                <StatusIndicator icon={Thermometer} label="Temp. Sistema Eléctrico" value={`${data.energy.systemTemp}°C`} />
+                <StatusIndicator icon={BatteryCharging} label={t('analysis.internal_sources')} value={`${data.energy.internalSourcePct}%`} />
+                <StatusIndicator icon={Thermometer} label={t('analysis.electrical_system_temp')} value={`${data.energy.systemTemp}°C`} />
                 {data.energy.alerts.length > 0 && (
                     <div className="p-2 bg-destructive/20 rounded-md">
                         <p className="text-xs text-destructive flex items-center gap-2"><Siren className="h-4 w-4" /> {data.energy.alerts[0]}</p>
@@ -185,34 +187,34 @@ export function SectionalAnalysis() {
         {/* Lighting & Environment Card */}
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5"/> Iluminación y Ambiente</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5"/> {t('analysis.lighting_env_title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <StatusIndicator icon={Lightbulb} label="Iluminación Promedio" value={data.environment.lighting} unit="lux" />
-                <StatusIndicator icon={Thermometer} label="Temperatura Ambiente" value={data.environment.temperature} unit="°C" />
-                <StatusIndicator icon={Wind} label="Calidad del Aire (CO₂)" value={data.environment.co2} unit="ppm" />
-                <StatusIndicator icon={Volume2} label="Ruido Ambiental" value={data.environment.noise} unit="dB" />
+                <StatusIndicator icon={Lightbulb} label={t('analysis.avg_lighting')} value={data.environment.lighting} unit="lux" />
+                <StatusIndicator icon={Thermometer} label={t('analysis.ambient_temp')} value={data.environment.temperature} unit="°C" />
+                <StatusIndicator icon={Wind} label={t('analysis.air_quality')} value={data.environment.co2} unit="ppm" />
+                <StatusIndicator icon={Volume2} label={t('analysis.ambient_noise')} value={data.environment.noise} unit="dB" />
             </CardContent>
         </Card>
         
         {/* Infrastructure Card */}
         <Card className="lg:col-span-2">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Wrench className="h-5 w-5"/> Infraestructura y Condiciones</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Wrench className="h-5 w-5"/> {t('analysis.infra_conditions_title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <StatusIndicator icon={ShieldCheck} label="Integridad Estructural" value={`${data.infrastructure.integrity}%`} />
-                <StatusIndicator icon={Droplets} label="Soporte Vital (ECLSS)" badgeText={data.infrastructure.lifeSupport} badgeVariant={data.infrastructure.lifeSupport === 'Nominal' ? 'success' : 'destructive'} />
-                <StatusIndicator icon={Vibrate} label="Vibraciones Anómalas" badgeText={data.infrastructure.vibrations} />
+                <StatusIndicator icon={ShieldCheck} label={t('analysis.structural_integrity')} value={`${data.infrastructure.integrity}%`} />
+                <StatusIndicator icon={Droplets} label={t('analysis.life_support')} badgeText={data.infrastructure.lifeSupport} badgeVariant={data.infrastructure.lifeSupport === 'Nominal' ? 'success' : 'destructive'} />
+                <StatusIndicator icon={Vibrate} label={t('analysis.anomalous_vibrations')} badgeText={data.infrastructure.vibrations} />
                 <Card className="bg-muted/50">
                     <CardHeader className="p-3">
-                        <CardTitle className="text-sm">Mantenimiento Pendiente</CardTitle>
+                        <CardTitle className="text-sm">{t('analysis.pending_maintenance')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-3 pt-0 text-sm">
                         {data.infrastructure.maintenance.length > 0 ? (
                              <p className="text-yellow-400">{data.infrastructure.maintenance[0]}</p>
                         ) : (
-                            <p className="text-muted-foreground">No hay tareas pendientes.</p>
+                            <p className="text-muted-foreground">{t('analysis.no_pending_tasks')}</p>
                         )}
                     </CardContent>
                 </Card>

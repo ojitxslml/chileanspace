@@ -26,6 +26,7 @@ import {
 } from "recharts";
 import { AlertCircle, BrainCircuit, Calendar, MessageSquare, Puzzle, Search, SlidersHorizontal, SunMoon, TrendingUp, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const dimensionDetails: Record<
   OshiDimension,
@@ -80,6 +81,7 @@ const getStatusClass = (status: "Optimal" | "Stable" | "Concern") => {
 };
 
 export function OshiDashboard() {
+  const { t } = useTranslation();
   const [selectedCrewId, setSelectedCrewId] = React.useState<string>(
     oshiCrewData[0].id
   );
@@ -99,26 +101,26 @@ export function OshiDashboard() {
     <div className="flex-1 space-y-4 p-4 md:p-6 pt-6 h-full flex flex-col">
       <div>
         <h2 className="text-3xl font-bold tracking-tight font-headline">
-          OSHI Dashboard
+          {t('oshi.title')}
         </h2>
         <p className="text-muted-foreground">
-          Occupational Space Health Index for all crew members.
+          {t('oshi.subtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         <Card className="lg:col-span-1 flex flex-col">
           <CardHeader>
-            <CardTitle>Crew Roster</CardTitle>
+            <CardTitle>{t('oshi.roster_title')}</CardTitle>
             <CardDescription>
-              Select a crew member to view their OSHI details.
+              {t('oshi.roster_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-1 p-2 flex flex-col min-h-0">
              <div className="relative p-2">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search crew..."
+                placeholder={t('oshi.search_crew')}
                 className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -199,13 +201,13 @@ export function OshiDashboard() {
                       getStatusClass(selectedCrew.status)
                     )}
                   >
-                    OSHI: {selectedCrew.oshiScore} ({selectedCrew.status})
+                    {t('oshi.oshi_score_label')}: {selectedCrew.oshiScore} ({selectedCrew.status})
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0">
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-lg">OSHI Dimensions</h4>
+                  <h4 className="font-semibold text-lg">{t('oshi.dimensions_title')}</h4>
                   {Object.keys(selectedCrew.dimensions).map((key) => {
                     const dimKey = key as OshiDimension;
                     const value = selectedCrew.dimensions[dimKey];
@@ -228,7 +230,7 @@ export function OshiDashboard() {
                 </div>
                 <div className="flex flex-col min-h-0">
                     <div className="mb-4">
-                        <h4 className="font-semibold text-lg mb-2">OSHI Trend (30d)</h4>
+                        <h4 className="font-semibold text-lg mb-2">{t('oshi.trend_title')}</h4>
                         <div className="h-40">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={selectedCrew.oshiHistory} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
@@ -248,7 +250,7 @@ export function OshiDashboard() {
                     </div>
                     <Separator className="my-4" />
                     <div className="flex-1 min-h-0">
-                        <h4 className="font-semibold text-lg mb-2">Recent Events & Alerts</h4>
+                        <h4 className="font-semibold text-lg mb-2">{t('oshi.events_title')}</h4>
                          <ScrollArea className="h-full pr-4">
                             <div className="space-y-3">
                             {selectedCrew.events.map(event => (
@@ -272,7 +274,7 @@ export function OshiDashboard() {
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <p className="text-muted-foreground">
-                Select a crew member to see their OSHI data.
+                {t('oshi.select_prompt')}
               </p>
             </div>
           )}

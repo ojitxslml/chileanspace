@@ -44,8 +44,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { provisionsData, provisionTypes } from "@/lib/provisions-data";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export function ProvisionsManagement() {
+  const { t } = useTranslation();
   const [filter, setFilter] = React.useState("All");
   const { toast } = useToast();
 
@@ -62,8 +64,8 @@ export function ProvisionsManagement() {
     const purpose = formData.get("purpose");
     
     toast({
-      title: "Request Submitted",
-      description: `Requested ${quantity} of ${category} for: ${purpose}`,
+      title: t('provisions.request_submitted_toast_title'),
+      description: t('provisions.request_submitted_toast_desc', { quantity, category, purpose }),
     });
     event.currentTarget.reset();
   };
@@ -92,56 +94,56 @@ export function ProvisionsManagement() {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-6 pt-6">
       <h2 className="text-3xl font-bold tracking-tight font-headline">
-        Provisions Management
+        {t('provisions.title')}
       </h2>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Storage Capacity</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('provisions.storage_capacity')}</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{provisionsData.storageUsagePercentage}%</div>
             <p className="text-xs text-muted-foreground">
-              {provisionsData.storageUsed} / {provisionsData.storageCapacity} units used
+              {t('provisions.storage_used', { used: provisionsData.storageUsed, capacity: provisionsData.storageCapacity })}
             </p>
             <Progress value={provisionsData.storageUsagePercentage} className="mt-2 h-2" />
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Next Supply Delivery</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('provisions.next_delivery')}</CardTitle>
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{provisionsData.nextDelivery.date}</div>
             <p className="text-xs text-muted-foreground">
-              ETA: {provisionsData.nextDelivery.eta} - Status: {provisionsData.nextDelivery.status}
+              {t('provisions.next_delivery_eta', { eta: provisionsData.nextDelivery.eta, status: provisionsData.nextDelivery.status })}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Last Delivery</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('provisions.last_delivery')}</CardTitle>
             <PackageCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{provisionsData.lastDelivery.date}</div>
             <p className="text-xs text-muted-foreground">
-              Status: {provisionsData.lastDelivery.status}
+              {t('provisions.last_delivery_status', { status: provisionsData.lastDelivery.status })}
             </p>
           </CardContent>
         </Card>
          <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('provisions.pending_requests')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
             <p className="text-xs text-muted-foreground">
-              Awaiting approval
+              {t('provisions.pending_requests_stat')}
             </p>
           </CardContent>
         </Card>
@@ -152,16 +154,16 @@ export function ProvisionsManagement() {
           <CardHeader>
             <div className="flex items-center justify-between">
                 <div>
-                    <CardTitle>Inventory</CardTitle>
-                    <CardDescription>Current stock of all provisions.</CardDescription>
+                    <CardTitle>{t('provisions.inventory_title')}</CardTitle>
+                    <CardDescription>{t('provisions.inventory_desc')}</CardDescription>
                 </div>
                 <div className="w-48">
                     <Select value={filter} onValueChange={setFilter}>
                         <SelectTrigger>
-                        <SelectValue placeholder="Filter by type..." />
+                        <SelectValue placeholder={t('provisions.filter_by_type')} />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="All">All Types</SelectItem>
+                        <SelectItem value="All">{t('provisions.all_types')}</SelectItem>
                         {provisionTypes.map(type => (
                             <SelectItem key={type} value={type}>{type}</SelectItem>
                         ))}
@@ -175,10 +177,10 @@ export function ProvisionsManagement() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
+                    <TableHead>{t('provisions.item_header')}</TableHead>
+                    <TableHead>{t('provisions.type_header')}</TableHead>
+                    <TableHead className="text-right">{t('provisions.quantity_header')}</TableHead>
+                    <TableHead className="text-center">{t('provisions.status_header')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -211,21 +213,21 @@ export function ProvisionsManagement() {
         <div className="space-y-4">
             <Card>
                 <CardHeader>
-                    <CardTitle>Request Provisions</CardTitle>
-                    <CardDescription>Request items from storage for your tasks.</CardDescription>
+                    <CardTitle>{t('provisions.request_title')}</CardTitle>
+                    <CardDescription>{t('provisions.request_desc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form className="space-y-4" onSubmit={handleRequestSubmit}>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="quantity">Quantity</Label>
+                                <Label htmlFor="quantity">{t('provisions.quantity_label')}</Label>
                                 <Input id="quantity" name="quantity" type="number" defaultValue="1" min="1" />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="category">Category</Label>
+                                <Label htmlFor="category">{t('provisions.category_label')}</Label>
                                 <Select name="category" defaultValue="Parts">
                                     <SelectTrigger id="category">
-                                        <SelectValue placeholder="Select category" />
+                                        <SelectValue placeholder={t('provisions.select_category')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                     {provisionTypes.map(type => (
@@ -236,12 +238,12 @@ export function ProvisionsManagement() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="purpose">Purpose / Item Name</Label>
-                            <Input id="purpose" name="purpose" placeholder="e.g., 'Repairing air filter' or 'Snacks'" />
+                            <Label htmlFor="purpose">{t('provisions.purpose_label')}</Label>
+                            <Input id="purpose" name="purpose" placeholder={t('provisions.purpose_placeholder')} />
                         </div>
                         <Button type="submit" className="w-full">
                             <Send className="mr-2 h-4 w-4" />
-                            Submit Request
+                            {t('provisions.submit_request')}
                         </Button>
                     </form>
                 </CardContent>
@@ -249,7 +251,7 @@ export function ProvisionsManagement() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Transaction Log</CardTitle>
+                    <CardTitle>{t('provisions.transaction_log_title')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                 <ScrollArea className="h-48">

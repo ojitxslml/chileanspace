@@ -34,6 +34,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 interface MainNavProps {
   activeView: string;
@@ -46,14 +47,16 @@ export function MainNav({
   setActiveView,
   className,
 }: MainNavProps) {
+  const { t } = useTranslation();
+  
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "oshi", label: "OSHI Dashboard", icon: HeartPulse },
-    { id: "provisions", label: "Provisions", icon: Package },
-    { id: "energy", label: "Energy Generation", icon: Zap },
-    { id: "explorer", label: "3D Explorer", icon: Box },
-    { id: "analysis", label: "Sectional Analysis", icon: SquareGanttChart },
-    { id: "materials", label: "Material Viewer", icon: Layers },
+    { id: "dashboard", label: t('common.dashboard'), icon: Home },
+    { id: "oshi", label: t('common.oshi_dashboard'), icon: HeartPulse },
+    { id: "provisions", label: t('common.provisions'), icon: Package },
+    { id: "energy", label: t('common.energy_generation'), icon: Zap },
+    { id: "explorer", label: t('common.explorer_3d'), icon: Box },
+    { id: "analysis", label: t('common.sectional_analysis'), icon: SquareGanttChart },
+    { id: "materials", label: t('common.material_viewer'), icon: Layers },
   ];
 
   return (
@@ -102,10 +105,10 @@ export function MainNav({
                       <AvatarImage src="https://picsum.photos/seed/cmdr-alex/40/40" alt="Cmdr. Alex Reyes" />
                       <AvatarFallback>AR</AvatarFallback>
                     </Avatar>
-                    <span className="truncate text-sm font-medium">Cmdr. Alex Reyes</span>
+                    <span className="truncate text-sm font-medium">{t('main_nav.user_name')}</span>
                 </div>
                  <div className="flex items-center gap-1">
-                    <SidebarMenuButton variant="ghost" size="icon" className="h-8 w-8" tooltip={{children: "Log Out"}}>
+                    <SidebarMenuButton variant="ghost" size="icon" className="h-8 w-8" tooltip={{children: t('common.logout')}}>
                       <LogOut className="h-4 w-4" />
                     </SidebarMenuButton>
                  </div>

@@ -13,8 +13,10 @@ import { getWeather } from "@/ai/flows/weather-flow";
 import { type WeatherDataPoint } from "@/ai/schemas/weather-schemas";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export function HabitatExplorer() {
+  const { t } = useTranslation();
   const mountRef = useRef<HTMLDivElement>(null);
   const stormIntensityRef = useRef<HTMLDivElement>(null);
   const piezoGroupRef = useRef<THREE.Group>();
@@ -273,21 +275,21 @@ export function HabitatExplorer() {
       <Card className="absolute bottom-4 left-4 w-80 bg-background/80 backdrop-blur-sm">
         <CardContent className="p-4 space-y-4">
             <div className="space-y-2">
-                <Label>Modo de Intensidad</Label>
+                <Label>{t('explorer.intensity_mode')}</Label>
                 <RadioGroup value={mode} onValueChange={(value) => setMode(value as "simulated" | "live")} className="flex space-x-2">
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="simulated" id="simulated" />
-                        <Label htmlFor="simulated">Simulado</Label>
+                        <Label htmlFor="simulated">{t('explorer.simulated')}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value="live" id="live" />
-                        <Label htmlFor="live">En vivo</Label>
+                        <Label htmlFor="live">{t('explorer.live')}</Label>
                     </div>
                 </RadioGroup>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="storm-intensity">
-                  Intensidad de Tormenta: {' '}
+                  {t('explorer.storm_intensity')}: {' '}
                   {loading && mode === 'live' ? <Skeleton className="h-4 w-8 inline-block" /> : <span ref={stormIntensityRef}>0.0</span>} m/s
                 </Label>
                 <Slider 
@@ -300,7 +302,7 @@ export function HabitatExplorer() {
             </div>
              <div className="flex items-center space-x-2">
                 <Switch id="piezo-toggle" onCheckedChange={togglePiezo}/>
-                <Label htmlFor="piezo-toggle">Mostrar capa piezoeléctrica</Label>
+                <Label htmlFor="piezo-toggle">{t('explorer.show_piezo_layer')}</Label>
             </div>
         </CardContent>
       </Card>

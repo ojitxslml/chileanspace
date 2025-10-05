@@ -17,6 +17,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { BatteryFull, BatteryCharging, Sun, Wind, Zap, Building } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const energyProductionChartData = [
   { month: "January", solar: 186, piezoelectric: 80 },
@@ -49,61 +50,63 @@ const energyConsumptionChartConfig = {
 }
 
 export function EnergyGeneration() {
+  const { t } = useTranslation();
+
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight font-headline">
-          Energy Generation
+          {t('energy.title')}
         </h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Output</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('energy.total_output')}</CardTitle>
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">45.2 kWe</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last hour
+              {t('energy.output_stat')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Solar Array Status
+              {t('energy.solar_status')}
             </CardTitle>
             <Sun className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Optimal</div>
-            <p className="text-xs text-muted-foreground">Efficiency: 92%</p>
+            <p className="text-xs text-muted-foreground">{t('energy.solar_efficiency')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Piezoelectric Status
+              {t('energy.piezo_status')}
             </CardTitle>
             <Wind className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Active</div>
             <p className="text-xs text-muted-foreground">
-              Generating from dust storm
+              {t('energy.piezo_generating')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Battery Storage</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('energy.battery_storage')}</CardTitle>
             <BatteryFull className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">78%</div>
-            <p className="text-xs text-muted-foreground">Time to full: 3 hours</p>
+            <p className="text-xs text-muted-foreground">{t('energy.battery_time_full')}</p>
           </CardContent>
         </Card>
       </div>
@@ -111,8 +114,8 @@ export function EnergyGeneration() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Energy Production (Last 6 Months)</CardTitle>
-            <CardDescription>Solar vs. Piezoelectric Output</CardDescription>
+            <CardTitle>{t('energy.production_title')}</CardTitle>
+            <CardDescription>{t('energy.production_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer
@@ -151,8 +154,8 @@ export function EnergyGeneration() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Energy Consumption by Sector</CardTitle>
-            <CardDescription>Current power draw per habitat sector.</CardDescription>
+            <CardTitle>{t('energy.consumption_title')}</CardTitle>
+            <CardDescription>{t('energy.consumption_desc')}</CardDescription>
           </CardHeader>
           <CardContent>
              <ChartContainer

@@ -26,6 +26,7 @@ import { getWeather, getTemperature, getRadiation } from "@/ai/flows/weather-flo
 import { Skeleton } from "@/components/ui/skeleton"
 import { WeatherDataPoint, TemperatureDataPoint, RadiationDataPoint } from "@/ai/schemas/weather-schemas"
 import { sectorData, crewData } from "@/lib/sector-data";
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 
 const energyChartData = [
@@ -49,6 +50,7 @@ const energyChartConfig = {
 };
 
 export function Dashboard() {
+  const { t } = useTranslation();
   const [selectedSectorId, setSelectedSectorId] = useState("all");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loadingWindData, setLoadingWindData] = useState(true);
@@ -148,57 +150,57 @@ export function Dashboard() {
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight font-headline">
-          Habitability Dashboard
+          {t('dashboard.title')}
         </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Energy Output
+              {t('dashboard.total_energy_output')}
             </CardTitle>
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">45.2 kWe</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last hour
+              {t('dashboard.energy_stat')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Crew Members</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.crew_members')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">20/20</div>
-            <p className="text-xs text-muted-foreground">All systems nominal</p>
+            <p className="text-xs text-muted-foreground">{t('dashboard.crew_stat')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Water Reserves</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.water_reserves')}</CardTitle>
             <Droplets className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">87.5%</div>
             <p className="text-xs text-muted-foreground">
-              Recycling rate: 98%
+              {t('dashboard.recycling_rate')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              ECLSS Redundancy
+              {t('dashboard.eclss_redundancy')}
             </CardTitle>
             <ShieldCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Active</div>
             <p className="text-xs text-muted-foreground">
-              No critical faults detected
+              {t('dashboard.eclss_stat')}
             </p>
           </CardContent>
         </Card>
@@ -207,8 +209,8 @@ export function Dashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
             <CardHeader>
-                <CardTitle>Estado de Sectores</CardTitle>
-                <CardDescription>Estado operativo de las áreas de la colonia.</CardDescription>
+                <CardTitle>{t('dashboard.sector_status_title')}</CardTitle>
+                <CardDescription>{t('dashboard.sector_status_desc')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
                 <div
@@ -220,7 +222,7 @@ export function Dashboard() {
                 >
                     <div className="flex items-center gap-3">
                         <Building className="h-5 w-5 text-muted-foreground" />
-                        <span className="font-medium">Todos los Sectores</span>
+                        <span className="font-medium">{t('dashboard.all_sectors')}</span>
                     </div>
                 </div>
                 {sectorData.map(sector => (
@@ -247,8 +249,8 @@ export function Dashboard() {
         </Card>
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Tripulación</CardTitle>
-            <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
+            <CardTitle>{t('dashboard.crew_title')}</CardTitle>
+            <CardDescription>{t('dashboard.crew_desc', { sectorName: sectorData.find(s => s.id === selectedSectorId)?.name || t('dashboard.all_sectors_label') })}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             <ScrollArea className="h-72">
@@ -271,27 +273,27 @@ export function Dashboard() {
             <Card className="border-dashed">
                 <CardHeader>
                     <CardTitle>{selectedCrewMember.name}</CardTitle>
-                    <CardDescription>Signos Vitales</CardDescription>
+                    <CardDescription>{t('dashboard.vital_signs')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-4">
                         <HeartPulse className="h-8 w-8 text-red-500" />
                         <div>
-                            <p className="text-sm text-muted-foreground">Ritmo Cardíaco</p>
+                            <p className="text-sm text-muted-foreground">{t('dashboard.heart_rate')}</p>
                             <p className="text-2xl font-bold">{selectedCrewMember.vitals.hr} <span className="text-sm font-normal">BPM</span></p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <Wind className="h-8 w-8 text-blue-500" />
                         <div>
-                            <p className="text-sm text-muted-foreground">Saturación de O₂</p>
+                            <p className="text-sm text-muted-foreground">{t('dashboard.spo2_saturation')}</p>
                             <p className="text-2xl font-bold">{selectedCrewMember.vitals.spo2}<span className="text-sm font-normal">%</span></p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <Thermometer className="h-8 w-8 text-orange-500" />
                         <div>
-                            <p className="text-sm text-muted-foreground">Temperatura Corporal</p>
+                            <p className="text-sm text-muted-foreground">{t('dashboard.body_temp')}</p>
                             <p className="text-2xl font-bold">{selectedCrewMember.vitals.temp}<span className="text-sm font-normal">°C</span></p>
                         </div>
                     </div>
@@ -304,8 +306,8 @@ export function Dashboard() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
         <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
-            <CardTitle>Energy Production (Last 6 Months)</CardTitle>
-            <CardDescription>Solar vs. Piezoelectric Output</CardDescription>
+            <CardTitle>{t('dashboard.energy_prod_title')}</CardTitle>
+            <CardDescription>{t('dashboard.energy_prod_desc')}</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
             <ChartContainer config={energyChartConfig} className="h-[300px] w-full">
@@ -351,53 +353,53 @@ export function Dashboard() {
         </Card>
         <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
-            <CardTitle>External Situation & Alerts</CardTitle>
-            <CardDescription>Live data from outside the habitat.</CardDescription>
+            <CardTitle>{t('dashboard.external_situation_title')}</CardTitle>
+            <CardDescription>{t('dashboard.external_situation_desc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
               <div>
-                  <h4 className="text-sm font-medium mb-2">Current Conditions</h4>
+                  <h4 className="text-sm font-medium mb-2">{t('dashboard.current_conditions')}</h4>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="flex items-center gap-2">
                           <Thermometer className="h-4 w-4 text-muted-foreground" />
-                          <span>Temp: <span className="font-semibold">{currentConditions.temperature}°C</span></span>
+                          <span>{t('dashboard.temp')}: <span className="font-semibold">{currentConditions.temperature}°C</span></span>
                       </div>
                        <div className="flex items-center gap-2">
                           <Wind className="h-4 w-4 text-muted-foreground" />
-                          <span>Pressure: <span className="font-semibold">{currentConditions.pressure} kPa</span></span>
+                          <span>{t('dashboard.pressure')}: <span className="font-semibold">{currentConditions.pressure} kPa</span></span>
                       </div>
                       <div className="flex items-center gap-2">
                           <Sun className="h-4 w-4 text-muted-foreground" />
-                          <span>Radiation: <Badge variant="outline" className={cn(
+                          <span>{t('dashboard.radiation')}: <Badge variant="outline" className={cn(
                             currentConditions.radiation === "High" && "text-yellow-500 border-yellow-500/50",
                             currentConditions.radiation === "Moderate" && "text-orange-500 border-orange-500/50",
                           )}>{currentConditions.radiation}</Badge></span>
                       </div>
                        <div className="flex items-center gap-2">
                           <Sunrise className="h-4 w-4 text-muted-foreground" />
-                          <span>UV Index: <Badge variant="outline" className="text-red-500 border-red-500/50">{currentConditions.uvIndex}</Badge></span>
+                          <span>{t('dashboard.uv_index')}: <Badge variant="outline" className="text-red-500 border-red-500/50">{currentConditions.uvIndex}</Badge></span>
                       </div>
                   </div>
               </div>
               <Separator />
               <div>
-                  <h4 className="text-sm font-medium mb-2">Upcoming Events</h4>
+                  <h4 className="text-sm font-medium mb-2">{t('dashboard.upcoming_events')}</h4>
                   <ul className="space-y-1 text-sm list-disc pl-4 text-muted-foreground">
-                      <li><span className="font-semibold text-foreground">Sol 345:</span> Supply Ship Arrival (ESA)</li>
-                      <li><span className="font-semibold text-foreground">Sol 350:</span> Solar Flare Peak Predicted</li>
+                      <li><span className="font-semibold text-foreground">Sol 345:</span> {t('dashboard.supply_ship_event')}</li>
+                      <li><span className="font-semibold text-foreground">Sol 350:</span> {t('dashboard.solar_flare_event')}</li>
                   </ul>
               </div>
               <Separator />
                <div>
                   <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-destructive" />
-                    Active Alerts
+                    {t('dashboard.active_alerts')}
                   </h4>
                   <ul className="space-y-1 text-sm list-disc pl-4 text-muted-foreground">
                        {currentConditions.windAlert ? (
                          <li><span className="font-semibold text-destructive">{currentConditions.windAlert}</span></li>
                        ) : (
-                         <li><span className="font-semibold text-foreground">No critical alerts.</span></li>
+                         <li><span className="font-semibold text-foreground">{t('dashboard.no_critical_alerts')}</span></li>
                        )}
                   </ul>
               </div>
@@ -406,8 +408,8 @@ export function Dashboard() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Wind Speed (Last 7 Days)</CardTitle>
-          <CardDescription>Wind speed at different altitudes from the surface.</CardDescription>
+          <CardTitle>{t('dashboard.wind_speed_title')}</CardTitle>
+          <CardDescription>{t('dashboard.wind_speed_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
            {loadingWindData ? (
@@ -430,9 +432,9 @@ export function Dashboard() {
               <YAxis label={{ value: 'm/s', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="speed2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="speed10m" name="10m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="speed100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="speed2m" name={t('dashboard.altitude_2m')} stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="speed10m" name={t('dashboard.altitude_10m')} stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="speed100m" name={t('dashboard.altitude_100m')} stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
           )}
@@ -440,8 +442,8 @@ export function Dashboard() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Temperature (Last 7 Days)</CardTitle>
-          <CardDescription>Temperature at different altitudes from the surface.</CardDescription>
+          <CardTitle>{t('dashboard.temperature_title')}</CardTitle>
+          <CardDescription>{t('dashboard.temperature_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
            {loadingTemperatureData ? (
@@ -464,9 +466,9 @@ export function Dashboard() {
               <YAxis label={{ value: '°C', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="temp2m" name="2m Altitude" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="temp20m" name="20m Altitude" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="temp100m" name="100m Altitude" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="temp2m" name={t('dashboard.altitude_2m')} stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="temp20m" name={t('dashboard.altitude_20m')} stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="temp100m" name={t('dashboard.altitude_100m')} stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
           )}
@@ -474,8 +476,8 @@ export function Dashboard() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Radiation (Last 7 Days)</CardTitle>
-          <CardDescription>Solar radiation levels in J/m².</CardDescription>
+          <CardTitle>{t('dashboard.radiation_title')}</CardTitle>
+          <CardDescription>{t('dashboard.radiation_desc')}</CardDescription>
         </CardHeader>
         <CardContent>
            {loadingRadiationData ? (
@@ -498,10 +500,10 @@ export function Dashboard() {
               <YAxis label={{ value: 'J/m²', angle: -90, position: 'insideLeft' }} tick={{ fontSize: 12 }}/>
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="direct" name="Direct" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="diffuse" name="Diffuse" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="global" name="Global" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
-              <Line type="monotone" dataKey="clearSky" name="Clear Sky" stroke="hsl(var(--chart-4))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="direct" name={t('dashboard.direct')} stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="diffuse" name={t('dashboard.diffuse')} stroke="hsl(var(--chart-2))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="global" name={t('dashboard.global')} stroke="hsl(var(--chart-3))" strokeWidth={2} dot={false}/>
+              <Line type="monotone" dataKey="clearSky" name={t('dashboard.clear_sky')} stroke="hsl(var(--chart-4))" strokeWidth={2} dot={false}/>
             </LineChart>
           </ResponsiveContainer>
           )}

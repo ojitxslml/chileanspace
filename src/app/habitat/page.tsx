@@ -22,15 +22,15 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Settings, Globe, Save } from "lucide-react";
+import { Settings, Globe } from "lucide-react";
 import { OshiDashboard } from "@/components/views/oshi-dashboard";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { EnergyGeneration } from "@/components/views/energy-generation";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 
 export default function Home() {
   const [activeView, setActiveView] = useState("dashboard");
+  const { t, setLocale } = useTranslation();
 
   const renderActiveView = () => {
     switch (activeView) {
@@ -70,15 +70,15 @@ export default function Home() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="mb-2 w-64 p-4" side="top" align="end">
-                  <DropdownMenuLabel>Language</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('common.language')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setLocale('en')}>
                     <Globe className="mr-2 h-4 w-4" />
-                    <span>English</span>
+                    <span>{t('common.english')}</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => setLocale('es')}>
                     <Globe className="mr-2 h-4 w-4" />
-                    <span>Español</span>
+                    <span>{t('common.spanish')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

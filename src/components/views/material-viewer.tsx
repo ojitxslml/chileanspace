@@ -15,8 +15,10 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { materials, Material } from "@/lib/materials-data";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export function MaterialViewer() {
+  const { t } = useTranslation();
   const [selectedMaterial, setSelectedMaterial] = useState<Material>(
     materials[0]
   );
@@ -25,7 +27,7 @@ export function MaterialViewer() {
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 h-full flex flex-col">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight font-headline">
-          Material Viewer
+          {t('materials.title')}
         </h2>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
@@ -33,7 +35,7 @@ export function MaterialViewer() {
           <CardHeader>
             <CardTitle>Construction Materials</CardTitle>
             <CardDescription>
-              Select a material to see its details.
+              {t('materials.select_material_desc')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -85,7 +87,7 @@ export function MaterialViewer() {
                     selectedMaterial.images.length > 0 && (
                       <>
                         <Separator className="my-6" />
-                        <h4 className="text-lg font-semibold mb-4">Gallery</h4>
+                        <h4 className="text-lg font-semibold mb-4">{t('materials.gallery')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {selectedMaterial.images.map((image, index) => (
                             <div
@@ -110,7 +112,7 @@ export function MaterialViewer() {
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <p className="text-muted-foreground">
-                Select a material to view details.
+                {t('materials.select_material_prompt')}
               </p>
             </div>
           )}

@@ -18,42 +18,45 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Icons } from "@/components/icons"
 import { Badge } from "@/components/ui/badge"
-
-const notifications = [
-    {
-        title: "High Radiation Alert",
-        description: "High radiation levels detected near Sector Gamma-7. EVA missions suspended.",
-        type: "alert" as const,
-        time: "2m ago"
-    },
-    {
-        title: "Supply Ship Arrival",
-        description: "ESA supply ship is scheduled to arrive at Sol 345.",
-        type: "info" as const,
-        time: "1h ago"
-    },
-    {
-        title: "Solar Flare Prediction",
-        description: "Peak solar flare activity predicted for Sol 350. All external systems should be monitored.",
-        type: "warning" as const,
-        time: "3h ago"
-    },
-    {
-        title: "System Maintenance",
-        description: "ECLSS maintenance scheduled for tomorrow at 08:00 habitat time.",
-        type: "info" as const,
-        time: "1d ago"
-    }
-]
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 export function AppHeader() {
+  const { t } = useTranslation();
+  
+  const notifications = [
+      {
+          title: t('app_header.high_radiation_alert'),
+          description: t('app_header.high_radiation_desc'),
+          type: "alert" as const,
+          time: "2m ago"
+      },
+      {
+          title: t('app_header.supply_ship_arrival'),
+          description: t('app_header.supply_ship_desc'),
+          type: "info" as const,
+          time: "1h ago"
+      },
+      {
+          title: t('app_header.solar_flare_prediction'),
+          description: t('app_header.solar_flare_desc'),
+          type: "warning" as const,
+          time: "3h ago"
+      },
+      {
+          title: t('app_header.system_maintenance'),
+          description: t('app_header.system_maintenance_desc'),
+          type: "info" as const,
+          time: "1d ago"
+      }
+  ]
+
   return (
     <header className="flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-2">
         <SidebarTrigger className="md:hidden" />
          <div className="md:hidden flex items-center gap-2">
             <Icons.logo className="h-6 w-6 text-primary" />
-            <h1 className="text-lg font-semibold font-headline">CHILEANSPACE</h1>
+            <h1 className="text-lg font-semibold font-headline">{t('app_header.title')}</h1>
         </div>
       </div>
       
@@ -69,7 +72,7 @@ export function AppHeader() {
           <PopoverContent className="w-80" align="end">
             <Card className="border-none shadow-none">
               <CardHeader className="p-2 pt-0">
-                <CardTitle className="text-base">Notifications</CardTitle>
+                <CardTitle className="text-base">{t('app_header.notifications')}</CardTitle>
               </CardHeader>
               <CardContent className="p-2 pt-0">
                 <div className="space-y-3">

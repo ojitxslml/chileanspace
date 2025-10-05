@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 export default function LandingPage() {
+  const { t } = useTranslation();
   const heroImage = PlaceHolderImages.find(
     (img) => img.id === "mars-landscape"
   );
@@ -27,21 +29,19 @@ export default function LandingPage() {
       </div>
       <div className="relative z-10 flex flex-col items-center justify-center text-center text-white p-4">
         <h1 className="text-5xl font-bold tracking-tight font-headline md:text-7xl lg:text-8xl">
-          CHILEANSPACE
+          {t('landing.title')}
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-white/80 md:text-xl">
-          Designing a sustainable future on Mars. Explore our innovative
-          habitat concept, engineered for resilience and habitability on the
-          Red Planet.
+          {t('landing.subtitle')}
         </p>
         <Link href="/habitat" className="mt-8">
           <Button size="lg" className="text-lg">
-            Explore The Habitat
+            {t('landing.explore_button')}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </Link>
         <p className="mt-8 max-w-4xl text-base text-white/70">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          {t('landing.lorem_ipsum')}
         </p>
       </div>
     </div>
