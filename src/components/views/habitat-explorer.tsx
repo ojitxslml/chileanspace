@@ -236,11 +236,6 @@ export function HabitatExplorer() {
           panel2.scale.set(3, 3, 3);
           panel2.position.set(-18, 0, 5);
           scene.add(panel2);
-
-          const panel3 = basePanel.clone();
-          panel3.scale.set(3, 3, 3);
-          panel3.position.set(-6, 0, 5);
-          scene.add(panel3);
       },
       undefined,
       function (error) {
