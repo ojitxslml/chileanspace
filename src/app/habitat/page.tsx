@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import {
   SidebarProvider,
   SidebarInset,
+  Sidebar,
 } from "@/components/ui/sidebar";
 import { MainNav } from "@/components/main-nav";
 import { Dashboard } from "@/components/views/dashboard";
@@ -61,10 +62,12 @@ function HabitatContent() {
 
   return (
       <SidebarProvider>
-        <MainNav activeView={activeView} setActiveView={setActiveView} />
+        <Sidebar>
+          <MainNav activeView={activeView} setActiveView={setActiveView} />
+        </Sidebar>
         <SidebarInset>
-          <AppHeader />
           <div className="flex h-screen flex-col animate-fade-in">
+            <AppHeader />
             <main className="flex-1 overflow-auto">{renderActiveView()}</main>
           </div>
           <div className="fixed bottom-4 right-4 z-50">

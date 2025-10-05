@@ -26,7 +26,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -64,13 +63,12 @@ export function MainNav({
   ];
 
   return (
-    <Sidebar
+    <div
       className={cn(
-        "border-r",
+        "group hidden h-screen flex-col border-r bg-background text-foreground md:flex",
         className
       )}
     >
-      <div className="flex h-full min-h-screen flex-col">
         <SidebarHeader>
           <div className="flex h-14 items-center gap-2 border-b p-2 px-4">
             <Icons.logo className="h-8 w-8 text-primary" />
@@ -119,8 +117,6 @@ export function MainNav({
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
-      </div>
-      <SidebarRail />
-    </Sidebar>
+    </div>
   );
 }
