@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef, useState, useMemo } from "react";
@@ -128,9 +129,11 @@ export function HabitatExplorer() {
     const piezoMaterial = new THREE.MeshStandardMaterial({ 
         color: 0x00ffff, 
         transparent: true, 
-        opacity: 0.2,
+        opacity: 0.3,
         emissive: 0x00ffff,
-        emissiveIntensity: 0
+        emissiveIntensity: 0,
+        depthWrite: false,
+        depthTest: false,
     });
 
     // Load custom model
