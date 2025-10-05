@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   SidebarProvider,
   SidebarInset,
@@ -28,8 +29,10 @@ import { EnergyGeneration } from "@/components/views/energy-generation";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 
-export default function Home() {
-  const [activeView, setActiveView] = useState("dashboard");
+function HabitatContent() {
+  const searchParams = useSearchParams();
+  const initialView = searchParams.get("view") || "explorer";
+  const [activeView, setActiveView] = useState(initialView);
   const { t, setLocale } = useTranslation();
 
   const renderActiveView = () => {
@@ -49,7 +52,7 @@ export default function Home() {
       case "materials":
         return <MaterialViewer />;
       default:
-        return <Dashboard />;
+        return <HabitatExplorer />;
     }
   };
 
@@ -57,7 +60,7 @@ export default function Home() {
       <SidebarProvider>
         <MainNav activeView={activeView} setActiveView={setActiveView} />
         <SidebarInset>
-          <div className="flex h-screen flex-col">
+          <div className="flex h-screen flex-col animate-fade-in">
             <AppHeader />
             <main className="flex-1 overflow-auto">{renderActiveView()}</main>
           </div>
@@ -86,4 +89,13 @@ export default function Home() {
         </SidebarInset>
       </SidebarProvider>
   );
+}
+
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HabitatContent />
+    </Suspense>
+  )
 }

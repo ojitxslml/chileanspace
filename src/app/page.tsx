@@ -35,7 +35,7 @@ export default function LandingPage() {
         <p className="mt-4 max-w-2xl text-lg text-white/80 md:text-xl">
           {t('landing.subtitle')}
         </p>
-        <Link href="/habitat" className="mt-8">
+        <Link href="/habitat?view=explorer" className="mt-8">
           <Button size="lg" className="text-lg">
             {t('landing.explore_button')}
             <ArrowRight className="ml-2 h-5 w-5" />

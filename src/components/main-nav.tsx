@@ -50,11 +50,11 @@ export function MainNav({
   const { t } = useTranslation();
   
   const menuItems = [
+    { id: "explorer", label: t('common.explorer_3d'), icon: Box },
     { id: "dashboard", label: t('common.dashboard'), icon: Home },
     { id: "oshi", label: t('common.oshi_dashboard'), icon: HeartPulse },
     { id: "provisions", label: t('common.provisions'), icon: Package },
     { id: "energy", label: t('common.energy_generation'), icon: Zap },
-    { id: "explorer", label: t('common.explorer_3d'), icon: Box },
     { id: "analysis", label: t('common.sectional_analysis'), icon: SquareGanttChart },
     { id: "materials", label: t('common.material_viewer'), icon: Layers },
   ];
