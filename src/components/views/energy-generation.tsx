@@ -66,7 +66,7 @@ export function EnergyGeneration() {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">58.2 kWe</div>
+            <div className="text-2xl font-bold">130 kW</div>
             <p className="text-xs text-muted-foreground">
               {t('energy.output_stat')}
             </p>
@@ -189,5 +189,7 @@ export function EnergyGeneration() {
     </div>
   );
 }
+
+    
 
     
