@@ -77,22 +77,6 @@ export default function Home() {
                     <Globe className="mr-2 h-4 w-4" />
                     <span>Español</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Meteomatics API</DropdownMenuLabel>
-                  <div className="space-y-2">
-                    <div>
-                      <Label htmlFor="meteo-user" className="text-xs">Username</Label>
-                      <Input id="meteo-user" placeholder="Your username" />
-                    </div>
-                     <div>
-                      <Label htmlFor="meteo-pass" className="text-xs">Password</Label>
-                      <Input id="meteo-pass" type="password" placeholder="Your password" />
-                    </div>
-                    <Button variant="secondary" size="sm" className="w-full">
-                      <Save className="mr-2 h-4 w-4"/>
-                      Save Credentials
-                    </Button>
-                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

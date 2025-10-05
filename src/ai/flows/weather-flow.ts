@@ -61,20 +61,17 @@ const getWeatherFlow = ai.defineFlow(
 
     } catch (error) {
         console.error("Error fetching from Meteomatics API:", error);
+        // Fallback to simulated data if API fails
+        const simulatedData: WeatherDataPoint[] = Array.from({ length: 42 }, (_, i) => {
+            const hour = (i * 4) % 24;
+            return {
+                hour: `${String(hour).padStart(2, '0')}:00`,
+                speed2m: parseFloat((Math.random() * 10 + 5).toFixed(1)),
+                speed10m: parseFloat((Math.random() * 15 + 8).toFixed(1)),
+                speed100m: parseFloat((Math.random() * 25 + 15).toFixed(1)),
+            };
+        });
+        return simulatedData;
     }
-    
-
-    const simulatedData: WeatherDataPoint[] = Array.from({ length: 24 * 7 }, (_, i) => {
-        const day = Math.floor(i / 24) + 1;
-        const hour = i % 24;
-        return {
-            hour: `Day ${day} ${String(hour).padStart(2, '0')}:00`,
-            speed2m: parseFloat((Math.random() * 10 + 5).toFixed(1)),
-            speed10m: parseFloat((Math.random() * 15 + 8).toFixed(1)),
-            speed100m: parseFloat((Math.random() * 25 + 15).toFixed(1)),
-        };
-    }).filter((_, i) => i % 4 === 0);
-
-    return simulatedData;
   }
 );

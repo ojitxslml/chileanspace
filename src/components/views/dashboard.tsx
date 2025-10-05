@@ -344,7 +344,7 @@ export function Dashboard() {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Wind Speed (Last 24h)</CardTitle>
+          <CardTitle>Wind Speed (Next 7 Days)</CardTitle>
           <CardDescription>Wind speed at different altitudes from the surface.</CardDescription>
         </CardHeader>
         <CardContent>
