@@ -14,7 +14,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-01',
     location: 'Entrada Principal',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-01/1280/720',
+    imageUrl: '/camera/processed-image-1.png',
     imageHint: 'habitat entrance',
   },
   {
@@ -22,7 +22,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-02',
     location: 'Laboratorio Científico',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-02/1280/720',
+    imageUrl: '/camera/processed-image-2.png',
     imageHint: 'science laboratory',
   },
   {
@@ -30,7 +30,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-03',
     location: 'Invernadero A',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-03/1280/720',
+    imageUrl: '/camera/processed-image-3.png',
     imageHint: 'greenhouse plants',
   },
   {
@@ -38,7 +38,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-04',
     location: 'Centro de Mando',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-04/1280/720',
+    imageUrl: '/camera/processed-image-4.png',
     imageHint: 'control center',
   },
   {
@@ -46,7 +46,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-05',
     location: 'Módulo Residencial B',
     status: 'Offline',
-    imageUrl: 'https://picsum.photos/seed/cam-05/1280/720',
+    imageUrl: '/camera/processed-image-5.png',
     imageHint: 'sleeping quarters',
   },
   {
@@ -54,7 +54,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-06',
     location: 'Área de Almacenamiento',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-06/1280/720',
+    imageUrl: '/camera/processed-image-6.png',
     imageHint: 'storage bay',
   },
     {
@@ -62,7 +62,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-07',
     location: 'Plataforma de Lanzamiento',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-07/1280/720',
+    imageUrl: '/camera/processed-image-7.png',
     imageHint: 'launch pad',
   },
   {
@@ -70,7 +70,7 @@ export const cameraData: Camera[] = [
     name: 'CAM-08',
     location: 'Taller de Mantenimiento',
     status: 'Online',
-    imageUrl: 'https://picsum.photos/seed/cam-08/1280/720',
+    imageUrl: '/camera/processed-image-8.png',
     imageHint: 'maintenance workshop',
   },
 ];
