@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { OshiDimension } from "@/lib/oshi-data";
+import { oshiCrewData, OshiDimension, CrewMemberOshi } from "@/lib/oshi-data";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
@@ -26,39 +26,6 @@ import {
 } from "recharts";
 import { AlertCircle, BrainCircuit, Calendar, MessageSquare, Puzzle, Search, SlidersHorizontal, SunMoon, TrendingUp, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useCollection, useFirebase, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
-import { Skeleton } from "../ui/skeleton";
-
-interface OshiData {
-  id: string;
-  name: string;
-  role: string;
-  oshiScore: number;
-  status: 'Optimal' | 'Stable' | 'Concern';
-  avatar: string;
-  dimensions: OshiScores;
-  oshiHistory: { date: string; score: number }[];
-  events: OshiEvent[];
-}
-
-interface OshiScores {
-  variety: number;
-  balance: number;
-  circadian: number;
-  sensory: number;
-  motivation: number;
-  social: number;
-  meaningful: number;
-}
-
-interface OshiEvent {
-    id: string;
-    timestamp: string;
-    type: 'alert' | 'suggestion' | 'system' | 'user';
-    message: string;
-}
-
 
 const dimensionDetails: Record<
   OshiDimension,
@@ -113,85 +80,20 @@ const getStatusClass = (status: "Optimal" | "Stable" | "Concern") => {
 };
 
 export function OshiDashboard() {
-  const { firestore } = useFirebase();
-  const oshiRef = useMemoFirebase(() => firestore ? collection(firestore, 'oshi') : null, [firestore]);
-  const { data: oshiCrewData, isLoading } = useCollection<OshiData>(oshiRef);
-
-  const [selectedCrewId, setSelectedCrewId] = React.useState<string | null>(null);
+  const [selectedCrewId, setSelectedCrewId] = React.useState<string>(
+    oshiCrewData[0].id
+  );
   const [searchTerm, setSearchTerm] = React.useState("");
-  
-  React.useEffect(() => {
-    if (oshiCrewData && oshiCrewData.length > 0 && !selectedCrewId) {
-      setSelectedCrewId(oshiCrewData[0].id);
-    }
-  }, [oshiCrewData, selectedCrewId]);
 
   const filteredCrew = React.useMemo(() => {
-    if (!oshiCrewData) return [];
     return oshiCrewData.filter((crew) =>
       crew.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [oshiCrewData, searchTerm]);
+  }, [searchTerm]);
 
   const selectedCrew = React.useMemo(() => {
-    return oshiCrewData?.find((c) => c.id === selectedCrewId) ?? null;
-  }, [oshiCrewData, selectedCrewId]);
-  
-  if (isLoading) {
-    return (
-      <div className="flex-1 space-y-4 p-4 md:p-6 pt-6 h-full flex flex-col">
-        <div>
-          <Skeleton className="h-8 w-1/4" />
-          <Skeleton className="h-4 w-1/2 mt-2" />
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
-          <Card className="lg:col-span-1 flex flex-col">
-            <CardHeader>
-              <Skeleton className="h-6 w-1/2" />
-              <Skeleton className="h-4 w-3/4" />
-            </CardHeader>
-            <CardContent className="flex-1 p-2 flex flex-col min-h-0">
-              <div className="p-2">
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2 p-2">
-                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-[80px]" />)}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-2 flex flex-col">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div>
-                  <Skeleton className="h-7 w-48" />
-                  <Skeleton className="h-4 w-32 mt-2" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0">
-              <div className="space-y-4">
-                <Skeleton className="h-6 w-1/3" />
-                {[...Array(7)].map((_, i) => (
-                  <div key={i}>
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-2 w-full mt-2" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col min-h-0">
-                <Skeleton className="h-40 w-full" />
-                <Separator className="my-4" />
-                <div className="space-y-3">
-                    {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+    return oshiCrewData.find((c) => c.id === selectedCrewId);
+  }, [selectedCrewId]);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-6 pt-6 h-full flex flex-col">

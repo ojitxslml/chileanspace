@@ -1,120 +1,116 @@
 /**
- * @fileoverview Firestore Security Rules for the Habitat application.
+ * @file Firestore Security Rules
+ * @description This ruleset defines access control for the Habitat app's Firestore database.
  *
  * Core Philosophy:
- * This ruleset prioritizes secure data access based on clearly defined roles and ownership.
- * It aims to strike a balance between security and rapid prototyping by focusing on authorization
- * while relaxing data validation constraints.
+ * The security model prioritizes user-specific data ownership for user profiles,
+ * while other data collections (crew, sectors, oshi, provisions, materials)
+ * are globally readable but not writable without authentication. User listing is disabled.
  *
  * Data Structure:
- * - /users/{userId}: Stores individual user profiles. Access is restricted to the owning user.
- * - /crew/{crewId}: Stores crew member data. Currently, read access is public, but write access is restricted.
- * - /sectors/{sectorId}: Stores habitat sector data. Currently, read access is public, but write access is restricted.
- * - /oshi/{oshiId}: Stores OSHI data for crew members. Currently, read access is public, but write access is restricted.
- * - /provisions/{provisionId}: Stores inventory data. Currently, read access is public, but write access is restricted.
- * - /materials/{materialId}: Stores construction material data. Currently, read access is public, but write access is restricted.
+ * - /users/{userId}: Stores individual user profiles, accessible only to the owning user.
+ * - /crew/{crewId}: Stores crew member data.
+ * - /sectors/{sectorId}: Stores habitat sector data.
+ * - /oshi/{oshiId}: Stores OSHI (Occupational Safety, Health, and Inclusion) data for crew members.
+ * - /provisions/{provisionId}: Stores inventory provision data.
+ * - /materials/{materialId}: Stores construction material data.
  *
  * Key Security Decisions:
- * - User listing is explicitly disallowed.
- * - Public read access is granted to the crew, sector, oshi, provisions, and materials collections to allow for the reported issue to be fixed.
- * - Data validation is minimized to accelerate prototyping.
+ * - User profiles are strictly private and owned by the authenticated user.
+ * - Data concerning crew members, habitat sectors, OSHI, provisions and materials is publicly readable.
+ * - No write access to crew, sectors, oshi, provisions, and materials is given.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows a user to read and write their own profile data.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (read, write) if the user is signed in and the requested userId matches their own ID. (e.g., request.auth.uid == 'user123')
-     * @deny (read, write) if the user is not signed in or the userId does not match their own ID. (e.g., request.auth.uid == 'otherUser')
-     * @principle Enforces strict user ownership for profile data.
+     * @allow (create) - User 'testuser' with UID 'testuser' can create their profile.
+     * @deny (create) - User 'otheruser' with UID 'testuser' cannot create a profile.
+     * @allow (get, list) - User 'testuser' with UID 'testuser' can read their profile.
+     * @deny (get, list) - User 'otheruser' with UID 'testuser' cannot read the profile.
+     * @allow (update, delete) - User 'testuser' with UID 'testuser' can update their profile.
+     * @deny (update, delete) - User 'otheruser' with UID 'testuser' cannot update the profile.
+     * @principle Enforces document ownership for writes; restricts access to a user's own data tree.
      */
     match /users/{userId} {
+      // Helper function to check if the authenticated user is the owner of the document
       function isOwner(userId) {
-        return request.auth != null && request.auth.uid == userId;
+        return request.auth.uid == userId;
+      }
+
+      // Helper function to check if the authenticated user is the owner of the document, and that the document exists
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
       }
 
       allow get: if isOwner(userId);
-      allow list: if false; // User listing is not permitted.
+      allow list: if false;
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId) && resource != null;
-      allow delete: if isOwner(userId) && resource != null;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read crew member data, but restricts writes.
+     * @description Controls access to crew member documents.
      * @path /crew/{crewId}
-     * @allow (read) any signed in user can read crew data.
-     * @deny (write) any writes are forbidden until proper authorization is set up.
-     * @principle Permits public read access while restricting write operations to authorized users.
+     * @allow (get, list) - Any user can read crew member data.
+     * @deny (create, update, delete) - No one can create, update, or delete crew member data.
+     * @principle Allows public read access but restricts write access.
      */
     match /crew/{crewId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Add authorization for crew creation.
-      allow update: if false; // TODO: Add authorization for crew updates.
-      allow delete: if false; // TODO: Add authorization for crew deletion.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
     /**
-     * @description Allows anyone to read sector data, but restricts writes.
+     * @description Controls access to sector documents.
      * @path /sectors/{sectorId}
-     * @allow (read) any signed in user can read sector data.
-     * @deny (write) any writes are forbidden until proper authorization is set up.
-     * @principle Permits public read access while restricting write operations to authorized users.
+     * @allow (get, list) - Any user can read sector data.
+     * @deny (create, update, delete) - No one can create, update, or delete sector data.
+     * @principle Allows public read access but restricts write access.
      */
     match /sectors/{sectorId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Add authorization for sector creation.
-      allow update: if false; // TODO: Add authorization for sector updates.
-      allow delete: if false; // TODO: Add authorization for sector deletion.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
     /**
-     * @description Allows anyone to read OSHI data, but restricts writes.
+     * @description Controls access to OSHI data documents.
      * @path /oshi/{oshiId}
-     * @allow (read) any signed in user can read OSHI data.
-     * @deny (write) any writes are forbidden until proper authorization is set up.
-     * @principle Permits public read access while restricting write operations to authorized users.
+     * @allow (get, list) - Any user can read OSHI data.
+     * @deny (create, update, delete) - No one can create, update, or delete OSHI data.
+     * @principle Allows public read access but restricts write access.
      */
     match /oshi/{oshiId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Add authorization for OSHI data creation.
-      allow update: if false; // TODO: Add authorization for OSHI data updates.
-      allow delete: if false; // TODO: Add authorization for OSHI data deletion.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
     /**
-     * @description Allows anyone to read provision data, but restricts writes.
+     * @description Controls access to provision documents.
      * @path /provisions/{provisionId}
-     * @allow (read) any signed in user can read provision data.
-     * @deny (write) any writes are forbidden until proper authorization is set up.
-     * @principle Permits public read access while restricting write operations to authorized users.
+     * @allow (get, list) - Any user can read provision data.
+     * @deny (create, update, delete) - No one can create, update, or delete provision data.
+     * @principle Allows public read access but restricts write access.
      */
     match /provisions/{provisionId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Add authorization for provision creation.
-      allow update: if false; // TODO: Add authorization for provision updates.
-      allow delete: if false; // TODO: Add authorization for provision deletion.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
-   /**
-     * @description Allows anyone to read material data, but restricts writes.
+    /**
+     * @description Controls access to material documents.
      * @path /materials/{materialId}
-     * @allow (read) any signed in user can read material data.
-     * @deny (write) any writes are forbidden until proper authorization is set up.
-     * @principle Permits public read access while restricting write operations to authorized users.
+     * @allow (get, list) - Any user can read material data.
+     * @deny (create, update, delete) - No one can create, update, or delete material data.
+     * @principle Allows public read access but restricts write access.
      */
     match /materials/{materialId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Add authorization for material creation.
-      allow update: if false; // TODO: Add authorization for material updates.
-      allow delete: if false; // TODO: Add authorization for material deletion.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
   }
 }

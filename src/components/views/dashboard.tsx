@@ -25,8 +25,8 @@ import { Separator } from "@/components/ui/separator"
 import { getWeather } from "@/ai/flows/weather-flow"
 import { Skeleton } from "@/components/ui/skeleton"
 import { WeatherDataPoint } from "@/ai/schemas/weather-schemas"
-import { useCollection, useFirebase, useMemoFirebase } from "@/firebase"
-import { collection, query, where } from "firebase/firestore"
+import { sectorData, crewData } from "@/lib/sector-data";
+
 
 const energyChartData = [
   { month: "January", solar: 186, piezoelectric: 80 },
@@ -49,39 +49,26 @@ const energyChartConfig = {
 };
 
 export function Dashboard() {
-  const { firestore } = useFirebase();
   const [selectedSectorId, setSelectedSectorId] = useState("all");
   const [windData, setWindData] = useState<WeatherDataPoint[]>([]);
   const [loadingWindData, setLoadingWindData] = useState(true);
 
-  const sectorsRef = useMemoFirebase(() => firestore ? collection(firestore, 'sectors') : null, [firestore]);
-  const { data: sectorData, isLoading: sectorsLoading } = useCollection(sectorsRef);
-
-  const crewRef = useMemoFirebase(() => firestore ? collection(firestore, 'crew') : null, [firestore]);
-  const { data: crewData, isLoading: crewLoading } = useCollection(crewRef);
-
   const filteredCrew = useMemo(() => {
-    if (!crewData) return [];
     if (selectedSectorId === "all") return crewData;
     return crewData.filter(c => c.sector === selectedSectorId);
-  }, [crewData, selectedSectorId]);
+  }, [selectedSectorId]);
 
   const [selectedCrewMemberId, setSelectedCrewMemberId] = useState("");
 
   useEffect(() => {
-    if (filteredCrew.length > 0 && !selectedCrewMemberId) {
+    if (filteredCrew.length > 0) {
       setSelectedCrewMemberId(filteredCrew[0].id);
-    } else if (filteredCrew.length > 0 && !filteredCrew.find(c => c.id === selectedCrewMemberId)) {
-      setSelectedCrewMemberId(filteredCrew[0].id);
-    } else if (filteredCrew.length === 0) {
-      setSelectedCrewMemberId("");
     }
-  }, [filteredCrew, selectedCrewMemberId]);
-
+  }, [filteredCrew]);
 
   const selectedCrewMember = useMemo(() => {
-    return crewData?.find(m => m.id === selectedCrewMemberId) || null;
-  }, [crewData, selectedCrewMemberId]);
+    return crewData.find(m => m.id === selectedCrewMemberId) || null;
+  }, [selectedCrewMemberId]);
 
   const handleSectorChange = (sectorId: string) => {
     setSelectedSectorId(sectorId);
@@ -101,28 +88,6 @@ export function Dashboard() {
     }
     fetchWeather();
   }, []);
-  
-  if (sectorsLoading || crewLoading) {
-    return (
-        <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
-            <div className="flex items-center justify-between space-y-2">
-                <Skeleton className="h-8 w-1/3" />
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24" />)}
-            </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <Skeleton className="h-72" />
-                <Skeleton className="lg:col-span-2 h-72" />
-            </div>
-             <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-                 <Skeleton className="col-span-1 lg:col-span-4 h-80" />
-                 <Skeleton className="col-span-1 lg:col-span-3 h-80" />
-            </div>
-             <Skeleton className="h-80" />
-        </div>
-    )
-  }
 
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
@@ -152,7 +117,7 @@ export function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{crewData?.length || 0}/20</div>
+            <div className="text-2xl font-bold">20/20</div>
             <p className="text-xs text-muted-foreground">All systems nominal</p>
           </CardContent>
         </Card>
@@ -203,7 +168,7 @@ export function Dashboard() {
                         <span className="font-medium">Todos los Sectores</span>
                     </div>
                 </div>
-                {sectorData?.map(sector => (
+                {sectorData.map(sector => (
                     <div 
                         key={sector.id}
                         onClick={() => handleSectorChange(sector.id)}
@@ -228,65 +193,56 @@ export function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Tripulación</CardTitle>
-            <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData?.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
+            <CardDescription>Monitoreo de signos vitales de la tripulación en {sectorData.find(s => s.id === selectedSectorId)?.name || 'Todos los Sectores'}.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
-            {filteredCrew.length > 0 ? (
-                <>
-                    <ScrollArea className="h-72">
-                      <RadioGroup value={selectedCrewMemberId} className="grid gap-4 pr-4" onValueChange={setSelectedCrewMemberId}>
-                      {filteredCrew.map((member) => (
-                          <div key={member.id}>
-                          <RadioGroupItem value={member.id} id={member.id} className="peer sr-only" />
-                          <Label
-                              htmlFor={member.id}
-                              className="flex flex-col items-start rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                          >
-                              <span className="text-lg font-semibold">{member.name}</span>
-                              <span className="text-sm text-muted-foreground">{member.role}</span>
-                          </Label>
-                          </div>
-                      ))}
-                      </RadioGroup>
-                    </ScrollArea>
-                    {selectedCrewMember && (
-                    <Card className="border-dashed">
-                        <CardHeader>
-                            <CardTitle>{selectedCrewMember.name}</CardTitle>
-                            <CardDescription>Signos Vitales</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-center gap-4">
-                                <HeartPulse className="h-8 w-8 text-red-500" />
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Ritmo Cardíaco</p>
-                                    <p className="text-2xl font-bold">{selectedCrewMember.vitals.hr} <span className="text-sm font-normal">BPM</span></p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Wind className="h-8 w-8 text-blue-500" />
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Saturación de O₂</p>
-                                    <p className="text-2xl font-bold">{selectedCrewMember.vitals.spo2}<span className="text-sm font-normal">%</span></p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <Thermometer className="h-8 w-8 text-orange-500" />
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Temperatura Corporal</p>
-                                    <p className="text-2xl font-bold">{selectedCrewMember.vitals.temp}<span className="text-sm font-normal">°C</span></p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                    )}
-                </>
-            ) : (
-                <div className="sm:col-span-2 flex items-center justify-center h-full text-muted-foreground">
-                    No hay tripulantes en este sector.
-                </div>
+            <ScrollArea className="h-72">
+              <RadioGroup value={selectedCrewMemberId} className="grid gap-4 pr-4" onValueChange={setSelectedCrewMemberId}>
+              {filteredCrew.map((member) => (
+                  <div key={member.id}>
+                  <RadioGroupItem value={member.id} id={member.id} className="peer sr-only" />
+                  <Label
+                      htmlFor={member.id}
+                      className="flex flex-col items-start rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                  >
+                      <span className="text-lg font-semibold">{member.name}</span>
+                      <span className="text-sm text-muted-foreground">{member.role}</span>
+                  </Label>
+                  </div>
+              ))}
+              </RadioGroup>
+            </ScrollArea>
+            {selectedCrewMember && (
+            <Card className="border-dashed">
+                <CardHeader>
+                    <CardTitle>{selectedCrewMember.name}</CardTitle>
+                    <CardDescription>Signos Vitales</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <HeartPulse className="h-8 w-8 text-red-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Ritmo Cardíaco</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.hr} <span className="text-sm font-normal">BPM</span></p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Wind className="h-8 w-8 text-blue-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Saturación de O₂</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.spo2}<span className="text-sm font-normal">%</span></p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Thermometer className="h-8 w-8 text-orange-500" />
+                        <div>
+                            <p className="text-sm text-muted-foreground">Temperatura Corporal</p>
+                            <p className="text-2xl font-bold">{selectedCrewMember.vitals.temp}<span className="text-sm font-normal">°C</span></p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
             )}
-            
           </CardContent>
         </Card>
       </div>

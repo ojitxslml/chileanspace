@@ -152,56 +152,6 @@
           },
           "description": "Stores user profile information."
         }
-      },
-      {
-        "path": "/crew/{crewId}",
-        "definition": {
-            "entityName": "CrewMember",
-            "schema": {
-                "$ref": "#/entities/CrewMember"
-            },
-            "description": "Stores data for each crew member."
-        }
-      },
-      {
-          "path": "/sectors/{sectorId}",
-          "definition": {
-              "entityName": "Sector",
-              "schema": {
-                  "$ref": "#/entities/Sector"
-              },
-              "description": "Stores data for each habitat sector."
-          }
-      },
-      {
-        "path": "/oshi/{oshiId}",
-        "definition": {
-          "entityName": "OshiData",
-          "schema": {
-            "$ref": "#/entities/OshiData"
-          },
-          "description": "Stores OSHI data for each crew member."
-        }
-      },
-      {
-        "path": "/provisions/{provisionId}",
-        "definition": {
-          "entityName": "Provision",
-          "schema": {
-            "$ref": "#/entities/Provision"
-          },
-          "description": "Stores inventory provision data."
-        }
-      },
-      {
-        "path": "/materials/{materialId}",
-        "definition": {
-          "entityName": "Material",
-          "schema": {
-            "$ref": "#/entities/Material"
-          },
-          "description": "Stores construction material data."
-        }
       }
     ]
   }

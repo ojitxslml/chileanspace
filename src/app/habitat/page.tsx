@@ -26,7 +26,6 @@ import { Settings, Globe, Save } from "lucide-react";
 import { OshiDashboard } from "@/components/views/oshi-dashboard";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { FirebaseClientProvider } from "@/firebase/client-provider";
 
 
 export default function Home() {
@@ -52,7 +51,6 @@ export default function Home() {
   };
 
   return (
-    <FirebaseClientProvider>
       <SidebarProvider>
         <MainNav activeView={activeView} setActiveView={setActiveView} />
         <SidebarInset>
@@ -100,6 +98,5 @@ export default function Home() {
             </div>
         </SidebarInset>
       </SidebarProvider>
-    </FirebaseClientProvider>
   );
 }
