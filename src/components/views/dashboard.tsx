@@ -35,12 +35,12 @@ export function Dashboard() {
   const crewData = getCrewData(t);
 
   const energyChartData = [
-    { month: t('energy.month_apr'), solar: 73, piezoelectric: 190, nuclear: 350 },
-    { month: t('energy.month_may'), solar: 209, piezoelectric: 130, nuclear: 350 },
-    { month: t('energy.month_jun'), solar: 214, piezoelectric: 140, nuclear: 350 },
-    { month: t('energy.month_jul'), solar: 250, piezoelectric: 150, nuclear: 350 },
-    { month: t('energy.month_aug'), solar: 280, piezoelectric: 160, nuclear: 350 },
-    { month: t('energy.month_sep'), solar: 310, piezoelectric: 110, nuclear: 350 },
+    { month: t('energy.month_jan'), solar: 24, piezoelectric: 0.01, nuclear: 197 },
+    { month: t('energy.month_feb'), solar: 20, piezoelectric: 0.01, nuclear: 197 },
+    { month: t('energy.month_mar'), solar: 9, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_apr'), solar: 5, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_may'), solar: 3, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_jun'), solar: 3, piezoelectric: 0.02, nuclear: 197 },
   ];
   
   const energyChartConfig = {
@@ -535,6 +535,8 @@ export function Dashboard() {
     </div>
   )
 }
+
+    
 
     
 

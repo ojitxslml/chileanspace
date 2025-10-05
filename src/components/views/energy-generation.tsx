@@ -21,12 +21,12 @@ export function EnergyGeneration() {
   const { t } = useTranslation();
 
   const energyProductionChartData = [
-    { month: t('energy.month_jan'), solar: 186, piezoelectric: 40, nuclear: 350 },
-    { month: t('energy.month_feb'), solar: 305, piezoelectric: 60, nuclear: 350 },
-    { month: t('energy.month_mar'), solar: 237, piezoelectric: 50, nuclear: 350 },
-    { month: t('energy.month_apr'), solar: 173, piezoelectric: 80, nuclear: 350 },
-    { month: t('energy.month_may'), solar: 209, piezoelectric: 55, nuclear: 350 },
-    { month: t('energy.month_jun'), solar: 214, piezoelectric: 65, nuclear: 350 },
+    { month: t('energy.month_jan'), solar: 24, piezoelectric: 0.01, nuclear: 197 },
+    { month: t('energy.month_feb'), solar: 20, piezoelectric: 0.01, nuclear: 197 },
+    { month: t('energy.month_mar'), solar: 9, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_apr'), solar: 5, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_may'), solar: 3, piezoelectric: 0.02, nuclear: 197 },
+    { month: t('energy.month_jun'), solar: 3, piezoelectric: 0.02, nuclear: 197 },
   ];
 
   const energyProductionChartConfig = {
@@ -189,6 +189,8 @@ export function EnergyGeneration() {
     </div>
   );
 }
+
+    
 
     
 
