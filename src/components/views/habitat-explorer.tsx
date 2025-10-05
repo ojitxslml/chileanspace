@@ -179,7 +179,7 @@ export function HabitatExplorer() {
     
     // Greenhouses
     const greenhouseGeo = new THREE.BoxGeometry(4, 3, 6);
-    const greenhouseMat = new THREE.MeshStandardmaterial({ color: 0x90a955 });
+    const greenhouseMat = new THREE.MeshStandardMaterial({ color: 0x90a955 });
     const greenhouse1 = new THREE.Mesh(greenhouseGeo, greenhouseMat);
     greenhouse1.position.set(0, 1.5, -10);
     greenhouse1.castShadow = true;
@@ -322,6 +322,4 @@ export function HabitatExplorer() {
   );
 }
 
-    
-
-    
+  
