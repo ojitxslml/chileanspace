@@ -227,7 +227,9 @@ export function HabitatExplorer() {
             }
         }
         stormParticlesRef.current.geometry.attributes.position.needsUpdate = true;
-        (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = Math.max(0, Math.min(0.7, intensity * 2));
+        // Use a power function for a more gradual increase in density
+        (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = Math.min(0.7, Math.pow(intensity, 2) * 0.7);
+
       } else if (stormParticlesRef.current) {
         (stormParticlesRef.current.material as THREE.PointsMaterial).opacity = 0;
       }
@@ -319,5 +321,7 @@ export function HabitatExplorer() {
     </div>
   );
 }
+
+    
 
     
