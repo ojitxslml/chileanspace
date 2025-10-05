@@ -229,12 +229,12 @@ export function HabitatExplorer() {
           
           const panel1 = basePanel.clone();
           panel1.scale.set(3, 3, 3);
-          panel1.position.set(-12, 0, 5);
+          panel1.position.set(18, 0, 0);
           scene.add(panel1);
 
           const panel2 = basePanel.clone();
           panel2.scale.set(3, 3, 3);
-          panel2.position.set(-18, 0, 5);
+          panel2.position.set(24, 0, 0);
           scene.add(panel2);
       },
       undefined,
