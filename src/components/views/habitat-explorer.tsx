@@ -17,6 +17,7 @@ import { useTranslation } from "@/lib/i18n/LanguageContext";
 import { Thermometer, Wind, Sun, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { getPerformanceTier, getQualitySettings, type QualitySettings } from "@/lib/performance-utils";
 
 export function HabitatExplorer() {
   const { t } = useTranslation();
@@ -35,6 +36,12 @@ export function HabitatExplorer() {
   const [apiDataLoading, setApiDataLoading] = useState(true);
   const [modelLoaded, setModelLoaded] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
+  const [quality, setQuality] = useState<QualitySettings | null>(null);
+
+  useEffect(() => {
+    const tier = getPerformanceTier();
+    setQuality(getQualitySettings(tier));
+  }, []);
   
   const [loaders, setLoaders] = useState<{
     GLTFLoader?: typeof GLTFLoader;
@@ -53,7 +60,7 @@ export function HabitatExplorer() {
     });
   }, []);
 
-  const isLoading = apiDataLoading || !modelLoaded || !loaders.GLTFLoader;
+  const isLoading = apiDataLoading || !modelLoaded || !loaders.GLTFLoader || !quality;
 
   const currentConditions = useMemo(() => {
     const latestWind = windData.length > 0 ? windData[windData.length - 1].speed10m : 0;
@@ -98,7 +105,7 @@ export function HabitatExplorer() {
   }, [mode, windData]);
 
   useEffect(() => {
-    if (!mountRef.current || !loaders.GLTFLoader || !loaders.OrbitControls) return;
+    if (!mountRef.current || !loaders.GLTFLoader || !loaders.OrbitControls || !quality) return;
 
     const { GLTFLoader } = loaders;
     const { OrbitControls } = loaders;
@@ -119,8 +126,8 @@ export function HabitatExplorer() {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(quality.pixelRatio);
+    renderer.shadowMap.enabled = quality.shadows;
     currentMount.appendChild(renderer.domElement);
 
     // Controls
@@ -135,9 +142,11 @@ export function HabitatExplorer() {
     scene.add(ambientLight);
     const directionalLight = new THREE.DirectionalLight(0xffae8b, 2);
     directionalLight.position.set(10, 20, 5);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 2048;
-    directionalLight.shadow.mapSize.height = 2048;
+    directionalLight.castShadow = quality.shadows;
+    if (quality.shadows) {
+        directionalLight.shadow.mapSize.width = quality.shadowMapSize;
+        directionalLight.shadow.mapSize.height = quality.shadowMapSize;
+    }
     scene.add(directionalLight);
 
     // Ground
@@ -145,7 +154,7 @@ export function HabitatExplorer() {
     const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x934322 });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    ground.receiveShadow = quality.shadows;
     scene.add(ground);
     
     const rockGeometry = new THREE.DodecahedronGeometry(1, 0);
@@ -160,7 +169,7 @@ export function HabitatExplorer() {
         rock.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
         const scale = Math.random() * 0.5 + 0.2;
         rock.scale.set(scale, scale, scale);
-        rock.castShadow = true;
+        rock.castShadow = quality.shadows;
         scene.add(rock);
     }
     
@@ -182,8 +191,8 @@ export function HabitatExplorer() {
             model.position.y = 2;
             model.traverse(function (child) {
                 if ((child as THREE.Mesh).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
+                    child.castShadow = quality.shadows;
+                    child.receiveShadow = quality.shadows;
                 }
             });
             scene.add(model);
@@ -222,8 +231,8 @@ export function HabitatExplorer() {
           reactorModel.position.set(12, 1, 0); 
           reactorModel.traverse(function (child) {
               if ((child as THREE.Mesh).isMesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
+                  child.castShadow = quality.shadows;
+                  child.receiveShadow = quality.shadows;
                   (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({ color: 0xE5E5E5 });
               }
           });
@@ -241,8 +250,8 @@ export function HabitatExplorer() {
           const basePanel = gltf.scene;
           basePanel.traverse(function (child) {
               if ((child as THREE.Mesh).isMesh) {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
+                  child.castShadow = quality.shadows;
+                  child.receiveShadow = quality.shadows;
               }
           });
           
@@ -262,7 +271,7 @@ export function HabitatExplorer() {
       }
   );
 
-    const particleCount = 200000;
+    const particleCount = quality.particleCount;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i++) {
